@@ -1,0 +1,25 @@
+---
+// Port source: surfc/src/components/LandingPage.jsx lines 322-336.
+
+const SUPPORTING_CARDS = [
+  { icon: '📖', label: 'Sources & notes',       body: 'Capture by photo or jot insights directly. Every note keeps its page and book attribution.' },
+  { icon: '⟳',  label: 'Sync across devices',   body: 'Notes live locally first and sync to the cloud when online. Outbox sync keeps devices aligned.' },
+  { icon: '◐',  label: 'Offline-first & private', body: 'Everything works without a connection. End-to-end encryption at rest with AES-256-GCM.' },
+]
+---
+
+<section class="hiw-section-v2">
+  <div class="hiw-threeup">
+    <p class="hiw-step-label hiw-step-center">04 · Plus</p>
+    <h2 class="hiw-h2 hiw-h2-center">Built for how you actually read</h2>
+    <div class="hiw-threeup-grid">
+      {SUPPORTING_CARDS.map((card) => (
+        <article class="surfc-card hiw-mini-card">
+          <div class="hiw-mini-glyph" aria-hidden="true">{card.icon}</div>
+          <h3 class="hiw-mini-title">{card.label}</h3>
+          <p class="hiw-mini-body">{card.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

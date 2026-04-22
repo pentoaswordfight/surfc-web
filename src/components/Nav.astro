@@ -1,0 +1,38 @@
+---
+/**
+ * Sticky top navigation. Identical markup + class names to the current React
+ * LandingPage.jsx so styles port without tweaks. The `.hiw-nav-scrolled`
+ * state is toggled by a tiny script once the user scrolls past the 8px
+ * threshold — no framework island needed.
+ *
+ * Port source: surfc/src/components/LandingPage.jsx lines 137-150.
+ */
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+---
+
+<nav class="hiw-nav" aria-label="Primary" data-nav>
+  <div class="hiw-nav-inner">
+    <a href="/" class="hiw-wordmark" aria-label="Surfc home">Surfc</a>
+    <div class="hiw-nav-links">
+      <a href="/#what-is-surfc" class="hiw-nav-link">How it works</a>
+      <a href="/#faq" class="hiw-nav-link">FAQ</a>
+      <a href={appUrl} class="hiw-nav-signin">Sign in</a>
+      <a href="/waitlist" class="btn btn-accent hiw-nav-cta">
+        Request invitation
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script is:inline>
+  // Sticky-nav scroll effect (was a useEffect in the React version).
+  const nav = document.querySelector('[data-nav]')
+  if (nav) {
+    const onScroll = () => {
+      nav.classList.toggle('hiw-nav-scrolled', window.scrollY > 8)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+  }
+</script>

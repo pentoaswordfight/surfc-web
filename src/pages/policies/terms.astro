@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const TERMLY_DATA_ID = 'f893c672-1fd9-4022-a214-e51b367e4ed1'
+---
+
+<BaseLayout
+  title="Terms of Use — Surfc"
+  description="The terms under which Surfc is offered."
+  path="/policies/terms"
+>
+  <div class="policy-page" data-policy="terms">
+    <header class="policy-header">
+      <a class="policy-back-link" href="/">← Back to Surfc</a>
+    </header>
+    <main class="policy-content">
+      <div name="termly-embed" data-id={TERMLY_DATA_ID} data-type="iframe"></div>
+    </main>
+  </div>
+</BaseLayout>
+
+<script is:inline src="https://app.termly.io/embed-policy.min.js" async></script>

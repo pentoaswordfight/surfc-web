@@ -1,0 +1,86 @@
+---
+/**
+ * BaseLayout — shared <head> and <body> chrome for every marketing page.
+ *
+ * Responsibilities:
+ *   - Meta tags (SEO, viewport, theme, OG, Twitter)
+ *   - Font preconnect + Google Fonts (matches the app's current load)
+ *   - Termly resource-blocker (GDPR consent banner, same resource ID as
+ *     the legacy index.html so returning visitors keep their choice)
+ *   - Canonical URL derived from the requested path
+ *
+ * Port sources:
+ *   - surfc/index.html — meta tags, fonts, Termly blocker
+ *   - SUR-218 plan — OG image + Twitter card requirements
+ */
+
+import '../styles/tokens.css'
+import '../styles/marketing.css'
+
+interface Props {
+  title?:       string
+  description?: string
+  ogImage?:     string
+  path?:        string
+  noindex?:     boolean
+}
+
+const {
+  title       = 'Surfc — a personal index of great ideas',
+  description = "Surfc turns a lifetime of reading into something you can actually think with. Capture printed passages and handwritten notes; tag them to 102 canonical ideas or your own.",
+  ogImage     = '/og-image.png',
+  path        = Astro.url.pathname,
+  noindex     = false,
+} = Astro.props
+
+const canonical = new URL(path, Astro.site ?? 'https://surfc.app').toString()
+const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString()
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#FFF8F2" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <title>{title}</title>
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Surfc" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Fonts (mirrors surfc/index.html) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Fira+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Termly resource blocker (GDPR consent) — same resource ID as the app -->
+    <script src="https://app.termly.io/resource-blocker/135b750f-a45d-4fbb-91c6-0f8e1c0b6b8d?autoBlock=on" is:inline></script>
+  </head>
+  <body class="lp-page-v2">
+    <slot />
+  </body>
+</html>

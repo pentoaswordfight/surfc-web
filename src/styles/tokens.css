@@ -1,0 +1,228 @@
+/* ============================================================
+   Surfc Design Tokens
+   src/tokens.css
+
+   Single source of truth for all visual design decisions.
+   Every component derives its values from this file —
+   no hardcoded hex colours, radii, or shadows anywhere else.
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   Colour — Backgrounds
+   ------------------------------------------------------------ */
+:root {
+  --color-bg-primary:   #FFF8F2;  /* app background — warm off-white */
+  --color-bg-input:     #FDF6EE;  /* input background - slightly warm */
+  --color-bg-card:      #FFFFFF;  /* elevated surfaces — cards, modals */
+  --color-bg-subtle:    #F5EDE0;  /* inactive chips, viewfinder, shimmer */
+  --color-bg-overlay:   rgba(26, 20, 16, 0.40); /* lightbox / modal scrim */
+  --color-bg-marketing: #EFE4D0;  /* marketing / landing page parchment background */
+}
+
+
+/* ------------------------------------------------------------
+   Header — Spacings
+   ------------------------------------------------------------ */
+:root {
+  --header-height: 60px;
+  /* Use the safe area or fall back to 0px if not on a notch device */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+
+/* ------------------------------------------------------------
+   Colour — Accent (amber)
+   Use for: active states, primary CTAs, idea tag dots,
+   active nav indicator. Nowhere else.
+   IMPORTANT: --color-accent (#C8860A) is only 2.9:1 on light
+      backgrounds — never use for body text. Large UI elements only:
+      buttons, active states, nav indicators, the logo wordmark. 
+   ------------------------------------------------------------ */
+:root {
+  --color-accent:       #C8860A;  /* primary amber */
+  --color-accent-light: #FAEEDA;  /* chip fills, active chip bg */
+  --color-accent-dark:  #5C3A00;  /* hover / pressed states */
+  --color-accent-text:  #7A4F00;  /* text on accent-light backgrounds */
+}
+
+
+/* ------------------------------------------------------------
+   Colour — Text
+   ------------------------------------------------------------ */
+:root {
+  --color-text-primary:   #1A1410;  /* body copy, headings */
+  --color-text-secondary: #6B5A47;  /* metadata, source labels, captions */
+  --color-text-muted:     #755F4A;  /* timestamps, hints, placeholders */
+}
+
+
+/* ------------------------------------------------------------
+   Colour — Borders
+   ------------------------------------------------------------ */
+:root {
+  --color-border:       #E8D9C5;  /* card borders, dividers, nav bar */
+  --color-border-strong: #C8B49A; /* input borders, dashed viewfinder */
+}
+
+
+/* ------------------------------------------------------------
+   Colour — Semantic
+   ------------------------------------------------------------ */
+:root {
+  --color-destructive:      #C0392B;  /* delete actions — text only */
+  --color-destructive-bg:   #FCEBEB;  /* destructive chip/button bg */
+
+  --color-custom:      #3D7A5C;  /* custom ideas — deep forest green */
+  --color-custom-text: #1F6B4F;  /* text/borders for custom idea elements */
+  --color-custom-bg:   #EAF3E8;  /* background fill for custom idea chips */
+
+  --color-warning:     #9A6200;  /* rate limit / quota notices — warm amber-brown */
+  --color-warning-bg:  #FFF4DC;  /* background for warning banners */
+  --color-warning-text:#7A4C00;  /* body text inside warning banners */
+}
+
+
+/* ------------------------------------------------------------
+   Typography — Font
+   Import Inter in index.html or main.jsx:
+   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+   ------------------------------------------------------------ */
+:root {
+  --font-base:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ------------------------------------------------------------
+   Typography — Scale
+   Format: font-size / line-height / font-weight
+   ------------------------------------------------------------ */
+:root {
+  --text-display-size:   26px;
+  --text-display-height: 1.2;
+  --text-display-weight: 700;
+
+  --text-title-size:     17px;
+  --text-title-height:   1.3;
+  --text-title-weight:   600;
+
+  --text-subtitle-size:  15px;
+  --text-subtitle-height: 1.4;
+  --text-subtitle-weight: 500;
+
+  --text-body-size:      14px;
+  --text-body-height:    1.6;
+  --text-body-weight:    400;
+
+  --text-caption-size:   12px;
+  --text-caption-height: 1.5;
+  --text-caption-weight: 400;
+
+  --text-label-size:     11px;
+  --text-label-height:   1.4;
+  --text-label-weight:   500;
+}
+
+
+/* ------------------------------------------------------------
+   Spacing — 8px base grid
+   Use multiples of --space-1 for all padding and margin.
+   ------------------------------------------------------------ */
+:root {
+  --space-1:  8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+
+  /* Component-specific shortcuts */
+  --space-card-padding:   14px;   /* internal card padding */
+  --space-screen-margin:  16px;   /* left/right screen edge margin */
+  --space-section-gap:    8px;    /* gap between cards in a list */
+  --space-chip-x:         10px;   /* horizontal chip padding */
+  --space-chip-y:         5px;    /* vertical chip padding */
+}
+
+
+/* ------------------------------------------------------------
+   Border Radius
+   ------------------------------------------------------------ */
+:root {
+  --radius-card:    14px;   /* note cards, modals */
+  --radius-input:   10px;   /* text inputs, search bar, buttons */
+  --radius-chip:    999px;  /* idea chips — full pill */
+  --radius-image:   12px;   /* photo thumbnails, captured images */
+  --radius-badge:   999px;  /* count badges */
+  --radius-dot:     50%;    /* idea colour dots */
+}
+
+
+/* ------------------------------------------------------------
+   Shadows — warm-tinted, never cold grey
+   ------------------------------------------------------------ */
+:root {
+  --shadow-card:   0 2px 8px rgba(100, 60, 10, 0.07);
+  --shadow-modal:  0 8px 32px rgba(100, 60, 10, 0.12);
+  --shadow-focus:  0 0 0 3px rgba(200, 134, 10, 0.18); /* amber focus ring */
+}
+
+
+/* ------------------------------------------------------------
+   Transitions
+   ------------------------------------------------------------ */
+:root {
+  --transition-fast:   150ms ease;
+  --transition-base:   200ms ease;
+  --transition-slow:   300ms ease;
+}
+
+
+/* ------------------------------------------------------------
+   Breakpoints (reference — use in media queries)
+   --bp-tablet:  768px
+   --bp-desktop: 1200px
+
+   CSS doesn't support variables in media queries.
+   Use these values directly:
+     @media (min-width: 768px)  { ... }   tablet
+     @media (min-width: 1200px) { ... }   desktop
+   ------------------------------------------------------------ */
+
+
+/* ------------------------------------------------------------
+   Layout — Navigation
+   ------------------------------------------------------------ */
+:root {
+  --nav-bar-height:      64px;   /* mobile bottom nav bar */
+  --nav-rail-width:      68px;   /* tablet left nav rail */
+  --nav-drawer-width:    220px;  /* desktop left nav drawer */
+  --nav-right-panel:     260px;  /* desktop contextual right panel */
+}
+
+
+/* ------------------------------------------------------------
+   Layout — Safe Areas (mobile)
+   Edge-to-edge rule: backgrounds bleed to the viewport edges,
+   interactive/title chrome stays below the notch. Use these
+   directly as paddings on every top-level screen container.
+   ------------------------------------------------------------ */
+:root {
+  --safe-top:    var(--safe-area-top);
+  --safe-bottom: max(34px, var(--safe-area-bottom));
+}
+
+
+/* ------------------------------------------------------------
+   Z-index scale
+   ------------------------------------------------------------ */
+:root {
+  --z-base:     0;
+  --z-card:     10;
+  --z-nav:      100;
+  --z-fab:      200;
+  --z-modal:    300;
+  --z-lightbox: 400;
+}

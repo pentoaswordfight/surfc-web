@@ -1,0 +1,34 @@
+---
+// Port source: surfc/src/components/LandingPage.jsx lines 339-355.
+
+const TESTIMONIALS = [
+  {
+    body: "I thought I remembered what I read. Turns out I remembered the feeling. Surfc keeps the actual ideas.",
+    name: 'Evelyn A.',
+    meta: 'beta reader · 20 notes captured',
+  },
+  {
+    body: "The photo-to-text pipeline is the first one I've trusted with handwriting. It caught a marginal note I'd forgotten I wrote four years ago.",
+    name: 'Alex O.',
+    meta: 'beta reader · 11 notes captured',
+  },
+]
+---
+
+<section class="hiw-section-v2 hiw-alt-bg">
+  <div class="hiw-testimonials">
+    <p class="hiw-step-label hiw-step-center">From the beta</p>
+    <h2 class="hiw-h2 hiw-h2-center">Early readers</h2>
+    <div class="hiw-testimonial-grid">
+      {TESTIMONIALS.map((quote) => (
+        <figure class="note-dot-card hiw-testimonial">
+          <blockquote class="hiw-testimonial-body">{quote.body}</blockquote>
+          <figcaption class="hiw-testimonial-meta">
+            <strong>{quote.name}</strong>
+            <span>{quote.meta}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

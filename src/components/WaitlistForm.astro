@@ -1,0 +1,189 @@
+---
+/**
+ * Waitlist form — posts to the Supabase Edge Function deployed out of the
+ * main surfc repo (supabase/functions/waitlist-signup). Progressively
+ * enhanced: the form submits via HTML POST if JS is unavailable, and via
+ * a fetch() + JSON POST when JS is enabled (allowing us to show the
+ * success/duplicate modal without a full navigation).
+ *
+ * Port source: surfc/src/components/WaitlistScreen.jsx.
+ *
+ * Honeypot: the `hp_company` field is hidden from users; bots fill every
+ * field by default, so any non-empty value silently shortcircuits the
+ * Edge Function without inserting a row.
+ */
+
+const appUrl           = import.meta.env.PUBLIC_APP_URL           ?? 'https://app.surfc.app'
+const waitlistEndpoint = import.meta.env.PUBLIC_WAITLIST_ENDPOINT ?? ''
+const anonKey          = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
+---
+
+<div class="wl-screen">
+  <div class="wl-card">
+    <div class="auth-logo">Surfc</div>
+    <p class="wl-heading">Request early access</p>
+    <p class="wl-subhead">
+      Surfc is rolling out through a waitlist. Fill in your details and we'll be in touch.
+    </p>
+
+    <form
+      class="auth-form"
+      method="POST"
+      action={waitlistEndpoint}
+      data-waitlist-form
+      data-endpoint={waitlistEndpoint}
+      data-anon-key={anonKey}
+    >
+      <input
+        class="inp"
+        type="text"
+        name="name"
+        placeholder="Your name"
+        autocomplete="name"
+        required
+      />
+      <input
+        class="inp"
+        type="email"
+        name="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
+      />
+      <textarea
+        class="inp wl-textarea"
+        name="use_case"
+        placeholder="How do you plan to use Surfc? (optional)"
+        rows="3"
+      ></textarea>
+
+      <!-- Honeypot: hidden from users, bots autofill. The Edge Function
+           silently succeeds if this is non-empty. -->
+      <label class="wl-honeypot" aria-hidden="true">
+        Company
+        <input type="text" name="hp_company" tabindex="-1" autocomplete="off" />
+      </label>
+
+      <p class="auth-error" data-waitlist-error hidden></p>
+
+      <button class="btn btn-gold auth-submit" type="submit" data-waitlist-submit>
+        <span class="spinner" data-waitlist-spinner hidden></span>
+        <span data-waitlist-label>Join Waitlist</span>
+      </button>
+    </form>
+
+    <p class="auth-note">
+      Already have access? <a href={appUrl} class="wl-link-btn">Sign in</a>
+    </p>
+  </div>
+
+  <!-- Modals (visibility controlled by the script below) -->
+  <div class="wl-modal-scrim" data-waitlist-modal="success" hidden>
+    <div class="wl-modal-card">
+      <p class="wl-modal-title">You're on the list!</p>
+      <p class="wl-modal-body">We'll be in touch when your spot is ready.</p>
+      <button type="button" class="btn btn-gold wl-modal-close" data-waitlist-close>Got it</button>
+    </div>
+  </div>
+
+  <div class="wl-modal-scrim" data-waitlist-modal="duplicate" hidden>
+    <div class="wl-modal-card">
+      <p class="wl-modal-title">You're already on the list!</p>
+      <p class="wl-modal-body">We'll reach out when your access is ready.</p>
+      <button type="button" class="btn btn-gold wl-modal-close" data-waitlist-close>Got it</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const form = document.querySelector('[data-waitlist-form]')
+    if (!form) return
+
+    const endpoint = form.getAttribute('data-endpoint')
+    const anonKey  = form.getAttribute('data-anon-key')
+    const errorEl  = form.querySelector('[data-waitlist-error]')
+    const submitEl = form.querySelector('[data-waitlist-submit]')
+    const spinner  = form.querySelector('[data-waitlist-spinner]')
+    const labelEl  = form.querySelector('[data-waitlist-label]')
+    const successModal   = document.querySelector('[data-waitlist-modal="success"]')
+    const duplicateModal = document.querySelector('[data-waitlist-modal="duplicate"]')
+
+    // Graceful degradation: if the endpoint isn't configured, let the HTML
+    // form submit the usual way (the user sees whatever the server returns).
+    if (!endpoint) return
+
+    function showError(message) {
+      if (!errorEl) return
+      errorEl.textContent = message
+      errorEl.hidden = false
+    }
+    function clearError() {
+      if (!errorEl) return
+      errorEl.textContent = ''
+      errorEl.hidden = true
+    }
+    function setLoading(isLoading) {
+      if (submitEl) submitEl.disabled = isLoading
+      if (spinner)  spinner.hidden    = !isLoading
+      if (labelEl)  labelEl.textContent = isLoading ? 'Joining…' : 'Join Waitlist'
+    }
+    function openModal(kind) {
+      const el = kind === 'duplicate' ? duplicateModal : successModal
+      if (el) el.hidden = false
+    }
+    function closeModal(el) { if (el) el.hidden = true }
+    function resetForm() {
+      form.reset()
+      clearError()
+    }
+
+    document.querySelectorAll('[data-waitlist-close]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const scrim = btn.closest('[data-waitlist-modal]')
+        const wasSuccess = scrim && scrim.getAttribute('data-waitlist-modal') === 'success'
+        closeModal(scrim)
+        if (wasSuccess) resetForm()
+      })
+    })
+    document.querySelectorAll('[data-waitlist-modal]').forEach((scrim) => {
+      scrim.addEventListener('click', (e) => {
+        if (e.target === scrim) closeModal(scrim)
+      })
+    })
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      clearError()
+
+      const data = new FormData(form)
+      const payload = {
+        name:       String(data.get('name') ?? '').trim(),
+        email:      String(data.get('email') ?? '').trim(),
+        use_case:   String(data.get('use_case') ?? '').trim(),
+        hp_company: String(data.get('hp_company') ?? ''),
+      }
+      if (!payload.name || !payload.email) return
+
+      setLoading(true)
+      try {
+        const headers = { 'content-type': 'application/json' }
+        if (anonKey) headers.apikey = anonKey
+        const res = await fetch(endpoint, {
+          method:  'POST',
+          headers,
+          body:    JSON.stringify(payload),
+        })
+        const body = await res.json().catch(() => ({}))
+        if (res.status === 429)              { showError("You're going too fast — try again in a minute."); return }
+        if (body.status === 'duplicate')     { openModal('duplicate'); return }
+        if (body.status === 'success')       { openModal('success');   return }
+        showError(body.message === 'invalid_email' ? 'That email looks off. Try again?' : 'Something went wrong. Please try again.')
+      } catch {
+        showError('Network error. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    })
+  })()
+</script>

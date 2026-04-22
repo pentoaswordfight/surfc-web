@@ -1,0 +1,64 @@
+---
+/**
+ * FAQ accordion using native <details>/<summary> for zero-JS access plus a
+ * tiny enhancement script that closes siblings when one opens (preserves
+ * the "single-open" feel of the React version without hydration).
+ *
+ * Port source: surfc/src/components/LandingPage.jsx lines 358-386.
+ */
+
+const FAQ_ITEMS = [
+  {
+    q: 'Who is Surfc for?',
+    a: 'Surfc is for people who annotate books, build commonplace notebooks, or study recurring themes across disciplines.',
+  },
+  {
+    q: 'How do I capture printed passages?',
+    a: 'Use the camera inside Surfc to take a photo. The ingestion pipeline transcribes the marked text and preserves page context.',
+  },
+  {
+    q: 'Can I capture handwritten notes?',
+    a: 'Yes. Photograph handwritten pages; Surfc keeps the handwriting image and transcribes the text for search.',
+  },
+  {
+    q: 'Will my notes sync across devices?',
+    a: 'Notes live locally first and sync across your devices when online. Expect instant local saves and background conflict-aware sync.',
+  },
+  {
+    q: 'Is my data private?',
+    a: 'Yes. Notes are encrypted at rest using AES-256-GCM and stay offline unless you choose to sync.',
+  },
+]
+---
+
+<section class="hiw-section-v2" id="faq">
+  <div class="hiw-faq-wrap">
+    <p class="hiw-step-label">Common questions</p>
+    <h2 class="hiw-h2">FAQ</h2>
+    <div class="hiw-faq-list" data-faq>
+      {FAQ_ITEMS.map((item, i) => (
+        <details class="hiw-faq-item-v2" open={i === 0}>
+          <summary class="hiw-faq-q">
+            <span>{item.q}</span>
+            <span class="hiw-faq-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="hiw-faq-a">{item.a}</div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // Single-open behaviour (was `faqOpen` index state in the React version).
+  // When one <details> opens, close every sibling.
+  const faq = document.querySelector('[data-faq]')
+  if (faq) {
+    const items = faq.querySelectorAll('details')
+    items.forEach((el) => {
+      el.addEventListener('toggle', () => {
+        if (el.open) items.forEach((other) => { if (other !== el) other.open = false })
+      })
+    })
+  }
+</script>

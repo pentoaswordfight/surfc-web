@@ -1,0 +1,59 @@
+---
+/**
+ * Hero — the first screen. Porting as-is from LandingPage.jsx lines 153-197.
+ * The "Sign in" CTA now resolves to the app subdomain; "Request invitation"
+ * deep-links to /waitlist. This matches the plan's subdomain split.
+ */
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+---
+
+<header class="hiw-hero-v2">
+  <div class="hiw-hero-grid">
+    <figure class="hiw-hero-photo-wrap">
+      <div class="hiw-hero-photo-frame">
+        <img
+          src="/hero-book.webp"
+          alt="An annotated open book with multi-colored highlights and sticky note tabs in the margin."
+          class="hiw-hero-photo"
+          width="1200"
+          height="900"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+      <figcaption class="hiw-hero-caption">
+        <span class="hiw-caption-dot" aria-hidden="true"></span>
+        Read like you always do.
+      </figcaption>
+    </figure>
+
+    <div class="hiw-hero-copy">
+      <p class="hiw-eyebrow-v2">How it works</p>
+      <h1 class="hiw-title-v2">
+        Your ideas.<br />
+        <span class="hiw-title-ink">Indexed.</span>
+      </h1>
+      <p class="hiw-lede">
+        You've read hundreds of books. Highlighted and scribbled around
+        hundreds of passages. Where are they now?
+      </p>
+      <p class="hiw-lede-strong">
+        Surfc turns a lifetime of reading into something you can actually
+        think with.
+      </p>
+      <div class="hiw-cta-row-v2">
+        <a href="/waitlist" class="btn btn-accent hiw-cta-primary">
+          Request invitation
+        </a>
+        <a href={appUrl} class="hiw-cta-secondary">
+          Sign in
+        </a>
+      </div>
+      <p class="hiw-cta-helper">
+        New to Surfc? <strong>Request access.</strong> Already invited?
+        <strong> Sign in.</strong>
+      </p>
+    </div>
+  </div>
+</header>

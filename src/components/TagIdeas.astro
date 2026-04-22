@@ -1,0 +1,36 @@
+---
+// Port source: surfc/src/components/LandingPage.jsx lines 286-319.
+
+const CANONICAL_CHIPS = ['Virtue', 'Habit', 'Freedom', 'Self', 'Time', 'Memory', 'Beauty', 'Justice', 'Change', 'Wisdom']
+const CUSTOM_CHIPS    = ['Daily Practice', 'The Self']
+---
+
+<section class="hiw-fullbleed">
+  <div class="hiw-fullbleed-inner">
+    <p class="hiw-step-label hiw-step-hero">03 · Core feature</p>
+    <h2 class="hiw-h2 hiw-h2-hero hiw-h2-center">Tag ideas</h2>
+    <p class="hiw-lede-small hiw-center">
+      Tag notes to the 102 built-in ideas — or create your own. AI tag
+      suggestions propose themes so your reading compounds across sources.
+    </p>
+    <div class="hiw-chipcloud">
+      {CANONICAL_CHIPS.map((label, i) => (
+        <span class="idea-chip chip-pop" style={`animation-delay: ${i * 60}ms`}>
+          <span class="idea-dot"></span>{label}
+        </span>
+      ))}
+      {CUSTOM_CHIPS.map((label, i) => (
+        <span
+          class="idea-chip custom chip-pop"
+          style={`animation-delay: ${(CANONICAL_CHIPS.length + i) * 60}ms`}
+        >
+          <span class="idea-dot" style="background: var(--color-custom)"></span>{label}
+        </span>
+      ))}
+    </div>
+    <p class="hiw-fullbleed-foot">
+      <span class="hiw-accent-text">Amber</span> chips are canonical.{' '}
+      <span class="hiw-custom-text">Green</span> chips are your own.
+    </p>
+  </div>
+</section>

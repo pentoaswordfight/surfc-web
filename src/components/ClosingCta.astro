@@ -1,0 +1,24 @@
+---
+// Port source: surfc/src/components/LandingPage.jsx lines 389-406.
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+---
+
+<section class="hiw-closing-v2">
+  <div class="hiw-closing-inner">
+    <p class="hiw-step-label hiw-step-center">Take the next step</p>
+    <h2 class="hiw-h2 hiw-h2-center">Build your reading index</h2>
+    <p class="hiw-lede-small hiw-center">
+      Surfc is rolling out through a waitlist. Access is approval-based —
+      we're onboarding readers gradually.
+    </p>
+    <div class="hiw-cta-row-v2 hiw-cta-center">
+      <a href="/waitlist" class="btn btn-accent hiw-cta-primary">
+        Request invitation
+      </a>
+      <a href={appUrl} class="hiw-cta-secondary">
+        Sign in
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,53 @@
+---
+/**
+ * Port source: surfc/src/components/LandingPage.jsx lines 213-248.
+ * The "Your index" diagram card lists a handful of canonical ideas with
+ * fictional note counts as a teaser for the indexing concept.
+ */
+
+const INDEX_IDEAS = [
+  { label: 'Virtue',      count: 12 },
+  { label: 'Habit',       count: 9  },
+  { label: 'Tranquility', count: 7  },
+  { label: 'Freedom',     count: 5  },
+  { label: 'Self',        count: 4  },
+  { label: 'Anxiety',     count: 3  },
+]
+---
+
+<section class="hiw-section-v2" id="what-is-surfc">
+  <div class="hiw-two-col">
+    <div class="hiw-col-copy">
+      <p class="hiw-step-label">01 · The idea</p>
+      <h2 class="hiw-h2">What Surfc is</h2>
+      <p class="hiw-body-v2">
+        Surfc is an offline-first reading companion. Scan passages and
+        reflections, tag them to canonical or custom ideas, and resurface
+        them when those themes recur.
+      </p>
+      <ul class="hiw-inline-list">
+        <li><span class="idea-chip"><span class="idea-dot"></span>102 canonical ideas</span></li>
+        <li><span class="idea-chip custom"><span class="idea-dot" style="background: var(--color-custom)"></span>Your own concepts</span></li>
+        <li><span class="idea-chip"><span class="idea-dot"></span>Cross-source index</span></li>
+      </ul>
+    </div>
+    <div class="hiw-col-diagram">
+      <div class="hiw-diagram-card dotgrid">
+        <div class="hiw-diagram-title">Your index</div>
+        <div class="hiw-diagram-ideas">
+          {INDEX_IDEAS.map((idea) => (
+            <div class="hiw-diagram-row">
+              <span class="hiw-diagram-tag">
+                <span class="idea-dot"></span>{idea.label}
+              </span>
+              <span class="hiw-diagram-count">{idea.count} notes</span>
+            </div>
+          ))}
+        </div>
+        <div class="hiw-diagram-footer">
+          <span class="hiw-stamp">cross-indexed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

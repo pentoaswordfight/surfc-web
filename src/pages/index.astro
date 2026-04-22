@@ -1,0 +1,37 @@
+---
+/**
+ * Landing page — composes the 11 sections ported from surfc/src/components/
+ * LandingPage.jsx. Each section lives in its own component for readability
+ * and so Astro can tree-shake any unused markup.
+ */
+
+import BaseLayout      from '../layouts/BaseLayout.astro'
+import Nav             from '../components/Nav.astro'
+import Hero            from '../components/Hero.astro'
+import PulledQuote     from '../components/PulledQuote.astro'
+import WhatSurfcIs     from '../components/WhatSurfcIs.astro'
+import CapturePassages from '../components/CapturePassages.astro'
+import TagIdeas        from '../components/TagIdeas.astro'
+import SupportingCards from '../components/SupportingCards.astro'
+import Testimonials    from '../components/Testimonials.astro'
+import Faq             from '../components/Faq.astro'
+import ClosingCta      from '../components/ClosingCta.astro'
+import Footer          from '../components/Footer.astro'
+---
+
+<BaseLayout
+  title="Surfc — turn a lifetime of reading into something you can think with"
+  description="Capture printed passages and handwritten notes. Tag them to 102 canonical ideas or your own. Surfc is an offline-first reading companion for people who read to think."
+>
+  <Nav />
+  <Hero />
+  <PulledQuote />
+  <WhatSurfcIs />
+  <CapturePassages />
+  <TagIdeas />
+  <SupportingCards />
+  <Testimonials />
+  <Faq />
+  <ClosingCta />
+  <Footer />
+</BaseLayout>

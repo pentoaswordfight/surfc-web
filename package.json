@@ -1,0 +1,22 @@
+{
+  "name": "surfc-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Surfc marketing site — standalone Astro project deployed at surfc.app (SUR-218)",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^6.1.8"
+  }
+}

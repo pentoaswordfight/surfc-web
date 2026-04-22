@@ -1,0 +1,28 @@
+---
+/**
+ * Privacy policy — rendered by Termly via their embed SDK. Same data-id as
+ * the legacy PolicyPage.jsx route at /policies/privacy, so the document
+ * content stays identical across the cutover.
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const TERMLY_DATA_ID = '3269e493-7d73-430a-bdef-e05479c111f6'
+---
+
+<BaseLayout
+  title="Privacy Policy — Surfc"
+  description="How Surfc handles the notes, photos, and metadata you store with us."
+  path="/policies/privacy"
+>
+  <div class="policy-page" data-policy="privacy">
+    <header class="policy-header">
+      <a class="policy-back-link" href="/">← Back to Surfc</a>
+    </header>
+    <main class="policy-content">
+      <div name="termly-embed" data-id={TERMLY_DATA_ID} data-type="iframe"></div>
+    </main>
+  </div>
+</BaseLayout>
+
+<script is:inline src="https://app.termly.io/embed-policy.min.js" async></script>

@@ -1,0 +1,24 @@
+# Netlify configuration for surfc.app (marketing site)
+# See https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command     = "npm run build"
+  publish     = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Force HTTPS + canonicalise www → apex. Netlify handles the apex domain
+# automatically when surfc.app is set as primary in the dashboard; the rule
+# below is a belt-and-suspenders redirect for any edge-case www.surfc.app hit.
+[[redirects]]
+  from   = "https://www.surfc.app/*"
+  to     = "https://surfc.app/:splat"
+  status = 301
+  force  = true
+
+# Long-lived cache for hashed assets produced by Astro.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
