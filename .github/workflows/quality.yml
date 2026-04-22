@@ -1,0 +1,84 @@
+name: Quality
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # ── Lighthouse CI on the Netlify deploy preview ─────────────────────────────
+  # Waits for the Netlify bot to post a deployment via the GitHub Deployments
+  # API, then runs Lighthouse against the preview URL. No Netlify token
+  # required — the wait action polls GitHub's own API using GITHUB_TOKEN.
+  lighthouse:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Wait for Netlify deploy preview
+        id: waitForNetlify
+        uses: jakepartusch/wait-for-netlify-action@v1.4
+        with:
+          site_name: surfc-web
+          max_timeout: 360
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ steps.waitForNetlify.outputs.url }}/
+            ${{ steps.waitForNetlify.outputs.url }}/waitlist
+            ${{ steps.waitForNetlify.outputs.url }}/policies/privacy
+            ${{ steps.waitForNetlify.outputs.url }}/policies/terms
+          configPath: ./lighthouserc.cjs
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # ── Link check on the built site ────────────────────────────────────────────
+  # Runs on every PR and every push to main. Blocking: a broken link is
+  # almost always a mistake, and the ignore file is the escape hatch.
+  linkcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # Scan built HTML, follow relative hrefs, but skip mailto:/tel:
+          # and anchors to nothing. Timeout each URL at 20s so the job
+          # fails fast on a dead host rather than hanging the runner.
+          # --base resolves absolute hrefs (e.g. "/waitlist") against the
+          # built site root; without it lychee treats them as filesystem
+          # paths relative to each HTML file and reports false positives.
+          args: >-
+            --no-progress
+            --timeout 20
+            --max-redirects 5
+            --exclude-mail
+            --exclude-loopback
+            --scheme https
+            --scheme http
+            --base ./dist
+            './dist/**/*.html'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
