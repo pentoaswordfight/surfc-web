@@ -70,6 +70,15 @@ const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString(
     <meta name="twitter:image" content={ogImageUrl} />
 
     <!-- Fonts (mirrors surfc/index.html) -->
+    <!-- TODO(SUR-227): Lighthouse flags this stylesheet as render-blocking
+         (~150–300 ms on cold loads) and as the likely culprit for CLS on
+         the homepage (font-swap shifts hero text once Inter/Playfair load).
+         Two non-exclusive remediations:
+           1. Async-load with the `media="print" onload="this.media='all'"`
+              swap, plus a <noscript><link …></noscript> fallback.
+           2. Self-host a subset of each face under public/fonts/ + use
+              `font-display: optional` to suppress swap entirely.
+         Keep `display=swap` query param removed if option 2 is taken. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

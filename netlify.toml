@@ -22,3 +22,11 @@
   for = "/_astro/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# TODO(SUR-227): Lighthouse "uses-long-cache-ttl" flagged the static
+# assets in /public — favicon, og-image, icon-*.png, robots.txt — as
+# missing efficient cache headers (5–9 audits per page). They're served
+# with Netlify's default short TTL. Add header rules for /favicon.ico,
+# /og-image.png, /icon-*.png; pick a max-age that balances cache hit
+# rate against rotation latency (1y for icons + og-image which are
+# stable, 1d for robots.txt which we may iterate on).

@@ -11,6 +11,13 @@
  * Honeypot: the `hp_company` field is hidden from users; bots fill every
  * field by default, so any non-empty value silently shortcircuits the
  * Edge Function without inserting a row.
+ *
+ * TODO(SUR-227): Lighthouse `color-contrast` audit fails on /waitlist —
+ * one or more text/background combinations on this page falls below the
+ * WCAG AA 4.5:1 ratio (3:1 for large text). Run Lighthouse locally
+ * against /waitlist to see the exact element list, then adjust the
+ * relevant tokens (likely --color-text-muted on input placeholders or
+ * the .auth-note / .wl-link-btn pair on the cream background).
  */
 
 const appUrl           = import.meta.env.PUBLIC_APP_URL           ?? 'https://app.surfc.app'
