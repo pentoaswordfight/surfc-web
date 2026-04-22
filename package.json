@@ -13,10 +13,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
     "astro": "^6.1.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
   }
 }
