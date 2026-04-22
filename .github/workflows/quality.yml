@@ -63,20 +63,17 @@ jobs:
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
-          # Scan built HTML, follow relative hrefs, but skip mailto:/tel:
-          # and anchors to nothing. Timeout each URL at 20s so the job
-          # fails fast on a dead host rather than hanging the runner.
           # --base resolves absolute hrefs (e.g. "/waitlist") against the
           # built site root; without it lychee treats them as filesystem
           # paths relative to each HTML file and reports false positives.
+          #
+          # Keeping the flag list minimal: lychee v0.23+ removed
+          # --exclude-mail (mailto: is excluded by default now) and the
+          # other filters we tried aren't needed for our HTML output.
           args: >-
             --no-progress
             --timeout 20
             --max-redirects 5
-            --exclude-mail
-            --exclude-loopback
-            --scheme https
-            --scheme http
             --base ./dist
             './dist/**/*.html'
           fail: true
