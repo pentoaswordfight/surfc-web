@@ -1,0 +1,7 @@
+# URL patterns the link checker should skip. One regex per line.
+#
+# Keep this file tight: the whole point of the check is to catch broken
+# links, so only add entries for URLs that are intentionally unreachable
+# from a CI runner (e.g. future app-store placeholders, auth-gated pages).
+#
+# Format: https://lychee.cli.rs/docs/usage/configuration/#exclude
