@@ -63,18 +63,19 @@ jobs:
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
-          # --base resolves absolute hrefs (e.g. "/waitlist") against the
-          # built site root; without it lychee treats them as filesystem
-          # paths relative to each HTML file and reports false positives.
+          # --root-dir resolves absolute hrefs (e.g. "/waitlist") against
+          # the built site root. lychee requires an absolute path here,
+          # so we use github.workspace. (--base is for URL roots only;
+          # using it with a relative local path raises "Base must either
+          # be a URL (with scheme) or an absolute local path".)
           #
-          # Keeping the flag list minimal: lychee v0.23+ removed
-          # --exclude-mail (mailto: is excluded by default now) and the
-          # other filters we tried aren't needed for our HTML output.
+          # Minimal flag list: lychee v0.23+ excludes mailto:/tel: by
+          # default so no --exclude-mail is needed.
           args: >-
             --no-progress
             --timeout 20
             --max-redirects 5
-            --base ./dist
+            --root-dir ${{ github.workspace }}/dist
             './dist/**/*.html'
           fail: true
         env:
