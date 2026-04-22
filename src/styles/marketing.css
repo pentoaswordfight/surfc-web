@@ -396,8 +396,9 @@ select.inp { cursor: pointer; }
   padding: var(--space-3);
 }
 /* Native [hidden] sets display:none, but the rule above is more specific
-   and would keep the scrim in the layout (blocking pointer events over
-   the submit button). Re-assert invisibility when the attribute is set. */
+   and would keep the scrim in the layout (covering the page and blocking
+   pointer events on the form below). Re-assert invisibility when the
+   attribute is set. */
 .wl-modal-scrim[hidden] {
   display: none;
 }
