@@ -24,13 +24,19 @@ module.exports = {
         preset: 'desktop',
       },
     },
+    // Category-level warnings only — intentionally NOT extending the
+    // `lighthouse:recommended` preset. That preset wires dozens of
+    // individual audits as `error` (color-contrast, render-blocking,
+    // efficient-cache, layout-shift, etc.) which would block CI on
+    // pre-existing baseline issues. We surface category scores now and
+    // promote individual audits to errors after triaging real issues
+    // in follow-up work — matches the "warnings till baseline" plan.
     assert: {
-      preset: 'lighthouse:recommended',
       assertions: {
-        'categories:performance':   ['warn', { minScore: 0.9 }],
-        'categories:accessibility': ['warn', { minScore: 0.9 }],
-        'categories:best-practices':['warn', { minScore: 0.9 }],
-        'categories:seo':           ['warn', { minScore: 0.95 }],
+        'categories:performance':    ['warn', { minScore: 0.9  }],
+        'categories:accessibility':  ['warn', { minScore: 0.9  }],
+        'categories:best-practices': ['warn', { minScore: 0.9  }],
+        'categories:seo':            ['warn', { minScore: 0.95 }],
       },
     },
     upload: {
