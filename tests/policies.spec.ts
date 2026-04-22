@@ -11,7 +11,7 @@
  * [SUR-218]
  */
 
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 
 const POLICY_PAGES = [
   {

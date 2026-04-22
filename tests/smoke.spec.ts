@@ -13,7 +13,7 @@
  * [SUR-218]
  */
 
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 
 test.describe('public pages respond 200 and render correctly', () => {
   // Policy pages delegate their visible content to Termly's async iframe,
