@@ -1,9 +1,11 @@
 ---
 /**
- * Sticky top navigation. Identical markup + class names to the current React
- * LandingPage.jsx so styles port without tweaks. The `.hiw-nav-scrolled`
- * state is toggled by a tiny script once the user scrolls past the 8px
- * threshold — no framework island needed.
+ * Sticky top navigation. On desktop (≥768px) renders an inline row of
+ * four links beside the wordmark; on mobile (<768px) collapses the links
+ * into a slide-down panel toggled by a hamburger button.
+ *
+ * The `.hiw-nav-scrolled` state is toggled by a tiny script once the user
+ * scrolls past the 8px threshold — unchanged from the original port.
  *
  * Port source: surfc/src/components/LandingPage.jsx lines 137-150.
  */
@@ -14,11 +16,35 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
 <nav class="hiw-nav" aria-label="Primary" data-nav>
   <div class="hiw-nav-inner">
     <a href="/" class="hiw-wordmark" aria-label="Surfc home">Surfc</a>
-    <div class="hiw-nav-links">
+
+    <button
+      type="button"
+      class="hiw-nav-toggle"
+      data-nav-toggle
+      data-cta="nav_menu_toggle"
+      aria-expanded="false"
+      aria-controls="hiw-nav-menu"
+      aria-label="Menu"
+    >
+      <svg
+        class="hiw-nav-toggle-icon"
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <line class="hiw-nav-toggle-line hiw-nav-toggle-line-top"    x1="3" y1="6"  x2="21" y2="6"  />
+        <line class="hiw-nav-toggle-line hiw-nav-toggle-line-middle" x1="3" y1="12" x2="21" y2="12" />
+        <line class="hiw-nav-toggle-line hiw-nav-toggle-line-bottom" x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+
+    <div id="hiw-nav-menu" class="hiw-nav-links" data-nav-menu>
       <a href="/#what-is-surfc" class="hiw-nav-link">How it works</a>
       <a href="/#faq" class="hiw-nav-link">FAQ</a>
-      <a href={appUrl} class="hiw-nav-signin">Sign in</a>
-      <a href="/waitlist" class="btn btn-accent hiw-nav-cta">
+      <a href={appUrl} class="hiw-nav-signin" data-cta="nav_signin">Sign in</a>
+      <a href="/waitlist" class="btn btn-accent hiw-nav-cta" data-cta="nav_request_invitation">
         Request invitation
       </a>
     </div>
@@ -34,5 +60,45 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
+  }
+
+  // Hamburger toggle: open/close the mobile menu, support Escape and
+  // outside-click, and close when a link inside the menu is chosen. The
+  // panel is hidden by CSS on desktop regardless of aria-expanded state,
+  // so no viewport-aware logic is needed here.
+  const toggle = document.querySelector('[data-nav-toggle]')
+  const menu   = document.querySelector('[data-nav-menu]')
+  if (toggle && menu && nav) {
+    const setOpen = (open) => {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+      nav.setAttribute('data-nav-open', open ? 'true' : 'false')
+    }
+    setOpen(false)
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation()
+      const next = toggle.getAttribute('aria-expanded') !== 'true'
+      setOpen(next)
+    })
+
+    // Close when any link inside the panel is activated so the user sees
+    // the destination section instead of the open drawer.
+    menu.addEventListener('click', (event) => {
+      const link = event.target && event.target.closest ? event.target.closest('a') : null
+      if (link) setOpen(false)
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false)
+        toggle.focus()
+      }
+    })
+
+    document.addEventListener('click', (event) => {
+      if (toggle.getAttribute('aria-expanded') !== 'true') return
+      const target = event.target
+      if (target && !nav.contains(target)) setOpen(false)
+    })
   }
 </script>
