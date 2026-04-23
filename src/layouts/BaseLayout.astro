@@ -15,6 +15,7 @@
  */
 
 import '../styles/tokens.css'
+import '../styles/fonts.css'
 import '../styles/marketing.css'
 
 interface Props {
@@ -35,6 +36,11 @@ const {
 
 const canonical = new URL(path, Astro.site ?? 'https://surfc.app').toString()
 const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString()
+
+// PostHog — same project as the React app so we get landing → waitlist → sign-up
+// in one funnel. Token may be empty locally; the init guard below no-ops in that case.
+const posthogToken = import.meta.env.PUBLIC_POSTHOG_PROJECT_TOKEN ?? ''
+const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu.i.posthog.com'
 ---
 
 <!doctype html>
@@ -69,25 +75,32 @@ const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString(
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <!-- Fonts (mirrors surfc/index.html) -->
-    <!-- TODO(SUR-227): Lighthouse flags this stylesheet as render-blocking
-         (~150–300 ms on cold loads) and as the likely culprit for CLS on
-         the homepage (font-swap shifts hero text once Inter/Playfair load).
-         Two non-exclusive remediations:
-           1. Async-load with the `media="print" onload="this.media='all'"`
-              swap, plus a <noscript><link …></noscript> fallback.
-           2. Self-host a subset of each face under public/fonts/ + use
-              `font-display: optional` to suppress swap entirely.
-         Keep `display=swap` query param removed if option 2 is taken. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Fira+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fonts: self-hosted via @fontsource/* (see src/styles/fonts.css).
+         font-display:optional suppresses CLS — no swap shift on load. -->
 
     <!-- Termly resource blocker (GDPR consent) — same resource ID as the app -->
     <script src="https://app.termly.io/resource-blocker/135b750f-a45d-4fbb-91c6-0f8e1c0b6b8d?autoBlock=on" is:inline></script>
+
+    <!-- PostHog — shares the React app's project so the landing → waitlist → sign-up
+         funnel lives in a single stream. Termly auto-blocks until consent. -->
+    <script is:inline define:vars={{ posthogToken, posthogHost }}>
+      if (posthogToken) {
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init(posthogToken, {
+          api_host: posthogHost,
+          capture_pageview: true,
+          session_recording: { maskAllInputs: true },
+        });
+        // Global CTA-click attribution. Fires on capture phase so the event is
+        // queued before the browser navigates away.
+        document.addEventListener('click', function (event) {
+          var target = event.target && event.target.closest ? event.target.closest('[data-cta]') : null;
+          if (target && window.posthog) {
+            window.posthog.capture('app_cta_clicked', { cta: target.getAttribute('data-cta') });
+          }
+        }, true);
+      }
+    </script>
   </head>
   <body class="lp-page-v2">
     <slot />
