@@ -17,8 +17,8 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
     <div class="hiw-nav-links">
       <a href="/#what-is-surfc" class="hiw-nav-link">How it works</a>
       <a href="/#faq" class="hiw-nav-link">FAQ</a>
-      <a href={appUrl} class="hiw-nav-signin">Sign in</a>
-      <a href="/waitlist" class="btn btn-accent hiw-nav-cta">
+      <a href={appUrl} class="hiw-nav-signin" data-cta="nav_signin">Sign in</a>
+      <a href="/waitlist" class="btn btn-accent hiw-nav-cta" data-cta="nav_request_invitation">
         Request invitation
       </a>
     </div>
