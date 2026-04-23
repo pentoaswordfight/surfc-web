@@ -3,20 +3,24 @@
  *
  * The tests run against `astro preview` so they exercise the production
  * static build (what Netlify ultimately serves), not dev-mode HMR output.
- * Waitlist endpoint calls are mocked via page.route() — no live Supabase
- * Edge Function is required. See tests/waitlist.spec.ts.
+ *
+ * Most waitlist specs mock the endpoint via page.route() — useful for
+ * UI-state assertions but blind to the network stack. To guard against the
+ * SUR-218 class of bug (Edge Function's Access-Control-Allow-Headers
+ * regressing to omit `apikey`), we also run a tiny local fixture server
+ * (tests/fixtures/cors-server.mjs) that mirrors the real Edge Function's
+ * CORS contract and point PUBLIC_WAITLIST_ENDPOINT at it. The fixture-backed
+ * spec submits the form for real and asserts both that the request went
+ * through end-to-end AND that the browser forwarded the `apikey` header that
+ * makes the preflight necessary in the first place.
  *
  * [SUR-218]
  */
 
 import { defineConfig, devices } from '@playwright/test'
 
-// Any syntactically valid URL works: specs intercept via page.route()
-// with a path glob, so the host never matters. Setting this at build
-// time ensures WaitlistForm's fetch() branch runs instead of falling
-// through to a native HTML form submit (which would reload the page
-// and skip the modal assertions).
-const MOCK_WAITLIST_ENDPOINT = 'https://mock.test.invalid/waitlist-signup'
+const CORS_FIXTURE_PORT     = 5179
+const WAITLIST_ENDPOINT_URL = `http://127.0.0.1:${CORS_FIXTURE_PORT}/waitlist-signup`
 
 export default defineConfig({
   testDir: './tests',
@@ -35,14 +39,33 @@ export default defineConfig({
     { name: 'chromium',      use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile-chrome', use: { ...devices['Pixel 7']        } },
   ],
-  webServer: {
-    command: 'npm run build && npm run preview',
-    url:     'http://localhost:4321',
-    reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
-    env: {
-      PUBLIC_WAITLIST_ENDPOINT: MOCK_WAITLIST_ENDPOINT,
-      PUBLIC_APP_URL:           'https://app.surfc.app',
+  webServer: [
+    {
+      command: `node tests/fixtures/cors-server.mjs`,
+      url:     `http://127.0.0.1:${CORS_FIXTURE_PORT}/__cors-fixture/health`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 10_000,
+      env: {
+        CORS_FIXTURE_PORT: String(CORS_FIXTURE_PORT),
+      },
     },
-  },
+    {
+      command: 'npm run build && npm run preview',
+      url:     'http://localhost:4321',
+      reuseExistingServer: !process.env.CI,
+      timeout: 180_000,
+      env: {
+        PUBLIC_WAITLIST_ENDPOINT:   WAITLIST_ENDPOINT_URL,
+        PUBLIC_APP_URL:             'https://app.surfc.app',
+        // The form only attaches the `apikey` header (which triggers the
+        // cross-origin preflight on the Edge Function) when this env var is
+        // set at build time. The CORS fixture doesn't verify the value, so
+        // any placeholder works.
+        PUBLIC_SUPABASE_ANON_KEY:   'test-anon-key-for-preflight',
+      },
+    },
+  ],
 })
+
+export const CORS_FIXTURE_INSPECT_URL =
+  `http://127.0.0.1:${CORS_FIXTURE_PORT}/__cors-fixture/inspect`
