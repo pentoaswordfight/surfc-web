@@ -1886,4 +1886,130 @@ select.inp { cursor: pointer; }
 
 .wl-honeypot { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SUR-228 — mobile responsive supplement
+   Below 768px the inline nav row cannot fit at common phone widths, so the
+   four links collapse behind a hamburger toggle and slide down into a panel
+   under the sticky nav bar. A handful of section paddings + the capture
+   mockup's absolute-positioned callouts are also tightened to stop content
+   spilling past the viewport edge.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Hamburger toggle — rendered in the DOM on every viewport, hidden on
+   desktop so the inline links take precedence. */
+.hiw-nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+  padding: 6px;
+  border-radius: var(--radius-input);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.hiw-nav-toggle:hover { background: var(--color-accent-light); }
+.hiw-nav-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-color: var(--color-accent);
+}
+.hiw-nav-toggle-icon { display: block; }
+.hiw-nav-toggle-line {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: transform 200ms ease, opacity 200ms ease;
+  transform-origin: 50% 50%;
+}
+/* Morph into an × when the menu is open, so a single icon carries the
+   open/close affordance. */
+.hiw-nav[data-nav-open="true"] .hiw-nav-toggle-line-top    { transform: translateY(6px)  rotate(45deg); }
+.hiw-nav[data-nav-open="true"] .hiw-nav-toggle-line-middle { opacity: 0; }
+.hiw-nav[data-nav-open="true"] .hiw-nav-toggle-line-bottom { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 767.98px) {
+  /* Tighter horizontal breathing room + space for the toggle. */
+  .hiw-nav-inner { padding: 10px 16px; gap: 12px; }
+
+  .hiw-nav-toggle { display: inline-flex; }
+
+  /* Slide-down panel below the sticky nav bar. */
+  .hiw-nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 12px 16px 16px;
+    background: rgba(255, 248, 242, 0.98);
+    backdrop-filter: saturate(1.2) blur(10px);
+    -webkit-backdrop-filter: saturate(1.2) blur(10px);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 12px 20px -12px rgba(92, 58, 0, 0.15);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 0s linear 180ms;
+  }
+  .hiw-nav[data-nav-open="true"] .hiw-nav-links {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 0s linear 0s;
+  }
+
+  /* Each row is tap-friendly (≥44px) and uniformly aligned. */
+  .hiw-nav-link,
+  .hiw-nav-signin {
+    padding: 12px 10px;
+    font-size: 15px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .hiw-nav-signin { text-decoration: none; }
+  .hiw-nav-cta {
+    justify-content: center;
+    margin-top: 4px;
+    min-height: 48px;
+  }
+
+  /* Pull the hero/section gutters in so 28px side padding doesn't press
+     copy against the viewport edges. */
+  .hiw-hero-v2      { padding: 40px 20px 56px; }
+  .hiw-section-v2   { padding: 64px 20px; }
+  .hiw-quote-section { padding: 48px 20px; }
+  .hiw-fullbleed    { padding: 72px 20px 80px; }
+  .hiw-closing-v2   { padding: 64px 20px 48px; }
+  .hiw-footer-v2    { padding: 20px 20px; }
+
+  /* Capture mockup callouts sit negative-offset on desktop to tuck under
+     the phone frame. On narrow viewports that pulls them past the edge, so
+     anchor them flush instead. */
+  .hiw-callout-a { left: 0; }
+  .hiw-callout-b { right: 0; }
+  .hiw-col-diagram-phone { min-height: 520px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hiw-nav-toggle-line,
+  .hiw-nav-links {
+    transition: none !important;
+  }
+}
+
 .auth-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
