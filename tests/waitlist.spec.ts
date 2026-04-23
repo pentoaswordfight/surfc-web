@@ -1,14 +1,29 @@
 /**
- * Waitlist form tests — all network calls are mocked via page.route().
- * No live Supabase Edge Function is required. The real function is
- * unit-tested in the surfc repo (supabase/functions/waitlist-signup/
- * handler.test.ts); these specs only cover the client-side UI contract.
+ * Waitlist form tests.
+ *
+ * Two layers of coverage:
+ *
+ *  1. page.route() mocks — cheap assertions on the UI state machine for each
+ *     response shape the Edge Function can return (success / duplicate /
+ *     rate-limited / invalid_email / aborted-before-response). These never
+ *     touch the network.
+ *
+ *  2. live-network (SUR-218) — points PUBLIC_WAITLIST_ENDPOINT at a local
+ *     fixture server (tests/fixtures/cors-server.mjs) that mirrors the real
+ *     Edge Function's CORS contract. The form submits for real, the browser
+ *     enforces CORS on the response, and the spec inspects what the fixture
+ *     received to assert the outgoing request carried the `apikey` header —
+ *     the header whose omission from the Edge Function's allow-list broke
+ *     production in SUR-218. The server-side half (Edge Function actually
+ *     naming apikey in Access-Control-Allow-Headers) is covered by the Deno
+ *     unit tests in the surfc repo.
  *
  * [SUR-218]
  */
 
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { CORS_FIXTURE_INSPECT_URL } from '../playwright.config'
 
 const ENDPOINT_GLOB = '**/waitlist-signup'
 
@@ -100,4 +115,36 @@ test('honeypot field is hidden from assistive tech', async ({ page }) => {
   // human users never focus it. Bots fill every named field.
   const honeypotInput = honeypotLabel.locator('input[name="hp_company"]')
   await expect(honeypotInput).toHaveAttribute('tabindex', '-1')
+})
+
+// ── Live-network fixture (SUR-218 regression) ────────────────────────────────
+//
+// These tests do NOT call page.route(). The form submits against the CORS
+// fixture server over the loopback interface so the browser runs through its
+// real CORS machinery. After each submit, the spec asks the fixture to report
+// what it received and asserts the browser forwarded the `apikey` header —
+// if WaitlistForm ever stops attaching it, the Edge Function would stop
+// preflighting against a header it allow-lists, and SUR-218 would quietly
+// pass CI. The fixture's own allow-headers string mirrors the Edge Function
+// (see tests/fixtures/cors-server.mjs).
+
+test('form submits end-to-end against a real CORS endpoint and forwards the apikey header', async ({ page }) => {
+  await page.goto('/waitlist')
+  await fillAndSubmit(page, 'real-network@example.com')
+
+  // The fixture responds with {"status": "success"}; if CORS were broken
+  // the browser would block response parsing and this modal would never show.
+  await expect(page.locator('[data-waitlist-modal="success"]')).toBeVisible()
+
+  // Ask the fixture what it saw. Using Playwright's APIRequestContext keeps
+  // the call outside the browser so we don't fight cross-origin rules on the
+  // inspect endpoint.
+  const inspectRes = await page.request.post(CORS_FIXTURE_INSPECT_URL)
+  expect(inspectRes.ok()).toBeTruthy()
+  const { lastWaitlistRequest } = await inspectRes.json() as {
+    lastWaitlistRequest: { method: string; headers: Record<string, string> } | null
+  }
+  expect(lastWaitlistRequest).not.toBeNull()
+  expect(lastWaitlistRequest!.headers.apikey).toBeTruthy()
+  expect(lastWaitlistRequest!.headers['content-type']).toMatch(/application\/json/i)
 })
