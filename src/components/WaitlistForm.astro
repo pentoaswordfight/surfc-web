@@ -58,12 +58,23 @@ const anonKey          = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
         rows="3"
       ></textarea>
 
-      <!-- Honeypot: hidden from users, bots autofill. The Edge Function
-           silently succeeds if this is non-empty. -->
-      <label class="wl-honeypot" aria-hidden="true">
-        Company
-        <input type="text" name="hp_company" tabindex="-1" autocomplete="off" />
-      </label>
+      <!--
+        Honeypot. Bots fill every named field; real browsers and password
+        managers have no heuristic to match a labelless input named `hp_trap`,
+        so they leave it alone. The Edge Function silently 200s when this is
+        non-empty and logs the value it saw. The previous name (`hp_company`
+        with a visible "Company" label) was getting autofilled by password
+        managers, which short-circuited real submissions into the honeypot
+        branch without ever inserting a row.
+      -->
+      <input
+        class="wl-honeypot"
+        type="text"
+        name="hp_trap"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
 
       <p class="auth-error" data-waitlist-error hidden></p>
 
@@ -159,10 +170,10 @@ const anonKey          = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
 
       const data = new FormData(form)
       const payload = {
-        name:       String(data.get('name') ?? '').trim(),
-        email:      String(data.get('email') ?? '').trim(),
-        use_case:   String(data.get('use_case') ?? '').trim(),
-        hp_company: String(data.get('hp_company') ?? ''),
+        name:     String(data.get('name') ?? '').trim(),
+        email:    String(data.get('email') ?? '').trim(),
+        use_case: String(data.get('use_case') ?? '').trim(),
+        hp_trap:  String(data.get('hp_trap') ?? ''),
       }
       if (!payload.name || !payload.email) return
 

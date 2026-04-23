@@ -90,14 +90,18 @@ test('network failure shows the generic network error', async ({ page }) => {
   await expect(page.locator('[data-waitlist-error]')).toContainText(/network error/i)
 })
 
-test('honeypot field is hidden from assistive tech', async ({ page }) => {
+test('honeypot field is hidden, label-less, and not autocompleted', async ({ page }) => {
   await page.goto('/waitlist')
 
-  const honeypotLabel = page.locator('label.wl-honeypot')
-  await expect(honeypotLabel).toHaveAttribute('aria-hidden', 'true')
+  const honeypot = page.locator('input.wl-honeypot')
+  await expect(honeypot).toHaveAttribute('name',         'hp_trap')
+  await expect(honeypot).toHaveAttribute('aria-hidden',  'true')
+  await expect(honeypot).toHaveAttribute('tabindex',     '-1')
+  await expect(honeypot).toHaveAttribute('autocomplete', 'off')
 
-  // The honeypot input is rendered but taken out of the tab flow so
-  // human users never focus it. Bots fill every named field.
-  const honeypotInput = honeypotLabel.locator('input[name="hp_company"]')
-  await expect(honeypotInput).toHaveAttribute('tabindex', '-1')
+  // The field must not be wrapped in a label any more: a visible "Company"
+  // label was the thing getting password managers to autofill the honeypot
+  // and silently drop real submissions. Any re-introduction of a label for
+  // this input should trip this assertion.
+  await expect(page.locator('label', { has: honeypot })).toHaveCount(0)
 })
