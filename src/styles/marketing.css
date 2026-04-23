@@ -168,7 +168,7 @@ select.inp { cursor: pointer; }
   font-family: var(--font-base);
   font-size: 28px;
   font-weight: 700;
-  color: var(--gold);   /* logo wordmark — accent colour exception per tokens.css */
+  color: var(--color-accent-text);
   letter-spacing: 0.04em;
   text-align: center;
 }
@@ -1862,8 +1862,8 @@ select.inp { cursor: pointer; }
   max-width: 1180px; margin: 0 auto;
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
 }
-.hiw-footer-mark { font-family: 'EB Garamond', serif; font-size: 20px; color: var(--color-accent); font-weight: 600; }
-.hiw-footer-links { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--color-text-muted); }
+.hiw-footer-mark { font-family: 'EB Garamond', serif; font-size: 20px; color: var(--color-accent-text); font-weight: 600; }
+.hiw-footer-links { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--color-text-secondary); }
 .hiw-footer-links a { color: var(--color-text-secondary); text-decoration: none; }
 .hiw-footer-links a:hover { color: var(--color-accent-dark); text-decoration: underline; }
 
