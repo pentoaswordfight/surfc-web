@@ -11,6 +11,7 @@
  * Honeypot: the `hp_company` field is hidden from users; bots fill every
  * field by default, so any non-empty value silently shortcircuits the
  * Edge Function without inserting a row.
+ *
  */
 
 const appUrl           = import.meta.env.PUBLIC_APP_URL           ?? 'https://app.surfc.app'
@@ -73,7 +74,7 @@ const anonKey          = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
     </form>
 
     <p class="auth-note">
-      Already have access? <a href={appUrl} class="wl-link-btn">Sign in</a>
+      Already have access? <a href={appUrl} class="wl-link-btn" data-cta="waitlist_signin">Sign in</a>
     </p>
   </div>
 
@@ -176,8 +177,8 @@ const anonKey          = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
         })
         const body = await res.json().catch(() => ({}))
         if (res.status === 429)              { showError("You're going too fast — try again in a minute."); return }
-        if (body.status === 'duplicate')     { openModal('duplicate'); return }
-        if (body.status === 'success')       { openModal('success');   return }
+        if (body.status === 'duplicate')     { window.posthog?.capture('waitlist_duplicate'); openModal('duplicate'); return }
+        if (body.status === 'success')       { window.posthog?.capture('waitlist_submitted'); openModal('success');   return }
         showError(body.message === 'invalid_email' ? 'That email looks off. Try again?' : 'Something went wrong. Please try again.')
       } catch {
         showError('Network error. Please try again.')
