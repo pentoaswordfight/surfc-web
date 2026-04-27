@@ -23,7 +23,8 @@
     "@fontsource/fira-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/playfair-display": "^5.2.8",
-    "astro": "^6.1.8"
+    "astro": "^6.1.8",
+    "web-vitals": "^5.2.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1"
