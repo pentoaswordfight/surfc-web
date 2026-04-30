@@ -14,10 +14,14 @@
 
 import { expect, test } from './fixtures'
 
-const FIRST_POST_SLUG = 'surfc-beginnings'
+// Slug of the post used as a stable fixture for post-page assertions
+// (TOC, JSON-LD, engagement events, trailing-slash). Whichever post sits
+// at the top of the listing depends on pubDate ordering and isn't fixed,
+// so listing-position tests assert generically rather than against this.
+const FIXTURE_POST_SLUG = 'surfc-beginnings'
 
 test.describe('blog index', () => {
-  test('lists at least one post and links to the post page', async ({ page }) => {
+  test('lists at least one post and links to a post page', async ({ page }) => {
     const response = await page.goto('/blog/')
     expect(response?.status()).toBe(200)
     await expect(page).toHaveTitle(/Blog/i)
@@ -26,11 +30,17 @@ test.describe('blog index', () => {
     await expect(cards.first()).toBeVisible()
 
     const firstLink = cards.first().locator('a.blog-card-link')
-    await expect(firstLink).toHaveAttribute('href', `/blog/${FIRST_POST_SLUG}/`)
+    const href = await firstLink.getAttribute('href')
+    expect(href).toMatch(/^\/blog\/[a-z0-9-]+\/$/)
 
     await firstLink.click()
-    await expect(page).toHaveURL(new RegExp(`/blog/${FIRST_POST_SLUG}/$`))
+    if (href) await expect(page).toHaveURL(new RegExp(`${href.replace(/\//g, '\\/')}$`))
     await expect(page.locator('article.blog-post h1')).toBeVisible()
+  })
+
+  test('the fixture post appears in the listing', async ({ page }) => {
+    await page.goto('/blog/')
+    await expect(page.locator(`a[href="/blog/${FIXTURE_POST_SLUG}/"]`).first()).toBeVisible()
   })
 
   test('Blog link in primary nav points at /blog/ and routes there when clicked', async ({ page }) => {
@@ -52,7 +62,7 @@ test.describe('blog index', () => {
 
 test.describe('blog post page', () => {
   test('renders article header, hero placeholders, TOC, body, author card', async ({ page }) => {
-    await page.goto(`/blog/${FIRST_POST_SLUG}/`)
+    await page.goto(`/blog/${FIXTURE_POST_SLUG}/`)
 
     // Header
     await expect(page.locator('.blog-post-title')).toContainText(/Beginning/)
@@ -81,7 +91,7 @@ test.describe('blog post page', () => {
   })
 
   test('emits Article JSON-LD with the right fields', async ({ page }) => {
-    await page.goto(`/blog/${FIRST_POST_SLUG}/`)
+    await page.goto(`/blog/${FIXTURE_POST_SLUG}/`)
     const ldText = await page.locator('script[type="application/ld+json"]').textContent()
     expect(ldText).toBeTruthy()
     const ld = JSON.parse(ldText ?? '{}')
@@ -89,13 +99,13 @@ test.describe('blog post page', () => {
     expect(ld.headline).toMatch(/Beginning/)
     expect(ld.author?.name).toBe('Deji Dipeolu')
     expect(ld.mainEntityOfPage?.['@id']).toBe(
-      `https://surfc.app/blog/${FIRST_POST_SLUG}/`,
+      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/`,
     )
     expect(typeof ld.datePublished).toBe('string')
   })
 
   test('TOC anchor link updates location.hash', async ({ page }) => {
-    await page.goto(`/blog/${FIRST_POST_SLUG}/`)
+    await page.goto(`/blog/${FIXTURE_POST_SLUG}/`)
     const firstAnchor = page.locator('.toc .toc-link').first()
     const href = await firstAnchor.getAttribute('href')
     expect(href).toMatch(/^#/)
@@ -106,15 +116,15 @@ test.describe('blog post page', () => {
 
 test.describe('trailing-slash convention', () => {
   test('canonical, og:url, JSON-LD mainEntity all use trailing slash', async ({ page }) => {
-    await page.goto(`/blog/${FIRST_POST_SLUG}/`)
+    await page.goto(`/blog/${FIXTURE_POST_SLUG}/`)
 
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
-      `https://surfc.app/blog/${FIRST_POST_SLUG}/`,
+      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/`,
     )
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
       'content',
-      `https://surfc.app/blog/${FIRST_POST_SLUG}/`,
+      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/`,
     )
 
     const ldText = await page.locator('script[type="application/ld+json"]').textContent()
@@ -124,7 +134,7 @@ test.describe('trailing-slash convention', () => {
 })
 
 test.describe('global Twitter meta', () => {
-  for (const path of ['/', '/blog/', `/blog/${FIRST_POST_SLUG}/`, '/waitlist/']) {
+  for (const path of ['/', '/blog/', `/blog/${FIXTURE_POST_SLUG}/`, '/waitlist/']) {
     test(`twitter:site and twitter:creator are set on ${path}`, async ({ page }) => {
       await page.goto(path)
       await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute(
@@ -179,7 +189,7 @@ test.describe('feeds and sitemap', () => {
     const body = await response.text()
     expect(body.startsWith('<?xml')).toBe(true)
     expect(body).toContain('<title>Surfc — Founder notes</title>')
-    expect(body).toContain(`https://surfc.app/blog/${FIRST_POST_SLUG}/</link>`)
+    expect(body).toContain(`https://surfc.app/blog/${FIXTURE_POST_SLUG}/</link>`)
     expect(body).toContain('<pubDate>')
   })
 
@@ -195,7 +205,7 @@ test.describe('feeds and sitemap', () => {
     const sitemap = await sitemapResponse.text()
     expect(sitemap).toContain('https://surfc.app/blog/</loc>')
     expect(sitemap).toContain(
-      `https://surfc.app/blog/${FIRST_POST_SLUG}/</loc>`,
+      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/</loc>`,
     )
   })
 })
@@ -214,7 +224,7 @@ test.describe('PostHog blog engagement events', () => {
       }
     })
 
-    await page.goto(`/blog/${FIRST_POST_SLUG}/`)
+    await page.goto(`/blog/${FIXTURE_POST_SLUG}/`)
 
     // Sanity-check: the page build must have suppressed PostHog's snippet
     // (PUBLIC_POSTHOG_PROJECT_TOKEN='' in playwright.config.ts) so the stub
