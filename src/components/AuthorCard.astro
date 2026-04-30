@@ -1,0 +1,97 @@
+---
+import { AUTHORS } from '../data/author'
+
+interface Props {
+  author: string
+}
+
+const { author } = Astro.props
+const profile = AUTHORS[author]
+---
+
+{
+  profile ? (
+    <aside class="author-card" aria-label={`About ${profile.name}`}>
+      <a class="author-card-link" href={profile.url} target="_blank" rel="noopener author">
+        <img
+          class="author-card-avatar"
+          src={profile.avatar}
+          alt={profile.name}
+          width="64"
+          height="64"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="author-card-text">
+          <p class="author-card-name">{profile.name}</p>
+          <p class="author-card-bio">{profile.bio}</p>
+        </div>
+      </a>
+    </aside>
+  ) : (
+    <p class="author-card-fallback">By {author}</p>
+  )
+}
+
+<style>
+  .author-card {
+    margin: var(--space-4) 0 var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .author-card-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: var(--color-text-primary);
+  }
+
+  .author-card-link:hover .author-card-name,
+  .author-card-link:focus-visible .author-card-name {
+    color: var(--color-accent-dark);
+  }
+
+  .author-card-avatar {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-dot);
+    object-fit: cover;
+    background: var(--color-bg-subtle);
+  }
+
+  .author-card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .author-card-name {
+    margin: 0;
+    font-family: var(--font-base);
+    font-size: var(--text-title-size);
+    font-weight: var(--text-title-weight);
+    line-height: var(--text-title-height);
+    color: var(--color-text-primary);
+  }
+
+  .author-card-bio {
+    margin: 0;
+    font-family: var(--font-base);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-height);
+    color: var(--color-text-secondary);
+  }
+
+  .author-card-fallback {
+    margin: var(--space-4) 0 var(--space-2);
+    font-family: var(--font-base);
+    font-size: var(--text-body-size);
+    color: var(--color-text-secondary);
+  }
+</style>

@@ -1,0 +1,226 @@
+---
+import { getCollection } from 'astro:content'
+import { Image } from 'astro:assets'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/Nav.astro'
+import Footer from '../../components/Footer.astro'
+import { isPublished, sortByDateDesc, PAGE_SIZE } from '../../utils/blog'
+
+const allPosts = (await getCollection('blog', isPublished)).sort(sortByDateDesc)
+const posts = allPosts.slice(0, PAGE_SIZE)
+const totalPages = Math.ceil(allPosts.length / PAGE_SIZE)
+
+const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
+---
+
+<BaseLayout
+  title="Blog — Surfc"
+  description="Founder notes, demos, and product writing from the team building Surfc."
+  path="/blog/"
+  bodyClass="blog-index-page"
+>
+  <Nav />
+
+  <main class="blog-index">
+    <header class="blog-index-header">
+      <p class="blog-index-eyebrow">Surfc Journal</p>
+      <h1 class="blog-index-title">Founder notes</h1>
+      <p class="blog-index-subtitle">
+        Writing on building Surfc, on reading as a practice, and on the ideas that won't stop nagging us.
+      </p>
+    </header>
+
+    {
+      posts.length === 0 ? (
+        <p class="blog-index-empty">No posts yet — check back soon.</p>
+      ) : (
+        <ol class="blog-index-list">
+          {posts.map((post) => {
+            const slug = post.id.replace(/\.(md|mdx)$/, '')
+            return (
+              <li class="blog-card">
+                <a class="blog-card-link" href={`/blog/${slug}/`}>
+                  {post.data.heroImage && (
+                    <div class="blog-card-thumb">
+                      <Image
+                        src={post.data.heroImage}
+                        alt={post.data.heroImageAlt ?? ''}
+                        widths={[320, 640]}
+                        sizes="(min-width: 768px) 320px, 100vw"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div class="blog-card-text">
+                    <h2 class="blog-card-title">{post.data.title}</h2>
+                    <p class="blog-card-meta">
+                      <time datetime={post.data.pubDate.toISOString()}>
+                        {dateFormatter.format(post.data.pubDate)}
+                      </time>
+                    </p>
+                    <p class="blog-card-description">{post.data.description}</p>
+                  </div>
+                </a>
+              </li>
+            )
+          })}
+        </ol>
+      )
+    }
+
+    {
+      totalPages > 1 && (
+        <nav class="blog-pager" aria-label="Blog pagination">
+          <a class="blog-pager-link blog-pager-next" href="/blog/page/2/">
+            Older posts →
+          </a>
+        </nav>
+      )
+    }
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .blog-index {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-screen-margin) var(--space-6);
+  }
+
+  .blog-index-header {
+    margin-bottom: var(--space-5);
+    text-align: center;
+  }
+
+  .blog-index-eyebrow {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-base);
+    font-size: var(--text-label-size);
+    font-weight: var(--text-label-weight);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent-text);
+  }
+
+  .blog-index-title {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-serif);
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-text-primary);
+  }
+
+  .blog-index-subtitle {
+    max-width: 560px;
+    margin: 0 auto;
+    font-family: var(--font-base);
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  .blog-index-empty {
+    margin: var(--space-5) 0;
+    text-align: center;
+    font-family: var(--font-base);
+    color: var(--color-text-secondary);
+  }
+
+  .blog-index-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .blog-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow var(--transition-base);
+  }
+
+  .blog-card:hover,
+  .blog-card:focus-within {
+    box-shadow: var(--shadow-modal);
+  }
+
+  .blog-card-link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @media (min-width: 768px) {
+    .blog-card-link {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .blog-card-link:has(.blog-card-thumb) {
+      grid-template-columns: 240px 1fr;
+      align-items: center;
+    }
+  }
+
+  .blog-card-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-image);
+    background: var(--color-bg-subtle);
+  }
+
+  .blog-card-title {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-serif);
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .blog-card-meta {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-base);
+    font-size: var(--text-caption-size);
+    color: var(--color-text-secondary);
+  }
+
+  .blog-card-description {
+    margin: 0;
+    font-family: var(--font-base);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-height);
+    color: var(--color-text-secondary);
+  }
+
+  .blog-pager {
+    margin-top: var(--space-5);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .blog-pager-link {
+    font-family: var(--font-base);
+    font-size: var(--text-body-size);
+    color: var(--color-accent-dark);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-accent);
+    padding-bottom: 2px;
+  }
+
+  .blog-pager-next {
+    margin-left: auto;
+  }
+</style>

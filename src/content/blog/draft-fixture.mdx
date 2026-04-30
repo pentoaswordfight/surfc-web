@@ -1,0 +1,12 @@
+---
+title: 'Draft fixture (should never appear in production)'
+description: 'Permanent fixture used by tests/blog.spec.ts to verify isPublished excludes drafts from /blog/, /rss.xml, sitemap, and the slug route in PROD builds. Renders only in `astro dev` so authors can preview.'
+pubDate: 2026-01-01
+author: 'Deji Dipeolu'
+tags: ['fixture']
+draft: true
+---
+
+This file is a regression guard, not real content. If a published `/blog/draft-fixture/`
+page appears on `surfc.app` in production, the `isPublished` predicate has regressed
+in [`src/utils/blog.ts`](../../utils/blog.ts) — see SUR-256.

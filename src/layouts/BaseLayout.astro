@@ -24,6 +24,15 @@ interface Props {
   ogImage?:     string
   path?:        string
   noindex?:     boolean
+  nofollow?:    boolean
+  bodyClass?:   string
+  /**
+   * Body-level data attributes. Keys are emitted as `data-${key}` and must
+   * already be kebab-case (e.g. `'blog-slug'` → `data-blog-slug`). Browsers
+   * normalise camelCase to lowercase, breaking `dataset.blogSlug` reads,
+   * so the normalisation must happen at the call site.
+   */
+  bodyData?:    Record<string, string | number>
 }
 
 const {
@@ -32,7 +41,15 @@ const {
   ogImage     = '/og-image.png',
   path        = Astro.url.pathname,
   noindex     = false,
+  nofollow    = false,
+  bodyClass   = 'lp-page-v2',
+  bodyData    = {},
 } = Astro.props
+
+const robotsParts: string[] = []
+if (noindex)  robotsParts.push('noindex')
+if (nofollow) robotsParts.push('nofollow')
+const robotsContent = robotsParts.join(', ')
 
 const canonical = new URL(path, Astro.site ?? 'https://surfc.app').toString()
 const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString()
@@ -51,7 +68,7 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
     <meta name="theme-color" content="#FFF8F2" />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {robotsContent && <meta name="robots" content={robotsContent} />}
 
     <title>{title}</title>
 
@@ -71,6 +88,8 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@surfcapp" />
+    <meta name="twitter:creator" content="@surfcapp" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
@@ -101,8 +120,11 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
         }, true);
       }
     </script>
+
+    <!-- Per-page extras (Article JSON-LD on blog posts, etc.) -->
+    <slot name="head" />
   </head>
-  <body class="lp-page-v2">
+  <body class={bodyClass} {...Object.fromEntries(Object.entries(bodyData).map(([k, v]) => [`data-${k}`, String(v)]))}>
     <slot />
   </body>
 </html>
