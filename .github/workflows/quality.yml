@@ -48,20 +48,14 @@ jobs:
           # using it with a relative local path raises "Base must either
           # be a URL (with scheme) or an absolute local path".)
           #
-          # Path note: the @astrojs/cloudflare adapter (SUR-256) splits
-          # the build output into dist/client/ (static assets + prerendered
-          # HTML, what Cloudflare Pages serves) and dist/server/ (Worker
-          # bundle, unused while output: 'static'). Scan + resolve hrefs
-          # against dist/client/ so /favicon.ico etc. resolve.
-          #
           # Minimal flag list: lychee v0.23+ excludes mailto:/tel: by
           # default so no --exclude-mail is needed.
           args: >-
             --no-progress
             --timeout 20
             --max-redirects 5
-            --root-dir ${{ github.workspace }}/dist/client
-            './dist/client/**/*.html'
+            --root-dir ${{ github.workspace }}/dist
+            './dist/**/*.html'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

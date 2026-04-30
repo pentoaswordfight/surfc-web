@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
 import mdx from '@astrojs/mdx'
-import cloudflare from '@astrojs/cloudflare'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs'
@@ -12,14 +11,12 @@ export default defineConfig({
   site: 'https://surfc.app',
   output: 'static',
   trailingSlash: 'always',
-  adapter: cloudflare({
-    // Force Node runtime for prerender to keep parity with the legacy
-    // Netlify build. Workerd default in @astrojs/cloudflare v13.1+ trips
-    // on a few markdown-pipeline deps; revisit when we move any route to
-    // SSR (which is the only case the workerd runtime would actually run
-    // for prod traffic).
-    prerenderEnvironment: 'node',
-  }),
+  // No adapter: every route is prerendered, so Astro's vanilla static
+  // output (flat dist/) is exactly what Cloudflare Pages and any other
+  // static host need. The @astrojs/cloudflare adapter was wired briefly
+  // in SUR-256 to keep an SSR option open, but the dist/{client,server}
+  // split it forces broke the Pages publish-dir convention (and Lychee).
+  // Re-add when SSR is actually needed.
   integrations: [sitemap(), mdx()],
   markdown: {
     remarkPlugins: [remarkReadingTime],
