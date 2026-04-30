@@ -62,6 +62,12 @@ export default defineConfig({
         // set at build time. The CORS fixture doesn't verify the value, so
         // any placeholder works.
         PUBLIC_SUPABASE_ANON_KEY:   'test-anon-key-for-preflight',
+        // Suppress the PostHog snippet in test builds. Its init IIFE
+        // overwrites any window.posthog stub we install via
+        // page.addInitScript before the engagement script runs — without
+        // this override the SUR-256 blog_scroll_depth / blog_read_complete
+        // assertions can't see captured events.
+        PUBLIC_POSTHOG_PROJECT_TOKEN: '',
       },
     },
   ],
