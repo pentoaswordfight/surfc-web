@@ -15,11 +15,11 @@ import { expect, test } from './fixtures'
 
 const POLICY_PAGES = [
   {
-    path:   '/policies/privacy',
+    path:   '/policies/privacy/',
     dataId: '3269e493-7d73-430a-bdef-e05479c111f6',
   },
   {
-    path:   '/policies/terms',
+    path:   '/policies/terms/',
     dataId: 'f893c672-1fd9-4022-a214-e51b367e4ed1',
   },
 ] as const

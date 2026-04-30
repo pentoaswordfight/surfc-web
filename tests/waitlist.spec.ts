@@ -56,7 +56,7 @@ async function fillAndSubmit(page: Page, email = 'test@example.com'): Promise<vo
 test('success response shows the success modal', async ({ page }) => {
   await mockEndpoint(page, { status: 200, body: { status: 'success' } })
 
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
   await fillAndSubmit(page)
 
   const modal = page.locator('[data-waitlist-modal="success"]')
@@ -67,7 +67,7 @@ test('success response shows the success modal', async ({ page }) => {
 test('duplicate response shows the duplicate modal', async ({ page }) => {
   await mockEndpoint(page, { status: 200, body: { status: 'duplicate' } })
 
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
   await fillAndSubmit(page, 'already-signed-up@example.com')
 
   const modal = page.locator('[data-waitlist-modal="duplicate"]')
@@ -78,7 +78,7 @@ test('duplicate response shows the duplicate modal', async ({ page }) => {
 test('rate-limited response shows the throttle error', async ({ page }) => {
   await mockEndpoint(page, { status: 429, body: { status: 'rate_limited' } })
 
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
   await fillAndSubmit(page)
 
   await expect(page.locator('[data-waitlist-error]')).toContainText(/going too fast/i)
@@ -90,7 +90,7 @@ test('invalid_email server response shows a specific error', async ({ page }) =>
     body:   { status: 'error', message: 'invalid_email' },
   })
 
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
   await fillAndSubmit(page)
 
   await expect(page.locator('[data-waitlist-error]')).toContainText(/email looks off/i)
@@ -99,14 +99,14 @@ test('invalid_email server response shows a specific error', async ({ page }) =>
 test('network failure shows the generic network error', async ({ page }) => {
   await mockEndpoint(page, { status: 'abort' })
 
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
   await fillAndSubmit(page)
 
   await expect(page.locator('[data-waitlist-error]')).toContainText(/network error/i)
 })
 
 test('honeypot field is hidden, label-less, and not autocompleted', async ({ page }) => {
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
 
   const honeypot = page.locator('input.wl-honeypot')
   await expect(honeypot).toHaveAttribute('name',         'hp_trap')
@@ -133,7 +133,7 @@ test('honeypot field is hidden, label-less, and not autocompleted', async ({ pag
 // (see tests/fixtures/cors-server.mjs).
 
 test('form submits end-to-end against a real CORS endpoint and forwards the apikey header', async ({ page }) => {
-  await page.goto('/waitlist')
+  await page.goto('/waitlist/')
   await fillAndSubmit(page, 'real-network@example.com')
 
   // The fixture responds with {"status": "success"}; if CORS were broken

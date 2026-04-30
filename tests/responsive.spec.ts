@@ -41,7 +41,7 @@ async function expectNoHorizontalOverflow(page: import('@playwright/test').Page,
 }
 
 test.describe('no horizontal overflow on mobile viewports', () => {
-  const paths = ['/', '/waitlist', '/policies/privacy']
+  const paths = ['/', '/waitlist/', '/policies/privacy/']
 
   for (const viewport of MOBILE_VIEWPORTS) {
     for (const path of paths) {
