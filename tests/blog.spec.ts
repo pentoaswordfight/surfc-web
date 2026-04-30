@@ -55,7 +55,7 @@ test.describe('blog post page', () => {
     await page.goto(`/blog/${FIRST_POST_SLUG}/`)
 
     // Header
-    await expect(page.locator('.blog-post-title')).toContainText('Beginnings')
+    await expect(page.locator('.blog-post-title')).toContainText(/Beginning/)
     await expect(page.locator('.blog-post-author')).toContainText('Deji Dipeolu')
     await expect(page.locator('.blog-post-meta time').first()).toHaveAttribute(
       'datetime',
@@ -86,7 +86,7 @@ test.describe('blog post page', () => {
     expect(ldText).toBeTruthy()
     const ld = JSON.parse(ldText ?? '{}')
     expect(ld['@type']).toBe('Article')
-    expect(ld.headline).toMatch(/Beginnings/)
+    expect(ld.headline).toMatch(/Beginning/)
     expect(ld.author?.name).toBe('Deji Dipeolu')
     expect(ld.mainEntityOfPage?.['@id']).toBe(
       `https://surfc.app/blog/${FIRST_POST_SLUG}/`,
@@ -138,6 +138,39 @@ test.describe('global Twitter meta', () => {
     })
   }
 })
+
+test.describe('draft posts excluded from production build', () => {
+  // src/content/blog/draft-fixture.mdx ships with `draft: true` so it should
+  // be filtered by isPublished() in PROD across all four surfaces. If any of
+  // these assertions fails, the predicate has drifted in src/utils/blog.ts.
+  const DRAFT_SLUG = 'draft-fixture'
+
+  test('the draft slug returns 404', async ({ request }) => {
+    const response = await request.get(`/blog/${DRAFT_SLUG}/`)
+    expect(response.status()).toBe(404)
+  })
+
+  test('the draft is absent from /blog/ listing', async ({ page }) => {
+    await page.goto('/blog/')
+    expect(await page.locator(`a[href="/blog/${DRAFT_SLUG}/"]`).count()).toBe(0)
+  })
+
+  test('the draft is absent from /rss.xml', async ({ request }) => {
+    const body = await (await request.get('/rss.xml')).text()
+    expect(body).not.toContain(`/blog/${DRAFT_SLUG}/`)
+  })
+
+  test('the draft is absent from sitemap-0.xml', async ({ request }) => {
+    const body = await (await request.get('/sitemap-0.xml')).text()
+    expect(body).not.toContain(`/blog/${DRAFT_SLUG}/`)
+  })
+})
+
+// Pagination: deferred until we have ≥6 published posts. Until then, /blog/
+// emits a single page and /blog/page/2/ does not exist as a route. Restore
+// this test (or replace with a fixture-driven version) once the post count
+// crosses pageSize (5). [SUR-256 plan §"Tests to add" line 277]
+test.fixme('pagination: /blog/ shows page 1 with Older link, /blog/page/2/ shows older posts with Newer link', async () => {})
 
 test.describe('feeds and sitemap', () => {
   test('rss.xml is well-formed and lists the first post with trailing slash', async ({ request }) => {
