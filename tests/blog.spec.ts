@@ -124,7 +124,7 @@ test.describe('trailing-slash convention', () => {
 })
 
 test.describe('global Twitter meta', () => {
-  for (const path of ['/', '/blog/', `/blog/${FIRST_POST_SLUG}/`, '/waitlist']) {
+  for (const path of ['/', '/blog/', `/blog/${FIRST_POST_SLUG}/`, '/waitlist/']) {
     test(`twitter:site and twitter:creator are set on ${path}`, async ({ page }) => {
       await page.goto(path)
       await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute(

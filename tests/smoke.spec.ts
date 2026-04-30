@@ -21,10 +21,10 @@ test.describe('public pages respond 200 and render correctly', () => {
   // loads. We assert on <title> instead — cheap, reliable, and proves the
   // Astro route resolved to the right page.
   const pages: Array<{ path: string; title: RegExp }> = [
-    { path: '/',                  title: /Surfc/i },
-    { path: '/waitlist',          title: /waitlist/i },
-    { path: '/policies/privacy',  title: /Privacy/i },
-    { path: '/policies/terms',    title: /Terms/i },
+    { path: '/',                   title: /Surfc/i },
+    { path: '/waitlist/',          title: /waitlist/i },
+    { path: '/policies/privacy/',  title: /Privacy/i },
+    { path: '/policies/terms/',    title: /Terms/i },
   ]
 
   for (const { path, title } of pages) {

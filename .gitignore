@@ -30,7 +30,3 @@ pnpm-debug.log*
 playwright-report/
 test-results/
 playwright/.cache/
-
-# Cloudflare adapter local cache (created by `npm run build` once the
-# @astrojs/cloudflare adapter is wired)
-.wrangler/
