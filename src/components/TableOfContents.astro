@@ -1,0 +1,103 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+}
+
+const { headings } = Astro.props
+const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3)
+---
+
+{
+  items.length > 1 && (
+    <nav class="toc" aria-label="Table of contents">
+      <details class="toc-details" open>
+        <summary class="toc-summary">On this page</summary>
+        <ol class="toc-list">
+          {items.map((h) => (
+            <li class={`toc-item toc-depth-${h.depth}`}>
+              <a class="toc-link" href={`#${h.slug}`}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    margin: var(--space-3) 0 var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-card);
+  }
+
+  .toc-summary {
+    cursor: pointer;
+    font-family: var(--font-base);
+    font-size: var(--text-label-size);
+    font-weight: var(--text-label-weight);
+    line-height: var(--text-label-height);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+    list-style: none;
+  }
+
+  .toc-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-summary::after {
+    content: '−';
+    margin-left: var(--space-1);
+    color: var(--color-accent-text);
+  }
+
+  .toc-details:not([open]) .toc-summary::after {
+    content: '+';
+  }
+
+  .toc-list {
+    margin: var(--space-1) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc-item {
+    margin: 4px 0;
+    font-family: var(--font-base);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-height);
+  }
+
+  .toc-depth-3 {
+    padding-left: var(--space-2);
+    font-size: var(--text-caption-size);
+  }
+
+  .toc-link {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .toc-link:hover,
+  .toc-link:focus-visible {
+    color: var(--color-accent-dark);
+    border-bottom-color: var(--color-accent);
+  }
+
+  @media (min-width: 1200px) {
+    .toc {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-2));
+    }
+  }
+</style>

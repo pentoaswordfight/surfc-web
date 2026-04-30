@@ -24,6 +24,8 @@ interface Props {
   ogImage?:     string
   path?:        string
   noindex?:     boolean
+  bodyClass?:   string
+  bodyData?:    Record<string, string | number>
 }
 
 const {
@@ -32,6 +34,8 @@ const {
   ogImage     = '/og-image.png',
   path        = Astro.url.pathname,
   noindex     = false,
+  bodyClass   = 'lp-page-v2',
+  bodyData    = {},
 } = Astro.props
 
 const canonical = new URL(path, Astro.site ?? 'https://surfc.app').toString()
@@ -71,6 +75,8 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@surfcapp" />
+    <meta name="twitter:creator" content="@surfcapp" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
@@ -101,8 +107,11 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
         }, true);
       }
     </script>
+
+    <!-- Per-page extras (Article JSON-LD on blog posts, etc.) -->
+    <slot name="head" />
   </head>
-  <body class="lp-page-v2">
+  <body class={bodyClass} {...Object.fromEntries(Object.entries(bodyData).map(([k, v]) => [`data-${k}`, String(v)]))}>
     <slot />
   </body>
 </html>
