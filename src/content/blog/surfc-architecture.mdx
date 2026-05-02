@@ -1,0 +1,105 @@
+---
+title: 'Surfc Architecture'
+description: 'Behind the Scenes. What it takes to build a production SaaS in 2026'
+pubDate: 2026-05-01
+author: 'Deji Dipeolu'
+tags: ['founder-notes', 'building-in-public', 'product']
+draft: false
+---
+
+import { Image } from 'astro:assets';
+import diagram from '../../assets/surfc-detailed-architecture.svg';
+
+
+
+## What
+
+I started building Surfc because, after trying practically every personal knowledge management product I could find, I realised what I was after was not necessarily knowledge management, but for a way to hold on to inspiration when it strikes. To pull threads I'd previously left dangling and sew them into the current tapestry of my life. Surfc, as it stands today, is a personal index of every idea I've cared about across my reading and writing life. The index itself is modelled on the Syntopicon - a cross reference of "Great Ideas" that Mortimer Adler and a team of editors spent eight years building for what they called the Great Books of the Western World. I'm building this version of it alone, for ideas (mine and yours), be they great or small.
+
+It is possible to do this in 2026 in a way it wasn't even 18 months ago when I first started sketching the idea - It certainly wasn't possible in 1952 when Adler published the initial edition of his Syntopicon. It is possible today because two things have converged: a stack mature and abstracted enough that one person can run a real production system and an ecosystem of coding agents (Claude is my preferred collaborator) that eliminate some of the drudgery and let me focus on what I truly enjoy - solving problems.
+
+## How
+
+So how *does* one person create and run a real production system? Not easily, I will tell you that much for free. Building Surfc has been immensely challenging, requiring managing multiple streams (data/technology/commercial) and bringing multiple skills to the task (development/design/project management/data engineering). Fortunately, in nearly two decades in industry I have learned most of these disciplines and functioned in capacities that allowed me to exercise each of them. Though rarely all at once. This is where Claude comes in. I have learned how to weigh trade-offs and make technical decisions. Claude knows how to implement them. This post is going to largely be about how that collaboration dynamic has worked to make Surfc what it is today. I've tried to structure the post so you don't have to read the nerdy bits unless you're interested.
+
+<Image src={diagram} alt="Surfc High Level Architecture" />
+
+### Offline-first and encrypted by default
+
+As soon as I built the data pipelines for Surfc and ran my first note through, I knew I had a problem. I was reviewing the backend, and there, plain as day were (what could have been) my most private and intimate thoughts. They weren't - and it wouldn't have mattered because, well, it was me - but I imagined a future where people trusted their private notes to the app. I shouldn't have access to that. Nor should anyone working on Surfc. 
+
+So one of the first significant decisions I made - for better or worse - is that Surfc encrypts your notes locally before they ever leave your device. Your notes are the whole product: photos of book margins, transcribed annotations and half-formed ideas that you would never want a stranger to read. Definitely not me - one person with a Postgres database. So I chose the hard road that gave me peace. I've built Surfc so that I *can't* read your notes. Not even if I said pretty please.
+
+#### The nerdy bit you can skip
+There are two layers to the architecture; one local, one remote. Locally, every note lives in IndexedDb via Dexie, so the app works offline and reads are instant. Remotely, note text is wrapped in AES-GCM-256 with a Master Key that is **never** sent to the server in plaintext. The Master Key itself is wrapped by a passkey using WebAuthn's PRF extension. The TL;DR is TouchID, Windows Hello, or a security key are what protect your data. I don't have your passwords.
+
+#### The Trade-off
+This was not a light decision. It makes syncing cross-device harder and account recovery nigh-on impossible -  If you lose your passkey and don't have a backup, the data is gone. This is by design. But it is a decision I will make again and again. Your reading, your thoughts and your notes are yours. The decision to share them is yours, even in the unlikely event that Surfc gets breached. I'm willing to die on this hill.
+
+### Proxy in the middle
+
+Surfc is an app that leverages LLMs and classifiers to do what it does. It's an AI app. There's no getting away from that. But I'm not building something that simply calls Anthropic/OpenAI and returns a response. I'm not building a wrapper. Surfc has a few nifty features but it cannot [reverse a linked list](https://www.linkedin.com/posts/mattpaige_forget-claude-code-the-mcdonalds-chatbot-activity-7452012064019087360-0LGk/). 
+
+Every AI call in Surfc is routed through managed infrastructure, protecting not just you the user, but Surfc the product. Attack surfaces are minimised and the app can't be tricked into handing over information, either personal or proprietary.
+
+#### The nerdy bit you can skip
+Unit 42 published a really interesting paper last month on Indirect Prompt Injection. It is not linked for reasons that will become apparent if you read it.
+
+I use an Edge Function as a proxy with every request wrapped in a multi-stage safety pipeline (both request and response). User text is by default untrusted content so sneaky instructions cannot escape into the system prompt. I use Azure AI Content Safety Prompt Shields to scan for direct and indirect injection with PII detection handled client side via regex (this was a not-so-fun side quest when it turned out that PII detection did not live within Azure's Content safety - so it was either a separate call to Azure AI Language just for PII or build it in-house.)
+
+#### The Trade-off
+There's a lot of infrastructure here. Certainly a lot for one person to maintain. Managing two critical path vendors as well as continuing to tune the pipeline to protect against new threats. It's a lot. And it is intentionally invisible. The Unit 42 paper was long. I read it so users don't have to.
+
+
+### Mono vs Poly
+
+One decision that I wish I'd made differently in the beginning and caused me a lot of headache later on was on whether to use a Monorepo or Polyrepo approach. Spoiler alert: I decided on a bit of both. In the beginning, Surfc lived entirely in one codebase. It had a landing page which routed to the auth page which routed to the app. Seamless. Simple. But I had forgotten about marketing. I ultimately would like people to use Surfc. That meant I needed to have a way to reach people that wasn't tied up in the app internals. 
+
+So I decided to split the repository. Marketing deserves to be its own thing - optimised for conversion, SEO, and getting strangers to care about the mission. It has a different cadence, it has a different audience and it has a different purpose. 
+
+Then I had to decide where to put Help & Support. At first, I was going to give it its own repo, but that felt like overkill. Technically, it's "content" and so my next instinct was to ship it with marketing. Thinking again (shout out Adam Grant), I realised that help docs describe how features work and need to be kept in lockstep with the features they describe. So it lives in harmony now with app code.
+
+#### The nerdy bit you can skip
+The app repo is a React 18 PWA on Vite. Help is a VitePress site that deploys to its own domain on Cloudflare Pages. Marketing is Astro, also on Cloudflare Pages. I keep all three funnelled to PostHog so it all lives in one stream for analytics.
+
+#### The Trade-off
+Two deploys. A bit of duplication where marketing links to help or policies. I've decided it's worth it to keep marketing deploys independent of app deploys. It's a cleaner mental model. Each lives where it lives.
+
+
+### Marginal Gains
+
+So far, I've described some of the bigger architectural decisions, but most of what keeps me up and Surfc moving forward is the many smaller and mostly repeated decisions. 
+
+Records are soft-deleted. Last write wins by timestamp. Every pull request gets a preview URL. Every commit follows the same prefix convention. These are the rules for shipping in Surfc. The memoranda. Dare I say the constitution. I set them once. They live in memory. That memory is the lifeblood of Claude.
+
+### Working with Claude
+
+I genuinely wasn't prepared when I first started building Surfc for the sheer breadth I would have to cover. I knew I would need to write, review and ship code and that was fine. But the reality is every day I'm a frontend engineer, designer, architect, security reviewer, marketer, copywriter. All before lunch. Claude makes this survivable by doing the parts of each that I find tedious, leaving me to do what I actually enjoy. 
+
+I've been driving a Tesla - the same one - for nearly 8 years. I don't say this to brag (is it even cool to drive a Tesla anymore?) but to provide some context. The Tesla was and is a technological marvel. Without a doubt, 8 years ago, Autopilot felt like the future was there now (now being 8 years ago). It was very impressive. But it was also very disappointing. Letting the car drive itself often felt like letting your 15 year old who hasn't quite passed their driving test drive your car. It was hesitant, it was skittish, it was generally quite shitty UX to be fair but it was so cool that you forgave it when it didn't work. 
+
+Working with Claude in 2026 is more like a fresh university grad - it needs to be told what to do. But given that instruction, it does excellent work, usually without many errors. Claude is an excellent and well behaved collaborator when given clear instructions and sufficient guardrails.  
+
+So our collaboration is structured. In much the same way that I made architectural decisions about Surfc, I made design decisions about how I would work with Claude. And documented them.
+
+#### As Interlocutor
+This is where I admit (*gasp*) that I do not use Claude exclusively for brainstorming. My process is varied and multi-dimensional, spanning search, other models, books from my shelf and conversations with users, friends and other founders. I sometimes feed this information back into Claude and then use it as an additional sounding board for ideas. Claude sometimes politely pushes back. I almost always politely ignore it. On rare occassions, I take its advice.
+
+#### As Builder
+Once a decision is made, and documented (I'm tracking this entire project in Linear), implementation sits mostly with Claude Code. I describe the change in plain English, point at the relevant files and review the diff. A CLAUDE.md file sits at the root of each repo so each session opens with full awareness of the rules.
+
+#### Skills/Commands, MCP and sub-agents
+I spent the first 2 weeks building with Claude Code rewriting (or copy/pasting) the same prompt over and over. It wasn't until I discovered **custom slash commands** (basically a structured prompt that you can call) that my workflow really took off. You can chain these commands, you can chain **skills** and commands together, easily packaging repeatable work without having to re-explain context every time. **MCP** lets Claude operate on external tools, which is really handy when I realise in the middle of a coding session that additional work needs to be done - a new Linear ticket can be filed with all the right labels and in the right project. If I need parallel research done or want to explore more than one angle, I deploy sub-agents. All of this is managed in one config file.
+
+#### What stays my job
+I retain responsibility for the vision, the decisions, the strategy and the roadmap. I decide how privacy and data security work. I still remain responsible for all infrastructure configurations and maintain strict controls over database writes. 
+
+## In Closing
+
+Right at the beginning I wrote that building Surfc in 2026 is possible in a way that it wasn't 18 months ago. This is true. It has made it possible, it hasn't made it easy. The mundane is abstracted away. What remains is (mostly) challenging and exciting.
+
+Surfc is just getting started. It works. The architecture is sound and the first users are already reaping the rewards of indexed ideas.
+
+Claude has made the breadth of the project survivable. It was impossible. Now it's just hard.
+
+
