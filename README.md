@@ -62,21 +62,25 @@ browser will display it.
 
 ## Deploy
 
-Production is Netlify with `surfc.app` as the primary domain. The
-`netlify.toml` pins build command / publish dir and 301s
-`www.surfc.app` → apex.
+Production is **Cloudflare Pages** at `surfc.app` (migrated from Netlify in
+[SUR-254](https://linear.app/surfc/issue/SUR-254), 2026-04-27). Cache headers
+are declared in `public/_headers`. The `www.surfc.app` → apex 301 is a
+Cloudflare zone-level Redirect Rule.
 
 ## CI
 
-PRs run three automated checks via GitHub Actions:
+PRs run automated checks via GitHub Actions:
 
 | Check | Tool | What it catches |
 |---|---|---|
-| Lighthouse | `@lhci/cli` | Performance, a11y, best-practices regressions |
+| Lighthouse | `@lhci/cli` | Performance, a11y, best-practices regressions — **disabled**, pending CF Pages preview waiter (see `.github/workflows/quality.yml`) |
 | Playwright | `@playwright/test` | Waitlist form submit + modal flow (Termly blocked in fixture) |
 | Link check | `lychee` | Broken internal and external links |
 
-Lighthouse is configured to warn (not block) on individual category scores, but will fail if a new external font request appears. Run `npm run build && npm run preview` locally before pushing to catch regressions early.
+Lighthouse is disabled pending a Cloudflare Pages preview waiter. The prior Netlify
+deploy-preview wait broke when production moved to CF Pages (SUR-254). Run
+`npm run build && npm run preview` locally before pushing to catch performance
+regressions early.
 
 ## Related issues
 
@@ -84,3 +88,4 @@ Lighthouse is configured to warn (not block) on individual category scores, but 
 - [SUR-219](https://linear.app/surfc/issue/SUR-219) — remove now-unused marketing CSS from the app bundle
 - [SUR-227](https://linear.app/surfc/issue/SUR-227) — Lighthouse performance + a11y fixes (self-hosted fonts, cache headers, WCAG contrast)
 - [SUR-228](https://linear.app/surfc/issue/SUR-228) — mobile hamburger nav
+- [SUR-254](https://linear.app/surfc/issue/SUR-254) — Netlify → Cloudflare Pages migration
