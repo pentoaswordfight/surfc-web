@@ -25,9 +25,12 @@ export class StaleTokenError extends Error {
 interface StartCheckoutOpts {
   interval: Interval
   token: string
+  // SUR-345 — optional attribution string forwarded to the Edge Function
+  // and into Stripe metadata. Server caps at 64 chars.
+  ref?: string
 }
 
-export async function startCheckout({ interval, token }: StartCheckoutOpts): Promise<void> {
+export async function startCheckout({ interval, token, ref }: StartCheckoutOpts): Promise<void> {
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? ''
   const anonKey     = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
   const appUrl      = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
@@ -50,7 +53,7 @@ export async function startCheckout({ interval, token }: StartCheckoutOpts): Pro
   const res = await fetch(endpoint, {
     method:  'POST',
     headers,
-    body:    JSON.stringify({ interval, successUrl, cancelUrl }),
+    body:    JSON.stringify({ interval, ref, successUrl, cancelUrl }),
   })
 
   if (res.status === 401) {

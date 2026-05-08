@@ -89,13 +89,17 @@ import '../styles/pricing.css'
         const interval = proCta.getAttribute('data-interval') === 'monthly' ? 'monthly' : 'annual'
         try {
           posthog()?.capture('pricing_checkout_started', { interval, ref })
-          await startCheckout({ interval, token })
+          // SUR-345: forward `ref` so Stripe metadata records the entry
+          // point (pricing, pricing_hero, etc.) for funnel attribution.
+          await startCheckout({ interval, token, ref })
         } catch (err) {
           const reason = err instanceof StaleTokenError ? 'stale_token' : 'fetch_error'
           posthog()?.capture('pricing_checkout_fallback', { interval, ref, reason })
           // Fall back to the redirect path. The React app's /upgrade route
           // is responsible for routing unauthenticated users to sign-in.
-          window.location.assign(`https://app.surfc.app/upgrade?interval=${interval}`)
+          // ref=pricing_fallback distinguishes JS-error fallbacks from the
+          // happy `pricing` (static-href / no-JS) attribution.
+          window.location.assign(`https://app.surfc.app/upgrade?interval=${interval}&ref=pricing_fallback`)
         }
       })
     }
