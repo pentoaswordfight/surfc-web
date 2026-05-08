@@ -15,8 +15,9 @@ jobs:
   # over (2026-04-27); the Netlify previews that still build off the
   # dashboard config are dead weight.
   #
-  # TODO: replace with a Cloudflare Pages preview waiter. Tracking ticket
-  # to follow up SUR-254's cleanup steps 16–19.
+  # TODO: replace with a Cloudflare Pages preview waiter against the
+  # "Cloudflare Pages" check name (confirmed on PRs #12/#13). Tracking:
+  # SUR-254 cleanup steps 16–19.
 
   # ── Link check on the built site ────────────────────────────────────────────
   # Runs on every PR and every push to main. Blocking: a broken link is
