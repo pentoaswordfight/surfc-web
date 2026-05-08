@@ -1,0 +1,313 @@
+/* ============================================================
+ * pricing.css — surfc.app/pricing (SUR-86)
+ *
+ * Page-scoped styles for the Plans & Pricing surface. Reuses
+ * tokens.css and the existing .hiw-* / .surfc-card / .btn-*
+ * patterns from marketing.css. No new colours, fonts, or
+ * spacing units introduced — everything routes through tokens.
+ * ============================================================ */
+
+/* ── Hero ──────────────────────────────────────────────────── */
+
+.pricing-hero {
+  /* Tighter than the homepage hero — this is a sub-page header. */
+  padding: 56px 28px 40px;
+}
+
+.pricing-hero-copy {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pricing-hero-title {
+  /* Same family/colour as .hiw-title-v2 but a beat smaller — this hero
+     supports the cards below, it doesn't compete with them. */
+  font-size: clamp(38px, 5vw, 64px);
+  margin: 0 0 24px;
+}
+
+.pricing-hero-lede {
+  margin: 0 auto 28px;
+  max-width: 560px;
+}
+
+.pricing-hero-cta-row {
+  justify-content: center;
+}
+
+/* ── Tier section + segmented control ──────────────────────── */
+
+.pricing-tiers {
+  padding-top: 16px;
+  padding-bottom: 88px;
+}
+
+.pricing-toggle-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.pricing-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 4px;
+  box-shadow: var(--shadow-card);
+}
+
+.pricing-toggle-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: 600 14px/1.2 var(--font-base);
+  color: var(--color-text-secondary);
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.pricing-toggle-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.pricing-toggle-btn-active {
+  background: var(--color-accent);
+  color: var(--color-text-primary);
+}
+
+.pricing-toggle-btn-active:hover {
+  color: var(--color-text-primary);
+}
+
+.pricing-toggle-save {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(26, 20, 16, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Active state hides the chip's bg-tint inheritance so it stays legible
+   on the amber background. */
+.pricing-toggle-btn-active .pricing-toggle-save {
+  background: rgba(26, 20, 16, 0.14);
+  color: var(--color-text-primary);
+}
+
+/* ── Tier cards ────────────────────────────────────────────── */
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .pricing-grid { grid-template-columns: 1fr; gap: 16px; max-width: 480px; margin: 0 auto; }
+}
+
+.pricing-card {
+  /* `.surfc-card` from marketing.css already gives us bg + border + radius
+     + shadow. Here we just lay out the internal sections and pad it. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px 24px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.pricing-card-recommended {
+  /* The featured card lifts a beat — amber-tinted border + deeper shadow. */
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 28px rgba(200, 134, 10, 0.18);
+  /* Slight scale-up on desktop so the eye lands here first. */
+}
+
+@media (min-width: 961px) {
+  .pricing-card-recommended { transform: translateY(-8px); }
+}
+
+.pricing-card-future {
+  /* Disabled tier — mute everything. */
+  background: var(--color-bg-subtle);
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  box-shadow: none;
+}
+
+.pricing-card-future .pricing-card-tier,
+.pricing-card-future .pricing-card-tagline {
+  color: var(--color-text-secondary);
+}
+
+.pricing-card-badge {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  font: 600 11px/1 var(--font-base);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--color-accent);
+  color: var(--color-text-primary);
+  padding: 6px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-card);
+}
+
+.pricing-card-badge-future {
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: none;
+}
+
+.pricing-card-head {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pricing-card-future .pricing-card-head {
+  border-bottom-color: var(--color-border-strong);
+  border-bottom-style: dashed;
+}
+
+.pricing-card-tier {
+  font: 600 14px/1.2 var(--font-base);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+  margin: 0 0 12px;
+}
+
+.pricing-card-price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.pricing-card-amount {
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.pricing-card-amount-future {
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.pricing-card-cadence {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-weight: 500;
+}
+
+.pricing-card-savings {
+  margin: 4px 0 12px;
+  font-size: 13px;
+  color: var(--color-accent-dark);
+  font-weight: 500;
+}
+
+.pricing-card-tagline {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+/* ── Cadence-driven price visibility ───────────────────────── */
+
+/* Annual is the server-rendered default. Default state: show annual,
+   hide monthly. Toggling [data-cadence="monthly"] flips it. */
+.pricing-tiers[data-cadence="annual"]  [data-pricing-amount-monthly],
+.pricing-tiers[data-cadence="annual"]  [data-pricing-cadence-monthly] {
+  display: none;
+}
+.pricing-tiers[data-cadence="monthly"] [data-pricing-amount-annual],
+.pricing-tiers[data-cadence="monthly"] [data-pricing-cadence-annual],
+.pricing-tiers[data-cadence="monthly"] [data-pricing-savings] {
+  display: none;
+}
+
+/* ── Feature list ──────────────────────────────────────────── */
+
+.pricing-card-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.pricing-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.pricing-feature-strong {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.pricing-feature-check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent-dark);
+  background: var(--color-accent-light);
+  border-radius: 50%;
+  margin-top: 1px;
+}
+
+.pricing-feature-check-strong {
+  background: var(--color-accent);
+  color: var(--color-text-primary);
+  font-size: 11px;
+}
+
+/* ── Card CTA ──────────────────────────────────────────────── */
+
+.pricing-card-cta {
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+  width: 100%;
+  padding: 12px 18px;
+  font-size: 15px;
+  min-height: 48px;
+  margin-top: auto;
+}
