@@ -1,0 +1,203 @@
+---
+/**
+ * Pricing tiers — three cards (Free / Pro / Scholar) with a segmented
+ * monthly/annual control above. Annual is selected by default; the toggle
+ * updates `data-cadence` on the section root, which CSS uses to swap the
+ * Pro price between `$8.99/month` and `$79/year` in place.
+ *
+ * Pricing strings are hard-coded here. If Stripe price IDs change, this
+ * file changes too. Source of truth: SUR-235.
+ *
+ * The Pro CTA on each cadence is a plain `<a>` to `app.surfc.app/upgrade?…`
+ * so the no-JS path still works. When the marketing page detects a signed-in
+ * user (`pricing.astro` hydration), it rebinds the click handler to call
+ * `startCheckout` directly via the cross-domain access token.
+ */
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+
+interface FeatureBullet {
+  text: string
+  emphasis?: boolean
+}
+
+const FREE_FEATURES: FeatureBullet[] = [
+  { text: '50 managed AI calls / month' },
+  { text: 'Full Adler 102 Great Ideas canon' },
+  { text: '10 custom ideas' },
+  { text: 'Multi-device sync — up to 2 devices' },
+  { text: 'Cloud sync, offline-first' },
+  { text: 'Readwise · Kindle imports · JSON export' },
+  { text: '250 MB image storage' },
+]
+
+const PRO_FEATURES: FeatureBullet[] = [
+  { text: 'Everything in Free, plus:' },
+  { text: 'Unlimited managed AI calls', emphasis: true },
+  { text: 'Unlimited custom ideas', emphasis: true },
+  { text: 'Unlimited devices', emphasis: true },
+  { text: 'Re-discover ideas on saved notes', emphasis: true },
+  { text: '5 GB image storage', emphasis: true },
+]
+---
+
+<section
+  id="pricing-tiers"
+  class="hiw-section-v2 pricing-tiers"
+  data-cadence="annual"
+  data-pricing-tiers
+>
+  <div class="pricing-toggle-wrap">
+    <div class="pricing-toggle" role="tablist" aria-label="Billing cadence">
+      <button
+        type="button"
+        class="pricing-toggle-btn"
+        data-cadence-btn="monthly"
+        role="tab"
+        aria-selected="false"
+      >
+        Monthly
+      </button>
+      <button
+        type="button"
+        class="pricing-toggle-btn pricing-toggle-btn-active"
+        data-cadence-btn="annual"
+        role="tab"
+        aria-selected="true"
+      >
+        <span>Annual</span>
+        <span class="pricing-toggle-save">save 27%</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="pricing-grid">
+    <!-- ── Free ────────────────────────────────────────────── -->
+    <article class="surfc-card pricing-card">
+      <header class="pricing-card-head">
+        <h3 class="pricing-card-tier">Free</h3>
+        <p class="pricing-card-price">
+          <span class="pricing-card-amount">$0</span>
+          <span class="pricing-card-cadence">forever</span>
+        </p>
+        <p class="pricing-card-tagline">
+          Generous enough to build a real reading index.
+        </p>
+      </header>
+      <ul class="pricing-card-features">
+        {FREE_FEATURES.map((f) => (
+          <li class="pricing-feature">
+            <span class="pricing-feature-check" aria-hidden="true">✓</span>
+            <span>{f.text}</span>
+          </li>
+        ))}
+      </ul>
+      <a
+        href={appUrl}
+        class="btn btn-ghost pricing-card-cta"
+        data-cta="pricing_start_free"
+      >
+        Start free
+      </a>
+    </article>
+
+    <!-- ── Pro ─────────────────────────────────────────────── -->
+    <article class="surfc-card pricing-card pricing-card-recommended">
+      <span class="pricing-card-badge">Recommended</span>
+      <header class="pricing-card-head">
+        <h3 class="pricing-card-tier">Pro</h3>
+        <p class="pricing-card-price">
+          <span class="pricing-card-amount" data-pricing-amount-monthly>$8.99</span>
+          <span class="pricing-card-amount" data-pricing-amount-annual>$79</span>
+          <span class="pricing-card-cadence" data-pricing-cadence-monthly>/ month</span>
+          <span class="pricing-card-cadence" data-pricing-cadence-annual>/ year</span>
+        </p>
+        <p class="pricing-card-savings" data-pricing-savings>
+          That's $6.58 / month — save 27% vs monthly.
+        </p>
+        <p class="pricing-card-tagline">
+          Surfc gets smarter the more you read.
+        </p>
+      </header>
+      <ul class="pricing-card-features">
+        {PRO_FEATURES.map((f) => (
+          <li class={`pricing-feature ${f.emphasis ? 'pricing-feature-strong' : ''}`}>
+            {f.emphasis
+              ? <span class="pricing-feature-check pricing-feature-check-strong" aria-hidden="true">★</span>
+              : <span class="pricing-feature-check" aria-hidden="true">✓</span>
+            }
+            <span>{f.text}</span>
+          </li>
+        ))}
+      </ul>
+      <a
+        href={`${appUrl}/upgrade?interval=annual`}
+        class="btn btn-accent pricing-card-cta"
+        data-cta="pricing_get_pro_annual"
+        data-pro-cta
+        data-interval="annual"
+        data-pro-href-monthly={`${appUrl}/upgrade?interval=monthly`}
+        data-pro-href-annual={`${appUrl}/upgrade?interval=annual`}
+      >
+        <span data-pro-cta-label>Get Pro</span>
+      </a>
+    </article>
+
+    <!-- ── Scholar ─────────────────────────────────────────── -->
+    <article class="surfc-card pricing-card pricing-card-future" aria-disabled="true">
+      <span class="pricing-card-badge pricing-card-badge-future">Coming Later</span>
+      <header class="pricing-card-head">
+        <h3 class="pricing-card-tier">Scholar</h3>
+        <p class="pricing-card-price">
+          <span class="pricing-card-amount-future">A future tier</span>
+        </p>
+        <p class="pricing-card-tagline">
+          Where reading turns into writing. Synthesis, idea graphs, and prompts
+          grounded in everything you've ever marked up. Building deliberately
+          for a future season of Surfc.
+        </p>
+      </header>
+    </article>
+  </div>
+</section>
+
+<script is:inline>
+  // Cadence toggle. Pure DOM swap — no framework. Annual is server-rendered
+  // as the default; clicking Monthly flips data-cadence on the section root,
+  // which CSS uses to show/hide the right price + cadence labels. Also
+  // updates the Pro CTA href so deep-links carry the cadence into the app.
+  (() => {
+    const root = document.querySelector('[data-pricing-tiers]')
+    if (!root) return
+
+    const monthlyBtn = root.querySelector('[data-cadence-btn="monthly"]')
+    const annualBtn  = root.querySelector('[data-cadence-btn="annual"]')
+    const proCta     = root.querySelector('[data-pro-cta]')
+
+    function setCadence(cadence) {
+      root.setAttribute('data-cadence', cadence)
+      monthlyBtn?.classList.toggle('pricing-toggle-btn-active', cadence === 'monthly')
+      annualBtn?.classList.toggle('pricing-toggle-btn-active', cadence === 'annual')
+      monthlyBtn?.setAttribute('aria-selected', cadence === 'monthly' ? 'true' : 'false')
+      annualBtn?.setAttribute('aria-selected',  cadence === 'annual'  ? 'true' : 'false')
+
+      if (proCta) {
+        const hrefAttr = cadence === 'monthly' ? 'data-pro-href-monthly' : 'data-pro-href-annual'
+        const next = proCta.getAttribute(hrefAttr)
+        if (next) proCta.setAttribute('href', next)
+        proCta.setAttribute('data-interval', cadence)
+        proCta.setAttribute(
+          'data-cta',
+          cadence === 'monthly' ? 'pricing_get_pro_monthly' : 'pricing_get_pro_annual',
+        )
+      }
+
+      if (window.posthog) {
+        window.posthog.capture('pricing_cadence_selected', { cadence })
+      }
+    }
+
+    monthlyBtn?.addEventListener('click', () => setCadence('monthly'))
+    annualBtn?.addEventListener('click',  () => setCadence('annual'))
+  })()
+</script>

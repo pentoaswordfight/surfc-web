@@ -1,0 +1,53 @@
+---
+/**
+ * Pricing FAQ — two questions locked by Deji (SUR-86):
+ *   1. How do I cancel my subscription?
+ *   2. Are there discounts available for students?
+ *
+ * Reuses the same native `<details>` accordion + single-open enhancement
+ * script as `Faq.astro`. Different `data-faq` selector keeps the two FAQs
+ * scoped independently if both ever live on the same page.
+ */
+
+const FAQ_ITEMS = [
+  {
+    q: 'How do I cancel my subscription?',
+    a: 'Cancel any time from Settings → Billing inside the Surfc app. Cancelling stops the next renewal — you keep Pro through the end of the billing period you\'ve already paid for, plus a 30-day grace window after that. When you move back to Free, every note you\'ve captured and every idea you\'ve already tagged to it stays exactly where it is; you only lose the ability to run Re-discover on saved notes until you upgrade again.',
+  },
+  {
+    q: 'Are there discounts available for students?',
+    a: 'Not yet. The future Scholar tier will include student-friendly access; until then, Surfc Free covers the full reading-and-indexing loop for 50 managed AI calls per month, and the Pro annual plan saves 27% vs monthly.',
+  },
+]
+---
+
+<section class="hiw-section-v2" id="pricing-faq">
+  <div class="hiw-faq-wrap">
+    <p class="hiw-step-label">Common questions</p>
+    <h2 class="hiw-h2">Pricing FAQ</h2>
+    <div class="hiw-faq-list" data-pricing-faq>
+      {FAQ_ITEMS.map((item, i) => (
+        <details class="hiw-faq-item-v2" open={i === 0}>
+          <summary class="hiw-faq-q">
+            <span>{item.q}</span>
+            <span class="hiw-faq-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="hiw-faq-a">{item.a}</div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const faq = document.querySelector('[data-pricing-faq]')
+    if (!faq) return
+    const items = faq.querySelectorAll('details')
+    items.forEach((el) => {
+      el.addEventListener('toggle', () => {
+        if (el.open) items.forEach((other) => { if (other !== el) other.open = false })
+      })
+    })
+  })()
+</script>

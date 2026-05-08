@@ -1,0 +1,52 @@
+---
+/**
+ * Pricing hero — the lede band at the top of /pricing.
+ *
+ * The headline copy is locked (SUR-86):
+ *
+ *   Your Ideas, Indexed.
+ *   Your Thinking, Compounded.
+ *
+ * The two halves echo the homepage's `Your ideas. Indexed.` H1 and extend it
+ * with the Pro promise. The second half uses `.hiw-title-ink` so it picks up
+ * the warm-amber italic emphasis the homepage already establishes.
+ *
+ * The headline CTA renders as `Start free` for cold visitors and is swapped
+ * to `Upgrade to Pro` at hydration when the cross-domain auth cookie is
+ * present (see `pricing.astro` script). The static HTML always ships the
+ * cold variant so there is no flash-of-wrong-copy.
+ */
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+---
+
+<header class="hiw-hero-v2 pricing-hero">
+  <div class="pricing-hero-copy">
+    <p class="hiw-eyebrow-v2">Pricing</p>
+    <h1 class="hiw-title-v2 pricing-hero-title">
+      Your Ideas, Indexed.<br />
+      Your Thinking, <span class="hiw-title-ink">Compounded.</span>
+    </h1>
+    <p class="hiw-lede pricing-hero-lede">
+      Surfc Free is generous enough to build a real reading index.
+      Surfc Pro keeps that index alive as your reading evolves.
+    </p>
+    <div class="hiw-cta-row-v2 pricing-hero-cta-row">
+      <a
+        href={appUrl}
+        class="btn btn-accent hiw-cta-primary"
+        data-cta="pricing_hero_start_free"
+        data-pricing-hero-cta
+      >
+        <span data-pricing-cta-label>Start free</span>
+      </a>
+      <a
+        href="#pricing-tiers"
+        class="hiw-cta-secondary"
+        data-cta="pricing_hero_compare"
+      >
+        Compare plans
+      </a>
+    </div>
+  </div>
+</header>

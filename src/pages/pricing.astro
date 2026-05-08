@@ -1,0 +1,105 @@
+---
+/**
+ * /pricing — Plans & Pricing page (SUR-86).
+ *
+ * Static composition of:
+ *   - Nav (modified to include the Pricing link)
+ *   - PricingHero (hero band with headline + headline CTA)
+ *   - PricingTiers (segmented monthly/annual control + Free / Pro / Scholar)
+ *   - PricingFaq (two questions: cancel, student discounts)
+ *   - ClosingCta (reused unchanged)
+ *   - Footer
+ *
+ * The cold-visitor variant is shipped in the static HTML. The hydration
+ * script below reads the cross-domain access cookie issued by app.surfc.app
+ * and, when present, swaps the hero CTA copy and rebinds the Pro CTA to
+ * call `create-checkout-session` directly — saving the round-trip through
+ * `app.surfc.app/upgrade`. See the plan in
+ * .claude/plans/sur-86-sur-235-defines-the-fluttering-locket.md for the
+ * full architecture.
+ */
+
+import BaseLayout      from '../layouts/BaseLayout.astro'
+import Nav             from '../components/Nav.astro'
+import PricingHero     from '../components/PricingHero.astro'
+import PricingTiers    from '../components/PricingTiers.astro'
+import PricingFaq      from '../components/PricingFaq.astro'
+import ClosingCta      from '../components/ClosingCta.astro'
+import Footer          from '../components/Footer.astro'
+
+import '../styles/pricing.css'
+---
+
+<BaseLayout
+  title="Plans & Pricing — Surfc"
+  description="Surfc Free is generous enough to build a real reading index. Surfc Pro keeps it alive as your reading evolves. $8.99/month or $79/year — annual saves 27%."
+  ogImage="/og-pricing.jpg"
+  path="/pricing/"
+>
+  <Nav />
+  <main id="main">
+    <PricingHero />
+    <PricingTiers />
+    <PricingFaq />
+    <ClosingCta />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  // Auth-aware hydration. Runs once on DOMContentLoaded:
+  //   1. Read the `sb-surfc-access` cookie (set by app.surfc.app).
+  //   2. Tag PostHog with the page-view event including signed-in state +
+  //      ?ref= attribution from SUR-88/89.
+  //   3. If signed in, swap the hero CTA label to "Upgrade to Pro" and
+  //      rebind the Pro CTA click to call `create-checkout-session`
+  //      directly. On 401 (stale token), fall back to the redirect path.
+  import { readCrossDomainAccessToken } from '../lib/auth.ts'
+  import { startCheckout, StaleTokenError } from '../lib/checkout.ts'
+  import { posthog } from '../lib/posthog.ts'
+
+  const params   = new URLSearchParams(window.location.search)
+  const ref      = params.get('ref') ?? 'cold'
+  const token    = readCrossDomainAccessToken()
+  const signedIn = !!token
+
+  // Stripe redirects cancelled checkouts back here with ?canceled=1&interval=…
+  // (set in lib/checkout.ts). Fire a dedicated event so the funnel can
+  // distinguish "viewed pricing" from "viewed pricing after cancelling
+  // a Stripe session" — they are very different intent signals.
+  const canceled = params.get('canceled') === '1'
+  if (canceled) {
+    const canceledInterval = params.get('interval') === 'monthly' ? 'monthly' : 'annual'
+    posthog()?.capture('pricing_checkout_canceled', { interval: canceledInterval, ref })
+  }
+
+  if (signedIn) {
+    document.body.dataset.pricingVariant = 'signed-in'
+
+    const heroLabel = document.querySelector('[data-pricing-cta-label]')
+    if (heroLabel) heroLabel.textContent = 'Upgrade to Pro'
+
+    const proLabel = document.querySelector('[data-pro-cta-label]')
+    if (proLabel) proLabel.textContent = 'Upgrade to Pro'
+
+    const proCta = document.querySelector('[data-pro-cta]') as HTMLAnchorElement | null
+    if (proCta && token) {
+      proCta.addEventListener('click', async (event) => {
+        event.preventDefault()
+        const interval = proCta.getAttribute('data-interval') === 'monthly' ? 'monthly' : 'annual'
+        try {
+          posthog()?.capture('pricing_checkout_started', { interval, ref })
+          await startCheckout({ interval, token })
+        } catch (err) {
+          const reason = err instanceof StaleTokenError ? 'stale_token' : 'fetch_error'
+          posthog()?.capture('pricing_checkout_fallback', { interval, ref, reason })
+          // Fall back to the redirect path. The React app's /upgrade route
+          // is responsible for routing unauthenticated users to sign-in.
+          window.location.assign(`https://app.surfc.app/upgrade?interval=${interval}`)
+        }
+      })
+    }
+  }
+
+  posthog()?.capture('pricing_viewed', { ref, signed_in: signedIn })
+</script>
