@@ -1,8 +1,8 @@
 ---
 /**
  * Hero — the first screen. Porting as-is from LandingPage.jsx lines 153-197.
- * The "Sign in" CTA now resolves to the app subdomain; "Request invitation"
- * deep-links to /waitlist. This matches the plan's subdomain split.
+ * Both CTAs resolve to the app subdomain — primary is signup, secondary is
+ * sign-in. (Pre-SUR-365 the primary deep-linked to /waitlist.)
  */
 
 const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
@@ -43,15 +43,15 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
         think with.
       </p>
       <div class="hiw-cta-row-v2">
-        <a href="/waitlist" class="btn btn-accent hiw-cta-primary" data-cta="hero_request_invitation">
-          Request invitation
+        <a href={appUrl} class="btn btn-accent hiw-cta-primary" data-cta="hero_signup">
+          Sign up free
         </a>
         <a href={appUrl} class="hiw-cta-secondary" data-cta="hero_signin">
           Sign in
         </a>
       </div>
       <p class="hiw-cta-helper">
-        New to Surfc? <strong>Request access.</strong> Already invited?
+        New to Surfc? <strong>Create a free account.</strong> Already have an account?
         <strong> Sign in.</strong>
       </p>
     </div>

@@ -117,7 +117,7 @@ test.describe('hamburger menu behaviour', () => {
     await expect(menu.locator('a', { hasText: 'How it works' })).toBeVisible()
     await expect(menu.locator('a', { hasText: 'FAQ' })).toBeVisible()
     await expect(menu.locator('a', { hasText: 'Sign in' })).toBeVisible()
-    await expect(menu.locator('a', { hasText: 'Request invitation' })).toBeVisible()
+    await expect(menu.locator('a', { hasText: 'Sign up free' })).toBeVisible()
   })
 
   test('clicking toggle again closes the panel', async ({ page }) => {

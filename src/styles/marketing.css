@@ -3,8 +3,8 @@
  *
  * Ported from the app's src/styles.css (SUR-218). Contains only
  * the classes consumed by the Astro marketing site: landing
- * sections (.hiw-*, .lp-page-v2), the waitlist form (.wl-*,
- * .auth-*), chips/buttons/inputs, and supporting cards.
+ * sections (.hiw-*, .lp-page-v2), .auth-*, chips/buttons/inputs,
+ * and supporting cards.
  *
  * When SUR-219 lands, the app drops its copy of these rules and
  * this file becomes the sole source.
@@ -318,123 +318,6 @@ select.inp { cursor: pointer; }
   height: 7px;
   background: var(--color-accent);
 }
-
-/* ── Waitlist modal + screen (styles.css L2995-L3102) ─── */
-.wl-screen {
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-3);
-  background: var(--color-bg-primary);
-}
-
-.wl-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-modal);
-  padding: var(--space-4) var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.wl-heading {
-  font-size: var(--text-title-size);
-  font-weight: var(--text-title-weight);
-  color: var(--color-text-primary);
-  text-align: center;
-  margin-top: var(--space-1);
-}
-
-.wl-subhead {
-  font-size: var(--text-body-size);
-  color: var(--color-text-secondary);
-  text-align: center;
-  line-height: var(--text-body-height);
-  margin-bottom: var(--space-1);
-}
-
-.wl-textarea {
-  resize: vertical;
-  min-height: 76px;
-  font-family: var(--font-base);
-  font-size: var(--text-body-size);
-  line-height: var(--text-body-height);
-}
-
-/* Inline text-style link button — no background, no border */
-.wl-link-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: var(--font-base);
-  font-size: inherit;
-  color: var(--color-accent-text);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-  transition: color var(--transition-fast);
-}
-
-.wl-link-btn:hover {
-  color: var(--color-accent);
-}
-
-/* Confirm / duplicate modal overlay */
-.wl-modal-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  background: var(--color-bg-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-3);
-}
-/* Native [hidden] sets display:none, but the rule above is more specific
-   and would keep the scrim in the layout (covering the page and blocking
-   pointer events on the form below). Re-assert invisibility when the
-   attribute is set. */
-.wl-modal-scrim[hidden] {
-  display: none;
-}
-
-.wl-modal-card {
-  width: 100%;
-  max-width: 360px;
-  background: var(--color-bg-card);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-modal);
-  padding: var(--space-4) var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  text-align: center;
-}
-
-.wl-modal-title {
-  font-size: var(--text-title-size);
-  font-weight: var(--text-title-weight);
-  color: var(--color-text-primary);
-}
-
-.wl-modal-body {
-  font-size: var(--text-body-size);
-  color: var(--color-text-secondary);
-  line-height: var(--text-body-height);
-}
-
-.wl-modal-close {
-  margin-top: var(--space-1);
-  align-self: center;
-  min-width: 120px;
-  justify-content: center;
-}
-
 
 /* ── How-it-works / Landing (styles.css L3104-L4539) ──── */
 .hiw-page {

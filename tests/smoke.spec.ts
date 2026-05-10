@@ -7,8 +7,8 @@
  *     the 8px threshold (mirrors the React LandingPage.jsx behaviour).
  *   - The FAQ <details> accordion enforces single-open: opening one
  *     closes any previously-open sibling.
- *   - Every CTA pointing at the app shell or the waitlist resolves to
- *     the right URL.
+ *   - Every "Sign up free" / "Sign in" CTA resolves to app.surfc.app
+ *     (post-SUR-365: marketing no longer sends visitors to /waitlist).
  *
  * [SUR-218]
  */
@@ -22,7 +22,8 @@ test.describe('public pages respond 200 and render correctly', () => {
   // Astro route resolved to the right page.
   const pages: Array<{ path: string; title: RegExp }> = [
     { path: '/',                   title: /Surfc/i },
-    { path: '/waitlist/',          title: /waitlist/i },
+    // /waitlist/ now serves a noindex sunset page after SUR-365.
+    { path: '/waitlist/',          title: /open|sign up directly/i },
     { path: '/policies/privacy/',  title: /Privacy/i },
     { path: '/policies/terms/',    title: /Terms/i },
   ]
@@ -64,14 +65,14 @@ test('FAQ enforces single-open behaviour', async ({ page }) => {
   await expect(first).not.toHaveAttribute('open', /.*/)
 })
 
-test('app-shell CTAs point at app.surfc.app; waitlist CTAs point at /waitlist', async ({ page }) => {
+test('"Sign up free" and "Sign in" CTAs both point at app.surfc.app', async ({ page }) => {
   await page.goto('/')
 
-  // Every "Sign in" link in the nav / closing CTA hits the app shell.
+  // "Sign in" lives in the nav and closing-CTA section.
   const signIn = page.locator('a', { hasText: /^Sign in$/ }).first()
   await expect(signIn).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/?$/)
 
-  // Primary "Request invitation" CTA goes to the waitlist route.
-  const request = page.locator('a', { hasText: /Request invitation/i }).first()
-  await expect(request).toHaveAttribute('href', '/waitlist')
+  // "Sign up free" replaces the old "Request invitation" CTA (SUR-365).
+  const signUp = page.locator('a', { hasText: /Sign up free/i }).first()
+  await expect(signUp).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/?$/)
 })

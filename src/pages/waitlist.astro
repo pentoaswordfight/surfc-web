@@ -1,14 +1,45 @@
 ---
-import BaseLayout   from '../layouts/BaseLayout.astro'
-import WaitlistForm from '../components/WaitlistForm.astro'
-import Footer       from '../components/Footer.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Footer from '../components/Footer.astro'
+
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
 ---
 
 <BaseLayout
-  title="Join the Surfc waitlist"
-  description="Request early access to Surfc. Tell us how you plan to use it and we'll reach out when your spot is ready."
+  title="Surfc is open — sign up directly"
+  description="The Surfc waitlist is closed because we've opened up self-service signup. Create your account at app.surfc.app."
   path="/waitlist"
+  noindex
 >
-  <WaitlistForm />
+  <Fragment slot="head">
+    <meta http-equiv="refresh" content={`3; url=${appUrl}`} />
+  </Fragment>
+
+  <main class="hiw-waitlist-sunset">
+    <h1>We've opened up.</h1>
+    <p>
+      Surfc no longer needs a waitlist — you can sign up directly. Redirecting
+      you to <a href={appUrl}>app.surfc.app</a> in a moment.
+    </p>
+    <a href={appUrl} class="btn btn-accent" data-cta="waitlist_legacy_signup">
+      Sign up free
+    </a>
+  </main>
+
   <Footer />
 </BaseLayout>
+
+<style>
+  .hiw-waitlist-sunset {
+    max-width: 640px;
+    margin: 8rem auto;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+  .hiw-waitlist-sunset h1 {
+    margin-bottom: 1rem;
+  }
+  .hiw-waitlist-sunset p {
+    margin-bottom: 2rem;
+  }
+</style>

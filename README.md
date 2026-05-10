@@ -27,11 +27,11 @@ src/
 ├── layouts/BaseLayout.astro   — <head> + self-hosted fonts + Termly blocker + OG tags
 ├── components/
 │   ├── Nav.astro              — top nav; collapses to slide-down hamburger on mobile [SUR-228]
-│   ├── WaitlistForm.astro     — waitlist form, posts to Supabase Edge Function
 │   └── …                     — Hero, ClosingCta, Faq, etc.
 ├── pages/
 │   ├── index.astro            — landing (composes the section components)
-│   ├── waitlist.astro         — waitlist form page
+│   ├── waitlist.astro         — legacy waitlist URL; serves a noindex
+│   │                            sunset page that redirects to app.surfc.app [SUR-365]
 │   └── policies/
 │       ├── privacy.astro      — Termly embed, same data-id as legacy site
 │       └── terms.astro        — Termly embed
@@ -48,17 +48,13 @@ render-blocking network requests [SUR-227]. The packages (`@fontsource/eb-garamo
 add `<link rel="preconnect">` or `@import` calls pointing to Google Fonts — the CI
 Lighthouse check will flag the external font request as a performance regression.
 
-## Waitlist flow
+## Signup flow
 
-The form in `WaitlistForm.astro` POSTs JSON to the
-[`waitlist-signup` Supabase Edge Function](https://github.com/pentoaswordfight/surfc/tree/main/supabase/functions/waitlist-signup)
-defined in the main repo. No Supabase client runs here — the function
-performs server-side validation, honeypot filtering, and per-IP rate
-limiting before inserting into `waitlist_requests`.
-
-With JavaScript disabled the same `<form>` element falls back to a
-regular HTML POST against the Edge Function; the response is JSON but the
-browser will display it.
+Self-service signup landed in SUR-364 — marketing CTAs ("Sign up free")
+deep-link to `app.surfc.app`, which handles the Google OAuth and
+email-OTP signup paths directly. The legacy `/waitlist` route still
+resolves (noindex sunset page with a meta-refresh redirect) so old
+bookmarks and shares don't 404.
 
 ## Deploy
 
@@ -74,7 +70,7 @@ PRs run automated checks via GitHub Actions:
 | Check | Tool | What it catches |
 |---|---|---|
 | Lighthouse | `@lhci/cli` | Performance, a11y, best-practices regressions — **disabled**, pending CF Pages preview waiter (see `.github/workflows/quality.yml`) |
-| Playwright | `@playwright/test` | Waitlist form submit + modal flow (Termly blocked in fixture) |
+| Playwright | `@playwright/test` | Smoke + responsive + blog specs (Termly blocked in fixture) |
 | Link check | `lychee` | Broken internal and external links |
 
 Lighthouse is disabled pending a Cloudflare Pages preview waiter. The prior Netlify
@@ -89,3 +85,4 @@ regressions early.
 - [SUR-227](https://linear.app/surfc/issue/SUR-227) — Lighthouse performance + a11y fixes (self-hosted fonts, cache headers, WCAG contrast)
 - [SUR-228](https://linear.app/surfc/issue/SUR-228) — mobile hamburger nav
 - [SUR-254](https://linear.app/surfc/issue/SUR-254) — Netlify → Cloudflare Pages migration
+- [SUR-365](https://linear.app/surfc/issue/SUR-365) — replace "Request invitation" CTAs with self-service signup
