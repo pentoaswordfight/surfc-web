@@ -54,8 +54,9 @@ const robotsContent = robotsParts.join(', ')
 const canonical = new URL(path, Astro.site ?? 'https://surfc.app').toString()
 const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString()
 
-// PostHog — same project as the React app so we get landing → waitlist → sign-up
-// in one funnel. Token may be empty locally; the init guard below no-ops in that case.
+// PostHog — same project as the React app so we get the landing → app sign-up
+// funnel in one stream. Token may be empty locally; the init guard below
+// no-ops in that case.
 const posthogToken = import.meta.env.PUBLIC_POSTHOG_PROJECT_TOKEN ?? ''
 const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu.i.posthog.com'
 ---
@@ -100,7 +101,7 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
     <!-- Termly resource blocker (GDPR consent) — same resource ID as the app -->
     <script src="https://app.termly.io/resource-blocker/135b750f-a45d-4fbb-91c6-0f8e1c0b6b8d?autoBlock=on" is:inline></script>
 
-    <!-- PostHog — shares the React app's project so the landing → waitlist → sign-up
+    <!-- PostHog — shares the React app's project so the landing → app sign-up
          funnel lives in a single stream. Termly auto-blocks until consent. -->
     <script is:inline define:vars={{ posthogToken, posthogHost }}>
       if (posthogToken) {

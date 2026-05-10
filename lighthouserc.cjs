@@ -1,6 +1,6 @@
 /**
- * Lighthouse CI configuration — measures the four public marketing pages
- * against a Netlify deploy preview URL supplied by the workflow.
+ * Lighthouse CI configuration — measures the public marketing pages
+ * against a Cloudflare Pages deploy preview URL supplied by the workflow.
  *
  * Thresholds start as warnings so early runs publish scores without
  * blocking merges. Once we have a stable baseline (~3 PRs of data), the
@@ -15,7 +15,6 @@ module.exports = {
       // runs (`npx lhci autorun`) against `astro preview` on :4321.
       url: [
         'http://localhost:4321/',
-        'http://localhost:4321/waitlist',
         'http://localhost:4321/policies/privacy',
         'http://localhost:4321/policies/terms',
       ],

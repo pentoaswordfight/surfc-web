@@ -17,7 +17,14 @@ export default defineConfig({
   // in SUR-256 to keep an SSR option open, but the dist/{client,server}
   // split it forces broke the Pages publish-dir convention (and Lychee).
   // Re-add when SSR is actually needed.
-  integrations: [sitemap(), mdx()],
+  // /waitlist/ still serves a noindex friendly-redirect page for legacy
+  // bookmarks (SUR-365), but should not appear in the sitemap. Match the
+  // exact path so a future blog post with "waitlist" in its slug doesn't
+  // get silently excluded.
+  integrations: [
+    sitemap({ filter: (page) => !/\/waitlist\/?$/.test(page) }),
+    mdx(),
+  ],
   markdown: {
     remarkPlugins: [remarkReadingTime],
     rehypePlugins: [

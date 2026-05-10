@@ -9,12 +9,11 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
     <p class="hiw-step-label hiw-step-center">Take the next step</p>
     <h2 class="hiw-h2 hiw-h2-center">Build your reading index</h2>
     <p class="hiw-lede-small hiw-center">
-      Surfc is rolling out through a waitlist. Access is approval-based —
-      we're onboarding readers gradually.
+      Surfc is free to use. Pro is for heavier readers when you're ready.
     </p>
     <div class="hiw-cta-row-v2 hiw-cta-center">
-      <a href="/waitlist" class="btn btn-accent hiw-cta-primary" data-cta="closing_request_invitation">
-        Request invitation
+      <a href={appUrl} class="btn btn-accent hiw-cta-primary" data-cta="closing_signup">
+        Sign up free
       </a>
       <a href={appUrl} class="hiw-cta-secondary" data-cta="closing_signin">
         Sign in
