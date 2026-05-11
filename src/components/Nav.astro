@@ -10,7 +10,7 @@
  * Port source: surfc/src/components/LandingPage.jsx lines 137-150.
  */
 
-const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+import { appUrl, signupUrl } from '../lib/appUrl'
 ---
 
 <nav class="hiw-nav" aria-label="Primary" data-nav>
@@ -46,7 +46,7 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
       <a href="/pricing/" class="hiw-nav-link" data-cta="nav_pricing">Pricing</a>
       <a href="/#faq" class="hiw-nav-link">FAQ</a>
       <a href={appUrl} class="hiw-nav-signin" data-cta="nav_signin">Sign in</a>
-      <a href={appUrl} class="btn btn-accent hiw-nav-cta" data-cta="nav_signup">
+      <a href={signupUrl()} class="btn btn-accent hiw-nav-cta" data-cta="nav_signup">
         Sign up free
       </a>
     </div>
