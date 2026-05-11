@@ -67,6 +67,47 @@ test('FAQ enforces single-open behaviour', async ({ page }) => {
   await expect(first).not.toHaveAttribute('open', /.*/)
 })
 
+test('signup CTAs emit both app_cta_clicked and marketing_signup_clicked (SUR-367)', async ({ page }) => {
+  await page.goto('/')
+
+  // BaseLayout's inline PostHog snippet replaces `window.posthog` with the
+  // SDK's own queue stub at load time, so a pre-navigation addInitScript
+  // wouldn't survive — we swap in our recorder *after* the page has booted.
+  // The BaseLayout click listener reads `window.posthog.capture` lazily at
+  // click time, so this re-binding is honoured. We also short-circuit the
+  // anchor's default navigation; otherwise the page unloads to app.surfc.app
+  // before we can read the recorded captures back.
+  await page.evaluate(() => {
+    const captures: Array<[string, Record<string, unknown>]> = []
+    ;(window as any).__captures = captures
+    if (!(window as any).posthog) (window as any).posthog = {}
+    ;(window as any).posthog.capture = (name: string, props: Record<string, unknown>) => {
+      captures.push([name, props])
+    }
+    document.addEventListener(
+      'click',
+      (e) => {
+        const a = (e.target as HTMLElement | null)?.closest?.('a[data-cta]') as HTMLAnchorElement | null
+        if (a) e.preventDefault()
+      },
+      false,
+    )
+  })
+
+  // hero_signup is rendered above the fold on every viewport — nav_signup is
+  // hidden behind the hamburger on mobile, so we'd need a menu-open dance.
+  const heroSignup = page.locator('[data-cta="hero_signup"]').first()
+  await heroSignup.click()
+
+  const captures = await page.evaluate(() => (window as any).__captures as Array<[string, Record<string, unknown>]>)
+  const names = captures.map(([n]) => n)
+  expect(names).toContain('app_cta_clicked')
+  expect(names).toContain('marketing_signup_clicked')
+
+  const signupEvent = captures.find(([n]) => n === 'marketing_signup_clicked')!
+  expect(signupEvent[1]).toEqual({ cta: 'hero_signup' })
+})
+
 test('"Sign in" CTAs point at bare app.surfc.app, "Sign up free" CTAs deep-link to /signin?intent=signup', async ({ page }) => {
   await page.goto('/')
 

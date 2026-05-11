@@ -112,11 +112,18 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
           session_recording: { maskAllInputs: true },
         });
         // Global CTA-click attribution. Fires on capture phase so the event is
-        // queued before the browser navigates away.
+        // queued before the browser navigates away. SUR-367 adds an additive
+        // `marketing_signup_clicked` capture for the three signup CTAs so the
+        // new conversion funnel anchors on a step-1 event without disturbing
+        // any existing dashboards built on `app_cta_clicked`.
+        var SIGNUP_CTAS = { nav_signup: 1, hero_signup: 1, closing_signup: 1 };
         document.addEventListener('click', function (event) {
           var target = event.target && event.target.closest ? event.target.closest('[data-cta]') : null;
-          if (target && window.posthog) {
-            window.posthog.capture('app_cta_clicked', { cta: target.getAttribute('data-cta') });
+          if (!target || !window.posthog) return;
+          var cta = target.getAttribute('data-cta');
+          window.posthog.capture('app_cta_clicked', { cta: cta });
+          if (Object.prototype.hasOwnProperty.call(SIGNUP_CTAS, cta)) {
+            window.posthog.capture('marketing_signup_clicked', { cta: cta });
           }
         }, true);
       }
