@@ -113,10 +113,23 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
         });
         // Global CTA-click attribution. Fires on capture phase so the event is
         // queued before the browser navigates away. SUR-367 adds an additive
-        // `marketing_signup_clicked` capture for the three signup CTAs so the
-        // new conversion funnel anchors on a step-1 event without disturbing
-        // any existing dashboards built on `app_cta_clicked`.
-        var SIGNUP_CTAS = { nav_signup: 1, hero_signup: 1, closing_signup: 1 };
+        // `marketing_signup_clicked` capture for every signup-intent CTA so
+        // the new conversion funnel anchors on a single step-1 event without
+        // disturbing existing dashboards built on `app_cta_clicked`.
+        //
+        // Pricing-page CTAs are included: `pricing_start_free` and
+        // `pricing_hero_start_free` are direct signup intents, and
+        // `pricing_get_pro_annual` requires account creation before
+        // checkout (cold visitors hit UpgradeAuthGate first), so it
+        // anchors the same signup funnel.
+        var SIGNUP_CTAS = {
+          nav_signup:              1,
+          hero_signup:             1,
+          closing_signup:          1,
+          pricing_start_free:      1,
+          pricing_hero_start_free: 1,
+          pricing_get_pro_annual:  1,
+        };
         document.addEventListener('click', function (event) {
           var target = event.target && event.target.closest ? event.target.closest('[data-cta]') : null;
           if (!target || !window.posthog) return;
