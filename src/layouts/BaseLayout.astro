@@ -127,5 +127,12 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
   </head>
   <body class={bodyClass} {...Object.fromEntries(Object.entries(bodyData).map(([k, v]) => [`data-${k}`, String(v)]))}>
     <slot />
+
+    <!-- SUR-370 — Forward UTM / click-ID params from the marketing page's
+         URL onto cross-domain `app.surfc.app` CTAs so AuthScreen's
+         `auth_landing_viewed` event carries campaign attribution. -->
+    <script>
+      import '../scripts/preserveUtm'
+    </script>
   </body>
 </html>

@@ -1,8 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Footer from '../components/Footer.astro'
-
-const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+import { appUrl, signupUrl } from '../lib/appUrl'
 ---
 
 <BaseLayout
@@ -21,7 +20,7 @@ const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
       Surfc no longer needs a waitlist — you can sign up directly. Redirecting
       you to <a href={appUrl}>app.surfc.app</a> in a moment.
     </p>
-    <a href={appUrl} class="btn btn-accent" data-cta="waitlist_legacy_signup">
+    <a href={signupUrl()} class="btn btn-accent" data-cta="waitlist_legacy_signup">
       Sign up free
     </a>
   </main>
