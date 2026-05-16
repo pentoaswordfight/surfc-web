@@ -306,6 +306,46 @@ const articleSchema = {
     border-radius: var(--radius-card);
   }
 
+  /* Tables: minimal — header rule + last-row rule only, zebra fill in
+     place of inter-row borders. Tokens only, per the "no hardcoded
+     colours" rule above. The 720px prose column can be narrower than a
+     wide table on mobile, so the table scrolls within its own track
+     rather than forcing horizontal page scroll. */
+  .prose table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.95em;
+    line-height: 1.5;
+  }
+
+  .prose thead th {
+    text-align: left;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    padding: var(--space-2);
+    border: 0;
+    border-bottom: 2px solid var(--color-border-strong);
+  }
+
+  .prose tbody td {
+    padding: var(--space-2);
+    border: 0;
+    color: var(--color-text-primary);
+    vertical-align: top;
+  }
+
+  /* Zebra instead of row borders. Even rows shade so the first data row
+     sits clean against the header rule. */
+  .prose tbody tr:nth-child(even) {
+    background: var(--color-bg-subtle);
+  }
+
+  .prose tbody tr:last-child td {
+    border-bottom: 2px solid var(--color-border-strong);
+  }
+
   /* rehype-autolink-headings injects <a class="anchor"> after each heading. */
   .prose .anchor {
     margin-left: var(--space-1);
