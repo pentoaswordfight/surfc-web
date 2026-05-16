@@ -1,0 +1,76 @@
+---
+title: Spine vs Surface
+description: A path-typed alternative to Compound Engineering for solo founders
+pubDate: 2026-05-15
+author: Deji Dipeolu
+tags: ['founder-notes', 'solo-builder', 'claude-code','compound-engineering','gated-engineering', 'conducted-engineering', 'building-in-public']
+  
+draft: false
+---
+> "For the simplicity on this side of complexity, I wouldn't give you a fig. But for the simplicity on the other side of complexity, for that I would give you anything I have"
+- Oliver Wendell Holmes Jr.
+
+A couple of months ago, I read about [Every's Compound Engineering Philosophy ](https://every.to/guides/compound-engineering) and it was impressive. A well-thought-out approach that optimises for agentic throughput. Each unit of work makes the next easier because learnings collapse into reusable substrate (CLAUDE.md, personas, solution docs, worktrees). So why did the thought of adopting the philosophy fill me with silent dread? In asking this question, I took some time to evaluate my own process of building with agents - where was it strong? where were there gaps? what would I adopt from Compound Engineering  and what was it to which my gut responded with a hard no.
+
+A bit of context before I get into it. I have been building for nearly two decades in highly regulated industries. As a business analyst, architect and product owner, documentation and governance are a foundation that I have successfully built my career on. I am the guy who sometimes builds prototypes so detailed and high-fidelity, the engineers simply have to plug in the backend and put it through the deployment pipelines. I was never going to be comfortable handing coding agents all the keys to the kingdom, no matter how many reviews they were doing.
+
+What that meant in practise is a structured and gated approach that I'm calling "Gated-Conducted Engineering". Honestly I really wanted to call it Conducted Engineering but then it would have the same acronym as Compound Engineering (hereafter CE) and that wouldn't work. So Gated-Conducted Engineering it is. GCE if you're nasty. This approach suits me as a solo founder because, although it is a little slower to market, it increases the likelihood that the product I put out is high quality and thoughtfully created.
+
+So back to the dread. Let me unpack it. 
+CE's loop is elegant: Plan - Work - Review - Compound. Each cycle deposits something that makes the next cycle faster. On a mature codebase with bounded paths, this is genuinely powerful. I can't fault the math.
+The problem is what "review" means when the blast radius is unbounded. When I'm shipping a database migration, a change to the encryption keychain or a prompt that touches every existing user's tagged archive, "reviewed by three personas" is plausible, but not verified, assurance. If a security-persona approves a migration, all I can say for certain is that it has read the diff. It hasn't run it against production shaped data, because it can't. The same goes for a reviewer-persona that signs off on a prompt change. It can't tell me whether the existing idea tags across my user base will hold under the new rubric. That requires evals against real artefacts. That requires me.
+
+There is an asymmetry here that my read of CE doesn't account for. For a UI change (tweaking copy or layout) the blast radius is bounded and recovery is cheap. For a spine change (encryption, payments, prompts or anything touching the database) the blast radius is unbounded and recovery may be impossible. A leaked private key can't be unleaked. CE treats both as the same shape of problem with the same review cadence. Gut instinct was no, and I had to sit with it for a while before I could articulate why: compounding can also be negative - I've had credit cards. A great review loop locked onto a half-discovered product just locks in the wrong shape faster.
+
+#### What is GCE?
+GCE (Gated/Conducted Engineering) is an agent-collaborative engineering approach that optimises for founder-conducted quality. A human is  on the podium, agents are sections and gates are explicit cues at every junction where being wrong is expensive. Surfc is a production-grade LLM app with an E2EE keychain, paid tiers and privacy at its core. There are many places where being wrong can be very expensive -for me, or for users. 
+
+In practice, GCE holds 3 core tenets.
+
+The first is **pressure-testing before code**. This behaviour directly inherits from hours and days spent brainstorming (arguing?) with engineers. This is a practise of humility, the implicit appreciation that we were unlikely to get things right the first time. So before any agent writes a line of code on a non-trivial change, I make it argue with the plan. Argue. Not review. What assumptions are likely to break things if we get them wrong? The plan looks good on paper, but is there a version that corrupts production state? This approach has saved me a great deal of pain and rework. I cannot find a clean analogue for this in CE. CE plans, then works. GCE plans, fights the plan and only then works. Might cost me a half hour and save me a nightmare.
+
+The second tenet has **Linear as the register**. Nothing gets built without a ticket (user story, why it matters, acceptance criteria, what's out of scope - and for anything that touches the spine, technical notes and explicit decision gates). Typical product documentation. I write the tickets and the agent's first job on any task is to read it. This sounds like bureaucracy. It is. It stops what we in the industry call "scope creep". If it ain't written, it ain't done.
+
+The third tenet rhymes with scope and it is **boundaries**. I work with bounded subagents. CE compounds personas, they accumulate substrate, develop reusable identity, get sharper over time. GCE briefs subagents like contractors: explicit scope, defined deliverable, report back when done and then the contract ends. I stand by this one. Something that has unsettled me a bit working with agents over a long period is that they get more and more opinionated over time. Not really a problem until a subagent that did good work on an encryption refactor carries that implicit authority into the next billing change. I keep my agents young grasshoppers - waxing on and waxing off.
+
+There's one final rule I have that's less framework, more personal paranoia: agents don't have database permissions. Ever. They can read schemas and they can write migrations as files. They can propose changes. They absolutely cannot touch production data directly. Every data migration is run by me. This isn't an elegant approach and it's not necessarily one I recommend for everyone. It doesn't compound and it doesn't scale, but it means the worst thing an agent can do to my users' data is suggest something stupid that I choose not to do.  Same goes for prod API keys, anything touching payments. Here, I am not the human in the loop. I am the entire frickin' knot.
+
+#### So who wins? CE or GCE? Spoiler alert - it depends
+
+At the top of this post, I called CE impressive. I meant it. Then I spent that last 5 minutes defending what I refuse to delegate. So in this mea culpa, I'm going to give CE a fair hearing. The truth is that on most of the work involved in building Surfc, CE is faster and probably just as safe. I've been quietly stealing from it for weeks. The rub - and the whole point of this post - is knowing where to twist and where to stick. Where do I hold the line? I put CE and GCE in the ring and here's how it unravels round by round:
+
+| Dimension                         | Winner                 | Why                                                                             |
+| --------------------------------- | ---------------------- | ------------------------------------------------------------------------------- |
+| Throughput on mature paths        | **CE**                 | Substrate compounds; each cycle is cheaper than the last.                       |
+| Quality on high-stakes paths      | **GCE**                | Verified gates beat plausible review when "wrong" is unbounded.                 |
+| Cost (tokens, dollars)            | **GCE**                | Targeted runs; no parallel review-persona overhead per task.                    |
+| Cognitive load per feature        | **CE** (after warm-up) | Once substrate is built, you don't have to stay hot on every change.            |
+| Recoverability when AI goes wrong | **GCE**                | Hard floors mean the worst case is "agent suggests something stupid."           |
+| Founder identity                  | **GCE**                | Staying in the work keeps your own codebase legible to you six months from now. |
+#### Failure modes
+Both have genuine failure modes. CE's is velocity into a wall. The loop runs faster than the human checking it. If a confident agent ships a plausible migration and prod drifts, that is the system working exactly as designed. That it wreaks havoc on your system and potentially your bottom line is by the by.
+GCE's failure mode is me. The founder. Bottleneck. Development happens only as quickly as I can verify it. If I'm sick, playing with my kid, or running errands, shipping slows. It's real pain that I carry and envy when a CE team ships 3 features in the time it took me to review a PR. 
+
+But which failure mode is preferable? It's the one that costs you less. And that depends on what you're building and where you are. I'm still working out the shape of Surfc - and with paid tiers, end-to-end encryption and built on LLM APIs - bottlenecked beats brittle.
+
+With that said, no one said you had to choose.  Not all code is created equal. Spine and surface are different problems. Different stakes deserve different gates.
+
+#### Spine and Surface
+
+The table below is my reference point whenever I'm looking at a change. The spine is anything load-bearing (parts of the codebase where being wrong could be catastrophic). Everything else is the surface. Being wrong on the surface is annoying. Maybe embarrassing, but it's cheap. This is what the split looks like for Surfc:
+
+| Workstream                                                | Pattern            | Why                                                       |
+| --------------------------------------------------------- | ------------------ | --------------------------------------------------------- |
+| Marketing site, blog posts (like this one), help articles | CE                 | Cheap to fix, cheap to be wrong                           |
+| Customer-facing UI, capture flows                         | CE-leaning         | Bounded blast radius; fast iteration earns its keep       |
+| Server-side AI proxy, anything touching user payloads     | GCE                | Privacy floor; a leak is product-ending                   |
+| Auth, encryption, key handling                            | GCE                | Trust violation isn't survivable                          |
+| Database migrations                                       | GCE                | State corruption is potentially irreversible              |
+| Billing, payments, Stripe integration                     | GCE                | Money, churn, and compliance in one change                |
+| Prompts that affect existing user data                    | GCE with eval gate | Regressions compound silently across every user's archive |
+The last row is the one CE doesn't have a clean answer for. A prompt regression won't crash anything. It'll just quietly change the meaning of every classification you've ever made.
+The key here is that I'm slow where slowness is vital. CE where throughput matters and being wrong is cheap. I sleep better with GCE on the spine. I'm not dogmatic about either. Each earns its place in the workflow.
+
+I check against that table whenever I'm about to hand work to an agent. It isn't quite a framework, it's just what I do. You may do something different. If you do, I'd love to hear it.
+
+P.s. (*Linear isn't paying me for this post*)
