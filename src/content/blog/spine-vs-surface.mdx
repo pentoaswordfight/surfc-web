@@ -68,6 +68,8 @@ The table below is my reference point whenever I'm looking at a change. The spin
 | Database migrations                                       | GCE                | State corruption is potentially irreversible              |
 | Billing, payments, Stripe integration                     | GCE                | Money, churn, and compliance in one change                |
 | Prompts that affect existing user data                    | GCE with eval gate | Regressions compound silently across every user's archive |
+
+
 The last row is the one CE doesn't have a clean answer for. A prompt regression won't crash anything. It'll just quietly change the meaning of every classification you've ever made.
 The key here is that I'm slow where slowness is vital. CE where throughput matters and being wrong is cheap. I sleep better with GCE on the spine. I'm not dogmatic about either. Each earns its place in the workflow.
 
