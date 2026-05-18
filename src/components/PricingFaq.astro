@@ -7,16 +7,20 @@
  * Reuses the same native `<details>` accordion + single-open enhancement
  * script as `Faq.astro`. Different `data-faq` selector keeps the two FAQs
  * scoped independently if both ever live on the same page.
+ *
+ * Tier display names come from `lib/tiers.ts` (SUR-374).
  */
+
+import { TIER_NAMES } from '../lib/tiers'
 
 const FAQ_ITEMS = [
   {
     q: 'How do I cancel my subscription?',
-    a: 'Cancel any time from Settings → Billing inside the Surfc app. Cancelling stops the next renewal — you keep Pro through the end of the billing period you\'ve already paid for, plus a 30-day grace window after that. When you move back to Free, every note you\'ve captured and every idea you\'ve already tagged to it stays exactly where it is; you only lose the ability to run Re-discover on saved notes until you upgrade again.',
+    a: `Cancel any time from Settings → Billing inside the Surfc app. Cancelling stops the next renewal — you keep ${TIER_NAMES.pro} through the end of the billing period you've already paid for, plus a 30-day grace window after that. When you move back to ${TIER_NAMES.free}, every note you've captured and every idea you've already tagged to it stays exactly where it is; you only lose the ability to run Re-discover on saved notes until you upgrade again.`,
   },
   {
     q: 'Are there discounts available for students?',
-    a: 'Not yet. The future Scholar tier will include student-friendly access; until then, Surfc Free covers the full reading-and-indexing loop for 50 managed AI calls per month, and the Pro annual plan saves 27% vs monthly.',
+    a: `Not yet. The future ${TIER_NAMES.scholar} tier will include student-friendly access; until then, Surfc ${TIER_NAMES.free} covers the full reading-and-indexing loop for 50 managed AI calls per month, and the ${TIER_NAMES.pro} annual plan saves 27% vs monthly.`,
   },
 ]
 ---

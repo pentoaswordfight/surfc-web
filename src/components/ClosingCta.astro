@@ -2,6 +2,7 @@
 // Port source: surfc/src/components/LandingPage.jsx lines 389-406.
 
 import { appUrl, signupUrl } from '../lib/appUrl'
+import { TIER_NAMES } from '../lib/tiers'
 ---
 
 <section class="hiw-closing-v2">
@@ -9,7 +10,7 @@ import { appUrl, signupUrl } from '../lib/appUrl'
     <p class="hiw-step-label hiw-step-center">Take the next step</p>
     <h2 class="hiw-h2 hiw-h2-center">Build your reading index</h2>
     <p class="hiw-lede-small hiw-center">
-      Surfc is free to use. Pro is for heavier readers when you're ready.
+      Surfc is free to use. {TIER_NAMES.pro} is for heavier readers when you're ready.
     </p>
     <div class="hiw-cta-row-v2 hiw-cta-center">
       <a href={signupUrl()} class="btn btn-accent hiw-cta-primary" data-cta="closing_signup">
