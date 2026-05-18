@@ -1,18 +1,25 @@
 ---
 /**
- * Pricing tiers — three cards (Free / Pro / Scholar) with a segmented
- * monthly/annual control above. Annual is selected by default; the toggle
- * updates `data-cadence` on the section root, which CSS uses to swap the
- * Pro price between `$8.99/month` and `$79/year` in place.
+ * Pricing tiers — three cards (Reader / Annotator / Scholar) with a
+ * segmented monthly/annual control above. Annual is selected by default;
+ * the toggle updates `data-cadence` on the section root, which CSS uses to
+ * swap the Annotator price between `$8.99/month` and `$79/year` in place.
+ *
+ * Tier *display names* come from `lib/tiers.ts` (SUR-374). The canonical
+ * identifiers stay `free`/`pro` — the `FREE_FEATURES` / `PRO_FEATURES`
+ * constants and the `data-cta` strings below are deliberately not renamed.
  *
  * Pricing strings are hard-coded here. If Stripe price IDs change, this
  * file changes too. Source of truth: SUR-235.
  *
- * The Pro CTA on each cadence is a plain `<a>` to `app.surfc.app/upgrade?…`
- * so the no-JS path still works. When the marketing page detects a signed-in
- * user (`pricing.astro` hydration), it rebinds the click handler to call
- * `startCheckout` directly via the cross-domain access token.
+ * The Annotator CTA on each cadence is a plain `<a>` to
+ * `app.surfc.app/upgrade?…` so the no-JS path still works. When the
+ * marketing page detects a signed-in user (`pricing.astro` hydration), it
+ * rebinds the click handler to call `startCheckout` directly via the
+ * cross-domain access token.
  */
+
+import { TIER_NAMES } from '../lib/tiers'
 
 const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
 
@@ -32,7 +39,7 @@ const FREE_FEATURES: FeatureBullet[] = [
 ]
 
 const PRO_FEATURES: FeatureBullet[] = [
-  { text: 'Everything in Free, plus:' },
+  { text: `Everything in ${TIER_NAMES.free}, plus:` },
   { text: 'Unlimited managed AI calls', emphasis: true },
   { text: 'Unlimited custom ideas', emphasis: true },
   { text: 'Unlimited devices', emphasis: true },
@@ -72,10 +79,10 @@ const PRO_FEATURES: FeatureBullet[] = [
   </div>
 
   <div class="pricing-grid">
-    <!-- ── Free ────────────────────────────────────────────── -->
+    <!-- ── Reader (free) ───────────────────────────────────── -->
     <article class="surfc-card pricing-card">
       <header class="pricing-card-head">
-        <h3 class="pricing-card-tier">Free</h3>
+        <h3 class="pricing-card-tier">{TIER_NAMES.free}</h3>
         <p class="pricing-card-price">
           <span class="pricing-card-amount">$0</span>
           <span class="pricing-card-cadence">forever</span>
@@ -101,11 +108,11 @@ const PRO_FEATURES: FeatureBullet[] = [
       </a>
     </article>
 
-    <!-- ── Pro ─────────────────────────────────────────────── -->
+    <!-- ── Annotator (pro) ─────────────────────────────────── -->
     <article class="surfc-card pricing-card pricing-card-recommended">
       <span class="pricing-card-badge">Recommended</span>
       <header class="pricing-card-head">
-        <h3 class="pricing-card-tier">Pro</h3>
+        <h3 class="pricing-card-tier">{TIER_NAMES.pro}</h3>
         <p class="pricing-card-price">
           <span class="pricing-card-amount" data-pricing-amount-monthly>$8.99</span>
           <span class="pricing-card-amount" data-pricing-amount-annual>$79</span>
@@ -139,7 +146,7 @@ const PRO_FEATURES: FeatureBullet[] = [
         data-pro-href-monthly={`${appUrl}/upgrade?interval=monthly&ref=pricing`}
         data-pro-href-annual={`${appUrl}/upgrade?interval=annual&ref=pricing`}
       >
-        <span data-pro-cta-label>Get Pro</span>
+        <span data-pro-cta-label>Get {TIER_NAMES.pro}</span>
       </a>
     </article>
 
@@ -147,7 +154,7 @@ const PRO_FEATURES: FeatureBullet[] = [
     <article class="surfc-card pricing-card pricing-card-future" aria-disabled="true">
       <span class="pricing-card-badge pricing-card-badge-future">Coming Later</span>
       <header class="pricing-card-head">
-        <h3 class="pricing-card-tier">Scholar</h3>
+        <h3 class="pricing-card-tier">{TIER_NAMES.scholar}</h3>
         <p class="pricing-card-price">
           <span class="pricing-card-amount-future">A future tier</span>
         </p>
@@ -165,7 +172,8 @@ const PRO_FEATURES: FeatureBullet[] = [
   // Cadence toggle. Pure DOM swap — no framework. Annual is server-rendered
   // as the default; clicking Monthly flips data-cadence on the section root,
   // which CSS uses to show/hide the right price + cadence labels. Also
-  // updates the Pro CTA href so deep-links carry the cadence into the app.
+  // updates the Annotator CTA href so deep-links carry the cadence into the
+  // app. (The `data-cta` value stays `pricing_get_pro_*` — funnel contract.)
   (() => {
     const root = document.querySelector('[data-pricing-tiers]')
     if (!root) return
