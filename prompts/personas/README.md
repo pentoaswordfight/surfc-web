@@ -67,9 +67,13 @@ These compose into the CE gate per `GATING.md` §4.
 The three reusable personas were adapted (not copied verbatim): the
 `surfc/` originals carry React/PWA/crypto/Supabase context that is
 actively wrong for a static Astro site. The shared parts — the
-report shape, the public vocabulary table, and the
-`'free' | 'pro'` → Reader/Annotator/Syntopist tier-name landmine — are
-preserved. Each adapted file notes its provenance at the top.
+report shape, the public vocabulary table, and the tier-name landmine —
+are preserved. The landmine itself moved on with SUR-374: the code
+identifiers stay `'free' | 'pro'` (entitlements SSoT, unchanged), while
+**Reader** and **Annotator** are now the **live** public display names
+and only **Scholar** remains aspirational (the "Coming Later" card) —
+so the blocker is now claiming **Scholar** as shipped, not naming
+Reader/Annotator. Each adapted file notes its provenance at the top.
 
 Not applicable here (live only in `surfc/`): `crypto-reviewer`,
 `migration-reviewer`, `billing-reviewer`, `prompt-regression-reviewer`,
@@ -143,4 +147,6 @@ review reports so future-you knows which version was applied.
 
 ---
 
-*Last updated: 2026-05-15 (SUR-422 per-repo grounding pass).*
+*Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
+rename to Scholar; Reader/Annotator now live). Originally 2026-05-15
+(SUR-422 per-repo grounding pass).*

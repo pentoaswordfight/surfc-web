@@ -35,10 +35,13 @@ product*, not prose you'd phrase differently.
   Supabase Anthropic proxy); a blog post that conflates them, or claims
   the proxy never sees content when managed mode forwards user-chosen
   content, is wrong.
-- Tier shape is `'free' | 'pro'` (entitlements SSoT in `surfc/`).
-  Reader/Annotator/Syntopist are aspirational and unlanded — a blog post
-  describing them as shipped features is a BLOCKER (and overlaps
-  `pricing-claim-reviewer` / `naming-reviewer`).
+- Tier code identifiers are `'free' | 'pro'` (entitlements SSoT in
+  `surfc/`, unchanged). **Reader** and **Annotator** are the **live**
+  public tier names as of SUR-374 — a blog post using them is correct,
+  not a blocker. **Scholar** is still aspirational / unlanded (the
+  "Coming Later" card); a blog post describing **Scholar** as a shipped
+  feature is a BLOCKER (overlaps `pricing-claim-reviewer` /
+  `naming-reviewer`).
 - Naming history: "Syntopicon" was a dropped early working name; Surfc
   does not derive from Adler. Posts re-asserting dropped framing as
   current are stale.
@@ -74,8 +77,9 @@ Any change that adds or modifies:
    (feature removed, behaviour altered, tier reshaped). Date-check against
    current `surfc/` reality, not the post's pubDate assumptions.
 4. **Never-was-true.** Aspirational features written as shipped.
-   Reader/Annotator/Syntopist as live; a roadmap item described in present
-   tense.
+   **Scholar** described as a live, available tier; a roadmap item
+   described in present tense. (Reader/Annotator are live as of SUR-374 —
+   not flagged here.)
 5. **Absolute security language.** "Unbreakable", "impossible to access",
    "100% private". Security claims in absolutes are liabilities; require
    the post to scope them to the actual threat model.
@@ -152,7 +156,8 @@ PASS / PASS WITH CONCERNS / HOLD
 - Privacy/security/architecture claim contradicted by current `surfc/`
   reality.
 - Managed/BYOK conflation that makes a false data-handling guarantee.
-- Aspirational feature (incl. v1.5 tier names) stated as shipped.
+- Aspirational feature stated as shipped (incl. the **Scholar** tier,
+  still unlanded; Reader/Annotator are live as of SUR-374).
 - Claim unverifiable against any stated product reality.
 
 ## What you do not do
@@ -165,4 +170,5 @@ PASS / PASS WITH CONCERNS / HOLD
 
 ---
 
-*Last updated: 2026-05-15.*
+*Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
+rename to Scholar; Reader/Annotator now live).*
