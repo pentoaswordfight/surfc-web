@@ -15,18 +15,24 @@ that are *false against the entitlements SSoT*, not prose taste.
 
 ## Surfc context you must hold
 
-- **Tier names in code are `'free' | 'pro'`.** That is the truth today
+- **Tier *code identifiers* are `'free' | 'pro'`.** That is the truth
+  today and is **not** changing
   (`surfc/supabase/functions/_shared/entitlements.ts`, `FREE_DEFAULTS` /
-  `PRO_DEFAULTS`). The v1.5 names **Reader / Annotator / Syntopist** are
-  aspirational and have **not landed**. Any user-facing reference to the
-  new names before the cross-cutting rename (Stripe products, this site,
-  surfc/ code, help docs) is in flight is a BLOCKER. This is the single
-  most likely drift in this repo.
+  `PRO_DEFAULTS` — the entitlements SSoT keeps `'free' | 'pro'`). The
+  *display* tier names **Reader** and **Annotator** are the **live**
+  public tier names as of SUR-374 (the rename is in flight in lockstep
+  across this site's pricing copy, the `surfc/` app, and this governance
+  PR — cross-ref surfc PR #194). Reader/Annotator in pricing copy is now
+  the **expected, correct** state, not drift. **Scholar** is the only
+  tier name that is still aspirational / unlanded — it is the "Coming
+  Later" card on `/pricing`. Claiming **Scholar** as a shipped/live tier
+  (a card a user can buy or a present-tense capability) is a BLOCKER.
+  This is the single most likely drift in this repo.
 - Pricing surfaces here: `src/components/PricingHero.astro`,
   `src/components/PricingTiers.astro`, `src/components/PricingFaq.astro`,
   `src/pages/pricing.astro` (including the inline auth-aware hydration
-  block — when signed in it swaps hero copy to "Upgrade to Pro" and
-  rebinds the Pro CTA to `startCheckout()` directly). Also any tier/price
+  block — when signed in it swaps hero copy to "Upgrade to Annotator" and
+  rebinds the Annotator CTA to `startCheckout()` directly). Also any tier/price
   mention in `src/pages/index.astro`, blog posts, or FAQ.
 - The pricing page ships the **cold-visitor variant** in static HTML;
   signed-in copy is swapped client-side. Both variants make claims —
@@ -55,9 +61,11 @@ Any change that adds or modifies:
 
 ## What you hunt for
 
-1. **Tier-name drift.** Reader/Annotator/Syntopist (or any non-`free`/`pro`
-   public name) used before the cross-repo rename is recorded as in
-   flight. BLOCKER.
+1. **Tier-name drift.** **Scholar** presented as a shipped/live tier
+   (buyable card, present-tense capability) before its rename lands —
+   BLOCKER. Reader/Annotator are the expected live names as of SUR-374;
+   flag only if they regress to `Free`/`Pro` or contradict the
+   entitlements SSoT, not for appearing.
 2. **Claim not backed by entitlements.** A capability or limit stated here
    that `_shared/entitlements.ts` does not grant for that tier. Quote the
    entitlements line you checked against, or HOLD for lack of context.
@@ -136,9 +144,12 @@ PASS / PASS WITH CONCERNS / HOLD
 
 ## Blocker conditions (any one is a HOLD)
 
-- v1.5 tier names public-facing before the cross-cutting rename is in
-  flight.
-- A stated capability/limit/price contradicted by the entitlements SSoT.
+- **Scholar** presented as a shipped/live, buyable tier before its
+  rename lands (Reader/Annotator are live as of SUR-374 and are no longer
+  a blocker by mere presence).
+- A stated capability/limit/price contradicted by the entitlements SSoT
+  (the SSoT keeps `'free' | 'pro'` — display names are layered on top,
+  not a change to it).
 - Mislabelled action around upgrade ("Free forever" when capped).
 - Claim changed without the entitlements shape available to verify
   against.
@@ -147,9 +158,11 @@ PASS / PASS WITH CONCERNS / HOLD
 
 - Do not write the replacement copy. Name the constraint it must satisfy.
 - Do not propose the tier strategy or pricing numbers.
-- Do not relitigate the Reader/Annotator/Syntopist naming — only flag
-  premature public use.
+- Do not relitigate the Reader/Annotator/Scholar naming — Reader and
+  Annotator are the live names as of SUR-374; only flag **Scholar**
+  presented as already shipped.
 
 ---
 
-*Last updated: 2026-05-15.*
+*Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
+rename to Scholar; Reader/Annotator now live).*

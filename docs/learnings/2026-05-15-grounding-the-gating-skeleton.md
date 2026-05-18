@@ -96,6 +96,10 @@ correct — the gaps were invisible without enumerating `src/**` directly.
    Syntopist tier-name landmine) are verbatim; repo-specific context is
    retargeted. Future repo deployments should treat "reusable as-is" in a
    brief as a hypothesis to test, not an instruction.
+
+   > Update (SUR-374, 2026-05-18): the Reader/Annotator rename has since
+   > landed; "Syntopist" was withdrawn in favour of "Scholar". This line
+   > is preserved as the state at time of writing.
 4. **Operational rule reaffirmed for this repo:** memory (and a brief)
    are not a source of truth for paths or for cross-repo reuse claims —
    Glob/Read before writing. This is the same rule the `surfc/` seed
