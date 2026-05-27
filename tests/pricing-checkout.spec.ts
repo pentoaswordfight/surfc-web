@@ -53,6 +53,29 @@ async function captures(page: import('@playwright/test').Page): Promise<Capture[
   return page.evaluate(() => (window as any).__captures ?? [])
 }
 
+/**
+ * Wait for initPricingCheckout() to finish. Astro module scripts are deferred,
+ * so a click / capture read issued right after goto() can race ahead of
+ * hydration (flaky in CI, esp. mobile-chrome). `pricing_viewed` is the last
+ * event the script fires, so its presence means listeners are attached and all
+ * load-time events (canceled / failure_shown) have already fired.
+ */
+async function waitForHydration(page: import('@playwright/test').Page) {
+  await page.waitForFunction(
+    () =>
+      Array.isArray((window as any).__captures) &&
+      (window as any).__captures.some((c: any) => c.event === 'pricing_viewed'),
+  )
+}
+
+/** Wait for the signed-in hydration branch (sets the body variant just before
+ *  binding the Pro CTA click handler). Gates CTA-click tests against the race. */
+async function waitForSignedInHydration(page: import('@playwright/test').Page) {
+  await expect(page.locator('body')).toHaveAttribute('data-pricing-variant', 'signed-in', {
+    timeout: 15_000,
+  })
+}
+
 // ── SUR-496 — failure banner ─────────────────────────────────────────────────
 
 test.describe('SUR-496 — pricing failure banner', () => {
@@ -88,6 +111,7 @@ test.describe('SUR-496 — pricing failure banner', () => {
   test('?canceled=1 without error renders no banner and keeps the silent cancel event', async ({ page }) => {
     await stubPosthog(page)
     await page.goto('/pricing/?canceled=1&interval=monthly')
+    await waitForHydration(page)
 
     await expect(page.locator('[data-checkout-failure-banner]')).toBeHidden()
 
@@ -101,6 +125,7 @@ test.describe('SUR-496 — pricing failure banner', () => {
   test('fires pricing_checkout_failure_shown with { error_code, interval, ref } on render', async ({ page }) => {
     await stubPosthog(page)
     await page.goto('/pricing/?canceled=1&interval=annual&error=invalid_request&ref=settings-reactivate')
+    await waitForHydration(page)
 
     const events = await captures(page)
     const shown = events.find((c) => c.event === 'pricing_checkout_failure_shown')
@@ -140,7 +165,11 @@ test.describe('SUR-496 — pricing failure banner', () => {
       /* never settles */
     })
 
+    // Guard the hydration race: a stray static-href nav would hang the test.
+    await page.route('**/app.surfc.app/**', (route) => route.abort())
+
     await page.goto('/pricing/?canceled=1&interval=annual&error=create_session_failed')
+    await waitForSignedInHydration(page)
     await page.locator('[data-checkout-failure-retry]').click()
 
     // Overlay (loading) appears → the Pro CTA flow was genuinely re-entered.
@@ -163,11 +192,13 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
   test('signed-in CTA tap shows the loading overlay with the shared copy', async ({ page }) => {
     await stubPosthog(page)
     await signIn(page)
+    await page.route('**/app.surfc.app/**', (route) => route.abort())
     await page.route(CHECKOUT_ENDPOINT, async () => {
       /* hold open so the loading state stays up */
     })
 
     await page.goto('/pricing/')
+    await waitForSignedInHydration(page)
     await page.locator('[data-pro-cta]').click()
 
     const loading = page.locator('[data-stripe-overlay-loading]')
@@ -184,11 +215,13 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
   test('repeat taps cannot start a second checkout session', async ({ page }) => {
     await stubPosthog(page)
     await signIn(page)
+    await page.route('**/app.surfc.app/**', (route) => route.abort())
     await page.route(CHECKOUT_ENDPOINT, async () => {
       /* hold open so the first attempt stays in flight */
     })
 
     await page.goto('/pricing/')
+    await waitForSignedInHydration(page)
     const cta = page.locator('[data-pro-cta]')
     await cta.click()
     await cta.click({ force: true })
@@ -203,12 +236,14 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
     test.setTimeout(30_000)
     await stubPosthog(page)
     await signIn(page)
+    await page.route('**/app.surfc.app/**', (route) => route.abort())
     // Never settle — let the client-side 8s AbortController fire.
     await page.route(CHECKOUT_ENDPOINT, async () => {
       /* hold open past the timeout */
     })
 
     await page.goto('/pricing/')
+    await waitForSignedInHydration(page)
     await page.locator('[data-pro-cta]').click()
 
     // After ~8s the loading state hides and the timeout/retry state appears.
@@ -257,8 +292,10 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
     // Abort the hand-off navigation — the aborted request still proves
     // `location.assign(url)` ran with the URL startCheckout returned.
     await page.route('https://stripe.example/**', (route) => route.abort())
+    await page.route('**/app.surfc.app/**', (route) => route.abort())
 
     await page.goto('/pricing/')
+    await waitForSignedInHydration(page)
     const navAttempt = page.waitForRequest('https://stripe.example/**')
     await page.locator('[data-pro-cta]').click()
     await navAttempt
