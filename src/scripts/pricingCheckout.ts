@@ -21,6 +21,7 @@
 import { readCrossDomainAccessToken } from '../lib/auth.ts'
 import { startCheckout, StaleTokenError, type Interval } from '../lib/checkout.ts'
 import { posthog } from '../lib/posthog.ts'
+import { TIER_NAMES } from '../lib/tiers.ts'
 import {
   STRIPE_TRANSITION_TIMEOUT_MS,
   STRIPE_TRANSITION_START,
@@ -258,11 +259,12 @@ export function initPricingCheckout(): void {
   if (signedIn) {
     document.body.dataset.pricingVariant = 'signed-in'
 
+    const upgradeLabel = `Upgrade to ${TIER_NAMES.pro}`
     const heroLabel = document.querySelector('[data-pricing-cta-label]')
-    if (heroLabel) heroLabel.textContent = 'Upgrade to Pro'
+    if (heroLabel) heroLabel.textContent = upgradeLabel
 
     const proLabel = document.querySelector('[data-pro-cta-label]')
-    if (proLabel) proLabel.textContent = 'Upgrade to Pro'
+    if (proLabel) proLabel.textContent = upgradeLabel
 
     const proCta = document.querySelector<HTMLAnchorElement>('[data-pro-cta]')
     if (proCta) {
