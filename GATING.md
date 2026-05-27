@@ -283,10 +283,14 @@ here.** This section adds only the gating-policy framing:
 - The four cross-repo drift classes (shared with `surfc/GATING.md` §10 and
   `surfc-intranet/GATING.md`):
   1. **Tier-name drift** — `surfc/supabase/functions/_shared/entitlements.ts`
-     is the SSoT for tier names (`'free' | 'pro'` today). The
-     Reader/Annotator/Syntopist rename, when v1.5 lands, hits the
-     pricing-copy contract here; the `surfc-web` PR for the rename **must
-     follow** the `surfc/` PR. `pricing-claim-reviewer` enforces this.
+     is the SSoT for the tier *code identifiers* (`'free' | 'pro'`, kept
+     as-is). The display rename to **Reader** / **Annotator** has landed
+     as of SUR-374 (in lockstep across this site's pricing copy, the
+     `surfc/` app, and this governance PR — cross-ref surfc PR #194), so
+     Reader/Annotator are now the expected live names here. **Scholar**
+     remains the unlanded "Coming Later" tier; presenting it as a
+     shipped/buyable tier is the drift to catch. `pricing-claim-reviewer`
+     enforces this.
   2. **Feature-claim drift** — `surfc-web` blog/marketing claims are bound
      to `surfc/` reality. `blog-claim-reviewer` checks against the app.
   3. **Auth-bridge drift** — `src/lib/auth.ts` / `appUrl.ts` /
@@ -365,5 +369,7 @@ descriptions and persona reports.
 
 ---
 
-*Last updated: 2026-05-15 (SUR-422 per-repo grounding pass — operational).
-Next scheduled review: 2026-08-15.*
+*Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: §10 tier-name
+drift updated — Reader/Annotator live, Scholar still unlanded). Originally
+2026-05-15 (SUR-422 per-repo grounding pass — operational). Next scheduled
+review: 2026-08-15.*
