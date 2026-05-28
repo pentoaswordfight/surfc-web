@@ -1,0 +1,277 @@
+---
+/**
+ * StripeCheckoutStates — the two hand-off states for the pricing → Stripe
+ * checkout flow, shipped hidden and driven by `src/scripts/pricingCheckout.ts`:
+ *
+ *   1. Loading + timeout OVERLAY (SUR-466) — a fixed, modal overlay shown while
+ *      the signed-in in-repo `startCheckout()` round-trip is in flight. After
+ *      the 8s timeout it swaps to a retry affordance (no indefinite spinner).
+ *      Mirrors the in-app `StripeTransition` component (surfc, SUR-419).
+ *
+ *   2. Failure BANNER (SUR-496) — a non-modal, dismissable inline banner shown
+ *      on load when surfc's UpgradeRoute bounced the user back with
+ *      `?canceled=1&error=<code>`. Sits just above the pricing tiers.
+ *
+ * Static copy is rendered from `src/lib/stripeTransition.ts` so it can't drift
+ * from the shared cross-repo contract. The dynamic failure sub-line (which
+ * depends on the `error` code) is filled in by the page script at runtime.
+ *
+ * No-JS / cold visitors never see either element — they stay `hidden`. The
+ * static-href Pro CTA continues to work without this component.
+ */
+import {
+  STRIPE_TRANSITION_COPY,
+  STRIPE_TRANSITION_TRUST,
+  STRIPE_TIMEOUT_HEADING,
+  STRIPE_TIMEOUT_MESSAGE,
+  CHECKOUT_FAILURE_HEADLINE,
+  SUPPORT_MAILTO,
+} from '../lib/stripeTransition.ts'
+---
+
+{/* ── Loading + timeout overlay (SUR-466) ───────────────────────────────── */}
+<div
+  class="stripe-overlay"
+  data-stripe-overlay
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-label="Opening secure billing"
+>
+  <div class="stripe-overlay-card" data-stripe-overlay-card tabindex="-1">
+    <div class="stripe-overlay-state" data-stripe-overlay-loading>
+      <div class="stripe-spinner" role="status" aria-label="Loading"></div>
+      <p class="stripe-overlay-copy">{STRIPE_TRANSITION_COPY}</p>
+      <p class="stripe-overlay-trust">{STRIPE_TRANSITION_TRUST}</p>
+    </div>
+
+    <div class="stripe-overlay-state" data-stripe-overlay-timeout hidden>
+      <p class="stripe-overlay-heading">{STRIPE_TIMEOUT_HEADING}</p>
+      <p class="stripe-overlay-message">{STRIPE_TIMEOUT_MESSAGE}</p>
+      <div class="stripe-overlay-actions">
+        <button type="button" class="btn btn-accent" data-stripe-overlay-retry>
+          Try again
+        </button>
+        <a class="stripe-overlay-help" href={SUPPORT_MAILTO}>Get help</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{/* ── Failure banner (SUR-496) ──────────────────────────────────────────── */}
+<div class="checkout-failure-banner" data-checkout-failure-banner hidden role="alert">
+  <div class="checkout-failure-content">
+    <p class="checkout-failure-headline">{CHECKOUT_FAILURE_HEADLINE}</p>
+    {/* Sub-line filled at runtime from failureCopyForCode(error). */}
+    <p class="checkout-failure-message" data-checkout-failure-message></p>
+  </div>
+  <div class="checkout-failure-actions">
+    <button type="button" class="btn btn-accent checkout-failure-retry" data-checkout-failure-retry>
+      Try again
+    </button>
+    <a class="checkout-failure-help" href={SUPPORT_MAILTO}>Get help</a>
+  </div>
+  <button
+    type="button"
+    class="checkout-failure-dismiss"
+    data-checkout-failure-dismiss
+    aria-label="Dismiss"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<style>
+  /* The `hidden` attribute must beat the author display rules below — without
+     this guard, `.stripe-overlay { display: flex }` would keep a "hidden"
+     overlay visible (author rules outrank the UA `[hidden] { display:none }`). */
+  [hidden] {
+    display: none !important;
+  }
+
+  /* ── Loading + timeout overlay ───────────────────────────────────────── */
+
+  .stripe-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--color-bg-overlay);
+    backdrop-filter: blur(2px);
+  }
+
+  .stripe-overlay-card:focus {
+    outline: none;
+  }
+
+  .stripe-overlay-card {
+    width: 100%;
+    max-width: 360px;
+    padding: 32px 28px;
+    text-align: center;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .stripe-overlay-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stripe-spinner {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 18px;
+    border: 3px solid var(--color-accent-light);
+    border-top-color: var(--color-accent-dark);
+    border-radius: 50%;
+    animation: stripe-spin 0.8s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Remove the rotation entirely for users who are harmed by motion; the
+       overlay copy ("Opening secure billing…") still communicates the wait. */
+    .stripe-spinner { animation: none; }
+  }
+
+  @keyframes stripe-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .stripe-overlay-copy {
+    margin: 0 0 8px;
+    font: 600 16px/1.4 var(--font-base);
+    color: var(--color-text-primary);
+  }
+
+  .stripe-overlay-trust {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .stripe-overlay-heading {
+    margin: 0 0 8px;
+    font: 600 16px/1.4 var(--font-base);
+    color: var(--color-text-primary);
+  }
+
+  .stripe-overlay-message {
+    margin: 0 0 20px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+  }
+
+  .stripe-overlay-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .stripe-overlay-actions .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .stripe-overlay-help,
+  .checkout-failure-help {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+  }
+
+  .stripe-overlay-help:hover,
+  .checkout-failure-help:hover {
+    color: var(--color-text-primary);
+  }
+
+  /* ── Failure banner ──────────────────────────────────────────────────── */
+
+  .checkout-failure-banner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto 8px;
+    padding: 18px 44px 18px 20px;
+    background: var(--color-accent-light);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .checkout-failure-content {
+    flex: 1 1 260px;
+  }
+
+  .checkout-failure-headline {
+    margin: 0 0 4px;
+    font: 600 15px/1.4 var(--font-base);
+    color: var(--color-text-primary);
+  }
+
+  .checkout-failure-message {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  .checkout-failure-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  .checkout-failure-retry {
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 14px;
+  }
+
+  .checkout-failure-dismiss {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .checkout-failure-dismiss:hover {
+    background: rgba(26, 20, 16, 0.08);
+    color: var(--color-text-primary);
+  }
+
+  @media (max-width: 600px) {
+    .checkout-failure-actions {
+      width: 100%;
+    }
+    .checkout-failure-retry {
+      flex: 1;
+    }
+  }
+</style>

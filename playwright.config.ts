@@ -42,6 +42,12 @@ export default defineConfig({
       // this override the SUR-256 blog_scroll_depth / blog_read_complete
       // assertions can't see captured events.
       PUBLIC_POSTHOG_PROJECT_TOKEN: '',
+      // Checkout (SUR-466/496) reads PUBLIC_SUPABASE_URL at build time and
+      // throws "not configured" if it's empty. CI has no .env file, so pin a
+      // dummy here — the create-checkout-session fetch is always intercepted
+      // by page.route() in pricing-checkout.spec.ts, so the value is inert.
+      PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
+      PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
     },
   },
 })

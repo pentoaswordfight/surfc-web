@@ -77,9 +77,11 @@ typecheck-only (`astro check`); there is no separate linter.
 | Path | Pattern | Primary gate | Fallback gate |
 |---|---|---|---|
 | `src/lib/auth.ts` (cross-domain auth-cookie reader for `sb-surfc-access` on `.surfc.app` — anchored by SUR-86; treats cookie *presence* = "signed in") | **GCE only** | Playwright E2E of the auth-aware pricing hydration + founder sign-off | Founder sign-off after `auth-bridge-reviewer` persona pass |
-| `src/lib/checkout.ts` (Stripe `create-checkout-session` caller — sends Bearer JWT + `apikey`, restricted `successUrl`/`cancelUrl` prefixes, `?ref=` → Stripe metadata per SUR-345) | **GCE only** | Playwright E2E + founder sign-off; cross-check against `surfc/supabase/functions/create-checkout-session/index.ts` | Founder sign-off after `auth-bridge-reviewer` + `pricing-claim-reviewer` persona passes |
+| `src/lib/checkout.ts` (Stripe `create-checkout-session` caller — sends Bearer JWT + `apikey`, restricted `successUrl`/`cancelUrl` prefixes, `?ref=` → Stripe metadata per SUR-345; returns the Stripe URL, optional `AbortSignal` per SUR-466) | **GCE only** | Playwright E2E + founder sign-off; cross-check against `surfc/supabase/functions/create-checkout-session/index.ts` | Founder sign-off after `auth-bridge-reviewer` + `pricing-claim-reviewer` persona passes |
+| `src/lib/stripeTransition.ts` (SUR-466 cross-repo telemetry contract — timeout, trust copy, `stripe_transition_*` event names + `{ surface, duration_ms, outcome }` shape, error-code→copy map; **edit in lockstep** with `surfc/src/lib/stripeTransition.js`, no shared build artefact) | **GCE only** | Founder sign-off; cross-check against the surfc side | Founder sign-off after `auth-bridge-reviewer` persona pass |
+| `src/scripts/pricingCheckout.ts` (SUR-86/466/496 checkout orchestrator — calls `startCheckout()`, drives the loading/timeout overlay + failure banner, emits `stripe_transition_*` and `pricing_checkout_*` events) | **GCE only** | Playwright E2E + founder sign-off | Founder sign-off after `auth-bridge-reviewer` + `pricing-claim-reviewer` persona passes |
 | `src/lib/appUrl.ts` (signup deep-link → `${PUBLIC_APP_URL}/signin?intent=signup`; targets `/signin` directly to skip the catch-all redirect — depends on surfc/ SUR-370) | **GCE** | Founder sign-off; cross-check against the React app's AuthScreen | Founder sign-off after `auth-bridge-reviewer` persona pass |
-| `src/components/Pricing*.astro` (`PricingHero.astro`, `PricingTiers.astro`, `PricingFaq.astro`) and `src/pages/pricing.astro` (pricing copy + the inline auth-aware hydration block, SUR-86) | **GCE only** | Cross-check claims against `surfc/supabase/functions/_shared/entitlements.ts` (currently `'free' \| 'pro'`) + founder sign-off | Founder sign-off after `pricing-claim-reviewer` persona pass |
+| `src/components/Pricing*.astro` (`PricingHero.astro`, `PricingTiers.astro`, `PricingFaq.astro`), `src/components/StripeCheckoutStates.astro` (overlay + failure-banner markup/copy, SUR-466/496), and `src/pages/pricing.astro` (pricing copy; auth-aware hydration now lives in `src/scripts/pricingCheckout.ts`, SUR-86) | **GCE only** | Cross-check claims against `surfc/supabase/functions/_shared/entitlements.ts` (currently `'free' \| 'pro'`) + founder sign-off | Founder sign-off after `pricing-claim-reviewer` persona pass |
 | `src/scripts/preserveUtm.ts` (`UTM_KEYS` array) | **GCE** | Founder sign-off; **must edit in lockstep** with `surfc/src/lib/utmParams.js` `UTM_KEYS` (no shared build artefact — the discipline is the gate) | Same |
 | `src/pages/policies/privacy.astro`, `src/pages/policies/terms.astro` (Termly embeds — visible content arrives via async iframe; Playwright asserts on `<title>`, not body text) | **GCE only** | Founder sign-off; legal review if material | Founder sign-off after `legal-copy-reviewer` persona pass |
 | `src/content/blog/*.mdx` claims that touch privacy / security / capability (notably `privacy-piracy.mdx`, `surfc-architecture.mdx`, `the-world-doesnt-reliably-know.mdx`, `surfc-beginnings.mdx`) | **GCE** | Founder sign-off after fact-check against current `surfc/` reality | Founder sign-off after `blog-claim-reviewer` persona pass |
@@ -297,6 +299,14 @@ here.** This section adds only the gating-policy framing:
   4. **Runbook / spec drift** — `surfc-intranet` content describes
      `surfc/` operations; not directly this repo's concern but listed for
      symmetry.
+  5. **Stripe-transition contract drift (SUR-466)** —
+     `src/lib/stripeTransition.ts` duplicates the timeout threshold, trust
+     copy, `stripe_transition_*` event names, and the
+     `{ surface, duration_ms, outcome }` payload from
+     `surfc/src/lib/stripeTransition.js` (SUR-419). No shared build artifact;
+     edit in lockstep. The `web_pricing` `surface` value is the one
+     intentional surfc-web-only addition. `auth-bridge-reviewer` (analytics
+     remit) enforces this.
 - `surfc/GATING.md` §10 and `surfc-intranet/GATING.md` should reference
   this file reciprocally. When all three exist, each §10 lists the other
   two.

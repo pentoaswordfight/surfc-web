@@ -1,7 +1,6 @@
 /**
  * Stripe Checkout starter — POSTs to `create-checkout-session` with the
- * cross-domain access token, then redirects the browser to Stripe's hosted
- * checkout page.
+ * cross-domain access token and resolves with Stripe's hosted-checkout URL.
  *
  * The Edge Function lives in the surfc/ repo (deployed to Supabase as
  * `create-checkout-session`); it requires a Bearer JWT and accepts only the
@@ -10,6 +9,11 @@
  *
  * On 401 we throw `StaleTokenError` so the caller can clear the cookie and
  * fall back to the redirect path (`app.surfc.app/upgrade?interval=…`).
+ *
+ * SUR-466: this function deliberately does NOT navigate. It returns the URL so
+ * the caller can (a) record the `stripe_transition_end` 'success' event before
+ * the page unloads, and (b) abort a slow round-trip via the optional `signal`
+ * once the 8s loading-state timeout fires.
  */
 import { clearCrossDomainAccessToken } from './auth.ts'
 
@@ -28,9 +32,13 @@ interface StartCheckoutOpts {
   // SUR-345 — optional attribution string forwarded to the Edge Function
   // and into Stripe metadata. Server caps at 64 chars.
   ref?: string
+  // SUR-466 — optional abort signal so the caller can cancel a slow round-trip
+  // when the loading-state timeout fires. Aborting rejects the fetch, which the
+  // caller distinguishes via `signal.aborted` to swap to the retry UI.
+  signal?: AbortSignal
 }
 
-export async function startCheckout({ interval, token, ref }: StartCheckoutOpts): Promise<void> {
+export async function startCheckout({ interval, token, ref, signal }: StartCheckoutOpts): Promise<string> {
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? ''
   const anonKey     = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
   const appUrl      = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
@@ -54,6 +62,7 @@ export async function startCheckout({ interval, token, ref }: StartCheckoutOpts)
     method:  'POST',
     headers,
     body:    JSON.stringify({ interval, ref, successUrl, cancelUrl }),
+    signal,
   })
 
   if (res.status === 401) {
@@ -68,5 +77,5 @@ export async function startCheckout({ interval, token, ref }: StartCheckoutOpts)
   const body = (await res.json().catch(() => null)) as { url?: string } | null
   if (!body?.url) throw new Error('create-checkout-session returned no url')
 
-  window.location.assign(body.url)
+  return body.url
 }
