@@ -34,7 +34,7 @@ export const STRIPE_TRANSITION_TRUST = 'Secured by Stripe'
 // redirect); the user explicitly retries or gets help.
 export const STRIPE_TIMEOUT_HEADING = 'This is taking longer than expected'
 export const STRIPE_TIMEOUT_MESSAGE =
-  'We stopped waiting on the secure billing session. Try again, or get help if it keeps happening.'
+  'The secure billing session timed out. Try again, or get help if it keeps happening.'
 
 // Closed set so the PostHog `surface` dimension stays groupable. `web_pricing`
 // is the surfc-web-only value (SUR-466).
@@ -74,23 +74,24 @@ export const CHECKOUT_FAILURE_HEADLINE = "Couldn't open secure billing."
 // a calm, specific sub-line. Codes are documented in SUR-496; `profile_missing`
 // and `unauthorized` are mapped defensively ahead of the surfc emitter actually
 // producing them (SUR-498). Copy follows brand-voice-guidelines.md
-// (Pricing / Product-UI register): terse, specific, names the next action — no
-// apology spam, no exclamation marks, and never the raw error code.
+// (Pricing / Product-UI register): terse, specific, names the next action —
+// neutral/passive voice with no first-person "we", no apology spam, no
+// exclamation marks, and never the raw error code.
 const FAILURE_COPY: Record<string, string> = {
   internal_error:
-    'Something went wrong on our end. Try again in a moment, or get help if it keeps happening.',
+    'Secure billing ran into a problem. Try again in a moment, or get help if it keeps happening.',
   invalid_request:
-    "We couldn't start this checkout. Try again, or get help if it keeps happening.",
+    "Checkout couldn't be started. Try again, or get help if it keeps happening.",
   profile_missing:
-    "We couldn't find your account details. Try again, or get help if it keeps happening.",
+    "Your account details couldn't be found. Try again, or get help if it keeps happening.",
   unauthorized:
     'Your sign-in has expired. Try again to start checkout.',
   unknown_tier:
-    "We couldn't match your plan to a price. Get help and we'll sort it out.",
+    "Your plan couldn't be matched to a price. Get help to sort it out.",
   entitlements_unavailable:
-    "We couldn't check your current plan. Try again in a moment, or get help if it keeps happening.",
+    "Your current plan couldn't be checked. Try again in a moment, or get help if it keeps happening.",
   create_session_failed:
-    "We couldn't reach secure billing. Try again, or get help if it keeps happening.",
+    "Secure billing couldn't be reached. Try again, or get help if it keeps happening.",
   unknown:
     'Something went wrong opening secure billing. Try again, or get help if it keeps happening.',
 }
