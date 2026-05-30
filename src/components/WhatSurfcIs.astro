@@ -1,8 +1,8 @@
 ---
 /**
  * Port source: surfc/src/components/LandingPage.jsx lines 213-248.
- * The "Your index" diagram card lists a handful of canonical ideas with
- * fictional note counts as a teaser for the indexing concept.
+ * The "Your Commonplace" diagram card lists a handful of canonical ideas
+ * with fictional note counts as a teaser for the indexing concept.
  */
 
 const INDEX_IDEAS = [
@@ -21,19 +21,29 @@ const INDEX_IDEAS = [
       <p class="hiw-step-label">01 · The idea</p>
       <h2 class="hiw-h2">What Surfc is</h2>
       <p class="hiw-body-v2">
-        Surfc is an offline-first reading companion. Scan passages and
-        reflections, tag them to canonical or custom ideas, and resurface
-        them when those themes recur.
+        You've highlighted hundreds of passages. You can't find them when
+        you need them. Surfc is the private idea index that gets you from a
+        marked book to a searchable thought — without having to remember
+        which book it was in.
+      </p>
+      <p class="hiw-body-v2">
+        Most reading tools file your highlights under the book. Surfc files
+        them under the idea — so when you go looking for what you read
+        about authority, or memory, or trust, the book follows the thought.
+      </p>
+      <p class="hiw-body-v2">
+        Your notes and AI insights are protected with end-to-end encryption
+        at rest, including synced storage.
       </p>
       <ul class="hiw-inline-list">
-        <li><span class="idea-chip"><span class="idea-dot"></span>102 canonical ideas</span></li>
+        <li><span class="idea-chip"><span class="idea-dot"></span>102 built-in ideas</span></li>
         <li><span class="idea-chip custom"><span class="idea-dot" style="background: var(--color-custom)"></span>Your own concepts</span></li>
         <li><span class="idea-chip"><span class="idea-dot"></span>Cross-source index</span></li>
       </ul>
     </div>
     <div class="hiw-col-diagram">
       <div class="hiw-diagram-card dotgrid">
-        <div class="hiw-diagram-title">Your index</div>
+        <div class="hiw-diagram-title">Your Commonplace</div>
         <div class="hiw-diagram-ideas">
           {INDEX_IDEAS.map((idea) => (
             <div class="hiw-diagram-row">
