@@ -76,6 +76,16 @@ html, body, #root {
   letter-spacing: 0.02em;
 }
 
+/* SUR-508 follow-up — .btn declares its own font-family (var(--font-base)), so
+   the CTA buttons lose to the inherited wrapper and would stay Inter. Re-point
+   them explicitly. (.hiw-nav-signin / .hiw-cta-secondary already use
+   `font-family: inherit`, so they're covered; the .hiw-phone-* mockup labels
+   intentionally stay Inter — they depict the app interior.) Surfaced by the
+   Codex review on the parallel surfc PR. */
+.front-door-surface .btn {
+  font-family: var(--font-front-door);
+}
+
 /* ── APP SHELL ─────────────────────────────────────────────────────────────── */
 
 /* ── Form inputs (styles.css L589-L616) ───────────────── */

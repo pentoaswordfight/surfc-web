@@ -49,6 +49,16 @@ test.describe('SUR-508 — front-door base face', () => {
       .first()
       .evaluate(el => getComputedStyle(el).fontFamily)
     expect(firstFamily(eyebrowFamily)).toBe('Sometype Mono')
+
+    // SUR-508 follow-up — .btn declares its OWN font-family (var(--font-base)),
+    // so it does not inherit the wrapper; an explicit override must re-point the
+    // CTAs to mono. This is the exact gap the first pass missed (it only checked
+    // inheriting elements), surfaced by the Codex review — guard it here.
+    const ctaFamily = await page
+      .locator('a.btn, button.btn')
+      .first()
+      .evaluate(el => getComputedStyle(el).fontFamily)
+    expect(firstFamily(ctaFamily)).toBe('Sometype Mono')
   })
 
   test('non-front-door page (privacy) stays on Inter — scoping is precise', async ({ page }) => {
