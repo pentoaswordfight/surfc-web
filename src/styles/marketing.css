@@ -57,6 +57,25 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
+/* SUR-508 — Front-door base face. The `front-door-surface` class is added to
+   the bodyClass on the public Landing (index.astro) and Waitlist
+   (waitlist.astro) only — deliberately NOT on the default `lp-page-v2`, so
+   pricing/policies/blog keep Inter. Sometype Mono replaces the sans-base
+   chrome here; the EB Garamond hero (.hiw-title-v2 / .hiw-wordmark /
+   .hiw-footer-mark) hardcodes its own family and is unaffected. Keep
+   --font-front-door in lockstep with surfc/src/tokens.css. */
+.front-door-surface {
+  font-family: var(--font-front-door);
+}
+
+/* Mono is already wide by the monospace grid, so the all-caps eyebrows tuned
+   for Inter (0.18em) balloon. Tighten — scoped to the front door so the
+   still-Inter pages keep their original tracking. */
+.front-door-surface .hiw-eyebrow-v2,
+.front-door-surface .hiw-step-label {
+  letter-spacing: 0.02em;
+}
+
 /* ── APP SHELL ─────────────────────────────────────────────────────────────── */
 
 /* ── Form inputs (styles.css L589-L616) ───────────────── */

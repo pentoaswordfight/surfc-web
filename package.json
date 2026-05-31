@@ -25,6 +25,7 @@
     "@fontsource/fira-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/playfair-display": "^5.2.8",
+    "@fontsource/sometype-mono": "^5.2.7",
     "astro": "^6.1.8",
     "mdast-util-to-string": "^4.0.0",
     "reading-time": "^1.5.0",

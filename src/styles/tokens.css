@@ -92,6 +92,13 @@
 :root {
   --font-base:  'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  /* SUR-508 — scoped front-door base face for the public Landing + Waitlist,
+     applied ONLY via `.front-door-surface` (see marketing.css); never replaces
+     --font-base. @font-face lives in fonts.css (self-hosted via @fontsource).
+     Keep this value in lockstep with surfc/src/tokens.css — the two token
+     files are duplicated by design and a divergent value is a cross-repo
+     escalation trigger. */
+  --font-front-door: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
 
