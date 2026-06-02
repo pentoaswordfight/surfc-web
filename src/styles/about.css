@@ -1,0 +1,84 @@
+/* ============================================================
+   about.css — /about page (SUR-520)
+
+   Page-specific layout layered on top of marketing.css, following the
+   pricing.astro → pricing.css precedent. Reuses existing design tokens and
+   the already-loaded faces only — no new colours, fonts, or radii.
+
+   The page wears the landing page's front-door identity (`front-door-surface`
+   on the bodyClass, set in about.astro): EB Garamond display headings over a
+   Sometype Mono body. Both reading surfaces — the lede and the essay — inherit
+   that one mono body face, so the page reads as a single, deliberate type
+   system rather than mixing Inter and serif across sections.
+   ============================================================ */
+
+/* ── Lede / page opener ──────────────────────────────────────────────────
+   No Hero on this page, so the lede carries the single <h1>. Centred title
+   over a left-aligned reading column (centred text hurts multi-line prose).
+   Body inherits the front-door Sometype Mono base via .hiw-body-v2. */
+.about-lede {
+  text-align: center;
+  padding-bottom: var(--space-6);
+}
+.about-lede h1 {
+  margin: 0 auto var(--space-3);
+  max-width: 14ch;
+}
+.about-lede__body {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: left;
+}
+.about-lede__body .hiw-body-v2 {
+  max-width: none;
+  line-height: 1.8;
+}
+.about-lede__body .hiw-body-v2:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Founder essay — the long-form centrepiece ───────────────────────────
+   Full-bleed warm band (overrides hiw-section-v2's 1180px cap) with a narrow
+   centred column. The parchment wash + hairline rules set the personal essay
+   apart *visually*, while its body shares the lede's Sometype Mono face so the
+   two surfaces stay typographically aligned. */
+.about-essay {
+  max-width: none;
+  background:
+    radial-gradient(135% 90% at 50% 0%, rgba(245, 237, 224, 0.7) 0%, transparent 72%),
+    var(--color-bg-marketing);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.about-essay__inner {
+  max-width: 660px;
+  margin: 0 auto;
+}
+.about-essay__inner h2 {
+  margin-bottom: var(--space-5);
+}
+.about-essay__inner p {
+  /* inherits the front-door Sometype Mono base — same face/size as the lede */
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3);
+}
+
+/* Sign-off — a quiet, human close to a first-person essay. */
+.about-essay__sign {
+  margin-top: var(--space-5);
+  font-style: italic;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────────────
+   Mirror marketing.css's 767.98px breakpoint; mono runs wide, so ease the
+   essay size down a notch to keep the measure comfortable on a phone. */
+@media (max-width: 767.98px) {
+  .about-essay__inner p {
+    font-size: 16px;
+    line-height: 1.75;
+  }
+}

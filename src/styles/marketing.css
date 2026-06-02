@@ -58,9 +58,9 @@ html, body, #root {
 }
 
 /* SUR-508 — Front-door base face. The `front-door-surface` class is added to
-   the bodyClass on the public Landing (index.astro) and Waitlist
-   (waitlist.astro) only — deliberately NOT on the default `lp-page-v2`, so
-   pricing/policies/blog keep Inter. Sometype Mono replaces the sans-base
+   the bodyClass on the public Landing (index.astro), Waitlist (waitlist.astro),
+   and About (about.astro, SUR-520) — deliberately NOT on the default
+   `lp-page-v2`, so pricing/policies/blog keep Inter. Sometype Mono replaces the sans-base
    chrome here; the EB Garamond hero (.hiw-title-v2 / .hiw-wordmark /
    .hiw-footer-mark) hardcodes its own family and is unaffected. Keep
    --font-front-door in lockstep with surfc/src/tokens.css. */

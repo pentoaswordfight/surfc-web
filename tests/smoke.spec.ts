@@ -28,6 +28,7 @@ test.describe('public pages respond 200 and render correctly', () => {
     { path: '/waitlist/',          title: /open|sign up directly/i },
     { path: '/policies/privacy/',  title: /Privacy/i },
     { path: '/policies/terms/',    title: /Terms/i },
+    { path: '/about/',             title: /About/i },
   ]
 
   for (const { path, title } of pages) {
