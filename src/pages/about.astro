@@ -1,0 +1,149 @@
+---
+/**
+ * /about — the second-touch brand page (SUR-520).
+ *
+ * Home for the longer-form positioning that SUR-479 deliberately kept off the
+ * tight landing page. Structure:
+ *   - Lede: the three "What Surfc is" paragraphs, lifted verbatim from
+ *     WhatSurfcIs.astro (LP keeps its own copy; the two diverge over time).
+ *   - "Why I built Surfc": the founder essay (single-column centrepiece).
+ *   - Manifesto: the PulledQuote.astro preserved-but-unused since SUR-479.
+ *   - Closing CTA: reused unchanged.
+ *
+ * Deferred sections (positioning → SUR-510; expanded E2EE → SUR-117) are left
+ * as commented scaffolding for those tickets. The Adler/lineage rec is covered
+ * narratively by the essay, so no separate Lineage section is scaffolded.
+ *
+ * Adopts the landing page's front-door identity via `front-door-surface` on the
+ * bodyClass: EB Garamond display headings + Sometype Mono body. This unifies the
+ * lede and the essay under one body face and matches index.astro (SUR-508), so
+ * the page no longer mixes Inter and serif bodies across sections.
+ * Page-specific layout lives in src/styles/about.css (cf. pricing.astro).
+ */
+
+import BaseLayout  from '../layouts/BaseLayout.astro'
+import Nav         from '../components/Nav.astro'
+import PulledQuote from '../components/PulledQuote.astro'
+import ClosingCta  from '../components/ClosingCta.astro'
+import Footer      from '../components/Footer.astro'
+
+import '../styles/about.css'
+---
+
+<BaseLayout
+  title="About — Surfc"
+  description="Surfc is the idea index that turns a lifetime of marked books into searchable, end-to-end-encrypted thoughts; filed under the idea, not the book."
+  path="/about/"
+  bodyClass="lp-page-v2 front-door-surface"
+>
+  <Nav />
+  <main id="main">
+    <!-- Lede — three "What Surfc is" paragraphs, verbatim from WhatSurfcIs.astro -->
+    <section id="about-lede" class="hiw-section-v2 about-lede">
+      <h1 class="hiw-h2 hiw-h2-hero hiw-h2-center">About Surfc</h1>
+      <div class="about-lede__body">
+        <p class="hiw-body-v2">
+          You've highlighted hundreds of passages. You can't find them when
+          you need them. Surfc is the private idea index that gets you from a
+          marked book to a searchable thought — without having to remember
+          which book it was in.
+        </p>
+        <p class="hiw-body-v2">
+          Most reading tools file your highlights under the book. Surfc files
+          them under the idea — so when you go looking for what you read
+          about authority, or memory, or trust, the book follows the thought.
+        </p>
+        <p class="hiw-body-v2">
+          Your notes and AI insights are protected with end-to-end encryption
+          at rest, including synced storage.
+        </p>
+      </div>
+    </section>
+
+    <!-- Why I built Surfc — founder essay (the long-form centrepiece) -->
+    <section id="why-i-built-surfc" class="hiw-section-v2 about-essay">
+      <div class="about-essay__inner">
+        <h2 class="hiw-h2 hiw-h2-center">Why I built Surfc</h2>
+
+        <p>
+          Reading is a strange kind of investment. You pour years into it,
+          hundreds of books, thousands of hours, and the returns are real but
+          almost impossible to point to. I can feel the books that changed me.
+          I cannot always name them. Something I read years ago rearranged how
+          I think about a thing I now treat as obvious, and if you asked me
+          which book, which chapter, which sentence did the work, I would have
+          nothing for you. The change took. The receipt did not.
+        </p>
+        <p>
+          That bothers me more than it probably should. You like to believe you
+          remember what shaped you. You don't, not really. You remember a vague
+          glow around a title, a feeling that a book mattered, and almost none
+          of the substance that did the actual shaping. The insight was there,
+          it did its work, and then it slipped quietly out the back while you
+          were busy starting the next book.
+        </p>
+        <p>
+          And that is the generous version, the one where the idea at least
+          left a mark. The everyday frustration is smaller and more annoying
+          than that. I know I read something good about a topic. I go looking
+          for it. It isn't anywhere. It is underlined in a book on a shelf I
+          haven't opened in three years, or scribbled in a margin I will never
+          find again, or highlighted in some app that swallowed it whole.
+          Hundreds of passages I cared enough to mark, and not one of them
+          within reach the moment I actually need it.
+        </p>
+        <p>
+          The part nobody wants to admit is that highlighting is not keeping.
+          Marking a passage feels like saving it. It isn't. It is the reading
+          equivalent of photographing a meal instead of tasting it, a gesture
+          toward memory that quietly stands in for the memory itself. A
+          highlight you cannot retrieve, cannot connect, cannot argue with
+          months later is just ink on a page (which, when you say it plainly
+          like that, is a slightly depressing thing to have done a thousand
+          times).
+        </p>
+        <p>
+          So I built the thing I actually wanted. Not a place to dump
+          highlights. An index. Somewhere a note I make today finds the note I
+          made years ago, where the ideas I keep circling back to surface on
+          their own instead of waiting for me to remember they exist. And, this
+          is the part that matters most to me, somewhere I can see not just what
+          I nodded along with but what I argued against. The agreements are
+          easy. The tensions are where the change actually happens. You don't
+          really take an idea on board until you have wrestled with it, and I
+          wanted a record of the wrestling, not just the verdict it ended on.
+        </p>
+        <p>
+          That is Surfc. It started, as a lot of this did, with Adler. I was
+          finishing <em>How to Read a Book</em> and I had this sinking feeling
+          that everything I was learning, every insight the book had set off in
+          me, would start eroding the second I slid it back onto the shelf. I
+          did not want a reading app. I have plenty of those. I wanted a private
+          record of the person I am becoming through the things I have read and
+          the thoughts I have kept, mine to hold, and worth more the longer I
+          keep at it.
+        </p>
+        <p>
+          I built it for myself first, and I will not pretend otherwise. But it
+          turns out I am not the only one. There are other people who read to
+          think, who argue in the margins, who want a lifetime of reading to
+          compound instead of scatter across shelves and apps and forgotten
+          highlights. If that is you, then somewhere along the way I started
+          building it for you too.
+        </p>
+
+        <p class="about-essay__sign">— Deji Dipeolu</p>
+      </div>
+    </section>
+
+    <!-- Manifesto — the PulledQuote preserved (but unused) since SUR-479 -->
+    <PulledQuote />
+
+    {/* TODO SUR-510: <section id="what-it-isnt"> What it is / what it isn't */}
+    {/* TODO SUR-117 expansion: <section id="why-e2ee"> Why E2EE matters */}
+    {/* No separate Lineage section — the essay above covers the Adler heritage. */}
+
+    <ClosingCta />
+  </main>
+  <Footer />
+</BaseLayout>
