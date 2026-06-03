@@ -8,7 +8,7 @@
  *   - The FAQ <details> accordion enforces single-open: opening one
  *     closes any previously-open sibling.
  *   - "Sign in" CTAs resolve to bare `app.surfc.app` (default landing).
- *   - "Sign up free" CTAs resolve to `app.surfc.app/signin?intent=signup`
+ *   - "Sign up" CTAs resolve to `app.surfc.app/signin?intent=signup`
  *     (SUR-370: signup intent is propagated across the cross-domain hop
  *     so AuthScreen renders signup-framed UI).
  *
@@ -162,7 +162,7 @@ test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', as
   expect(signupEvent[1]).toEqual({ cta: 'pricing_start_free' })
 })
 
-test('"Sign in" CTAs point at bare app.surfc.app, "Sign up free" CTAs deep-link to /signin?intent=signup', async ({ page }) => {
+test('"Sign in" CTAs point at bare app.surfc.app, "Sign up" CTAs deep-link to /signin?intent=signup', async ({ page }) => {
   await page.goto('/')
 
   // "Sign in" lives in the nav and closing-CTA section. Bare appUrl —
@@ -170,11 +170,12 @@ test('"Sign in" CTAs point at bare app.surfc.app, "Sign up free" CTAs deep-link 
   const signIn = page.locator('a', { hasText: /^Sign in$/ }).first()
   await expect(signIn).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/?$/)
 
-  // "Sign up free" deep-links past the PWA's catch-all unauth redirect
+  // "Sign up" deep-links past the PWA's catch-all unauth redirect
   // straight onto /signin?intent=signup (SUR-370). AuthScreen reads the
   // intent and renders signup-framed UI. The `preserveUtm.ts` rewriter
   // would append UTMs here on a real ad landing, but this test loads `/`
-  // with no UTMs so the build-time href is unchanged.
-  const signUp = page.locator('a', { hasText: /Sign up free/i }).first()
+  // with no UTMs so the build-time href is unchanged. Matches the post-SUR-510
+  // CTA copy ("Sign up", was "Sign up free").
+  const signUp = page.locator('a', { hasText: /Sign up/i }).first()
   await expect(signUp).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/signin\?intent=signup$/)
 })
