@@ -76,7 +76,7 @@ test.describe('SUR-357 — pricing CTAs land on the right downstream surfaces', 
   test('pricing_hero_start_free points at the bare app root', async ({ page }) => {
     // "Start free" — signed-out visitors land on / and are redirected by
     // App.jsx's catch-all to /signin (default framing). Signed-in visitors
-    // see this CTA swapped to "Upgrade to Annotator" via the pricing.astro hydration
+    // see this CTA swapped to "Upgrade to Practitioner" via the pricing.astro hydration
     // script reading the cross-domain auth cookie. The static href that
     // ships is the cold-visitor variant; assert exactly that.
     await page.goto('/pricing/')
@@ -87,7 +87,7 @@ test.describe('SUR-357 — pricing CTAs land on the right downstream surfaces', 
 
   test('pricing_get_pro_annual lands on /upgrade with interval + ref params', async ({ page }) => {
     // This is the highest-value pin in this spec for SUR-357: cold visitors
-    // clicking "Get Annotator" land on /upgrade, which renders UpgradeAuthGate.
+    // clicking "Get Practitioner" land on /upgrade, which renders UpgradeAuthGate.
     // If this href ever drifts (e.g. flips to /signin?intent=signup like the
     // other signup CTAs), the SUR-357 upgrade-flow chrome — price echo +
     // "Continue to Pro upgrade" framing + inline AuthControls — would be

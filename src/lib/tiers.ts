@@ -4,11 +4,12 @@
 // the entitlements SSoT (`surfc/supabase/functions/_shared/entitlements.ts`),
 // PostHog `tier` event properties, `data-cta` strings, and Stripe price IDs
 // all keep `free`/`pro`. Only the human-readable label moves —
-// Free → Reader, Pro → Annotator. `scholar` is the already-shipped capstone
-// (the "Coming Later" card on /pricing); its name is unchanged.
+// Free → Reader, Pro → Practitioner (renamed from Annotator by SUR-530).
+// `scholar` is the already-shipped capstone (the "Coming Later" card on
+// /pricing); its name is unchanged.
 //
 // House style (locked in the SUR-374 plan): Title-case proper noun, referred
-// to as "the Annotator plan" / "upgrade to Annotator".
+// to as "the Practitioner plan" / "upgrade to Practitioner".
 //
 // This map is duplicated per-repo — `surfc/` ships its own copy (SUR-374
 // PR pair). Per `CLAUDE.md`, any tier-name change must land in both repos in
@@ -16,7 +17,7 @@
 
 export const TIER_NAMES = {
   free: 'Reader',
-  pro: 'Annotator',
+  pro: 'Practitioner',
   scholar: 'Scholar',
 } as const
 

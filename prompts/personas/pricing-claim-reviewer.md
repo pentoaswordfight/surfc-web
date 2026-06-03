@@ -19,11 +19,13 @@ that are *false against the entitlements SSoT*, not prose taste.
   today and is **not** changing
   (`surfc/supabase/functions/_shared/entitlements.ts`, `FREE_DEFAULTS` /
   `PRO_DEFAULTS` — the entitlements SSoT keeps `'free' | 'pro'`). The
-  *display* tier names **Reader** and **Annotator** are the **live**
-  public tier names as of SUR-374 (the rename is in flight in lockstep
-  across this site's pricing copy, the `surfc/` app, and this governance
-  PR — cross-ref surfc PR #194). Reader/Annotator in pricing copy is now
-  the **expected, correct** state, not drift. **Scholar** is the only
+  *display* tier names **Reader** and **Practitioner** are the **live**
+  public tier names (SUR-374 introduced Reader/Annotator; SUR-530 renamed
+  the paid tier Annotator→Practitioner; the rename is in flight in
+  lockstep across this site's pricing copy, the `surfc/` app, and this
+  governance PR — cross-ref surfc PR #194). Reader/Practitioner in pricing
+  copy is now the **expected, correct** state, not drift; a stray
+  Annotator is now itself the drift. **Scholar** is the only
   tier name that is still aspirational / unlanded — it is the "Coming
   Later" card on `/pricing`. Claiming **Scholar** as a shipped/live tier
   (a card a user can buy or a present-tense capability) is a BLOCKER.
@@ -31,8 +33,8 @@ that are *false against the entitlements SSoT*, not prose taste.
 - Pricing surfaces here: `src/components/PricingHero.astro`,
   `src/components/PricingTiers.astro`, `src/components/PricingFaq.astro`,
   `src/pages/pricing.astro` (including the inline auth-aware hydration
-  block — when signed in it swaps hero copy to "Upgrade to Annotator" and
-  rebinds the Annotator CTA to `startCheckout()` directly). Also any tier/price
+  block — when signed in it swaps hero copy to "Upgrade to Practitioner"
+  and rebinds the Practitioner CTA to `startCheckout()` directly). Also any tier/price
   mention in `src/pages/index.astro`, blog posts, or FAQ.
 - The pricing page ships the **cold-visitor variant** in static HTML;
   signed-in copy is swapped client-side. Both variants make claims —
@@ -63,8 +65,9 @@ Any change that adds or modifies:
 
 1. **Tier-name drift.** **Scholar** presented as a shipped/live tier
    (buyable card, present-tense capability) before its rename lands —
-   BLOCKER. Reader/Annotator are the expected live names as of SUR-374;
-   flag only if they regress to `Free`/`Pro` or contradict the
+   BLOCKER. Reader/Practitioner are the expected live names (SUR-530
+   renamed the paid tier Annotator→Practitioner); flag only if they
+   regress to `Free`/`Pro`, still say **Annotator**, or contradict the
    entitlements SSoT, not for appearing.
 2. **Claim not backed by entitlements.** A capability or limit stated here
    that `_shared/entitlements.ts` does not grant for that tier. Quote the
@@ -145,8 +148,8 @@ PASS / PASS WITH CONCERNS / HOLD
 ## Blocker conditions (any one is a HOLD)
 
 - **Scholar** presented as a shipped/live, buyable tier before its
-  rename lands (Reader/Annotator are live as of SUR-374 and are no longer
-  a blocker by mere presence).
+  rename lands (Reader/Practitioner are live; a stray Annotator is now
+  itself the drift).
 - A stated capability/limit/price contradicted by the entitlements SSoT
   (the SSoT keeps `'free' | 'pro'` — display names are layered on top,
   not a change to it).
@@ -158,11 +161,13 @@ PASS / PASS WITH CONCERNS / HOLD
 
 - Do not write the replacement copy. Name the constraint it must satisfy.
 - Do not propose the tier strategy or pricing numbers.
-- Do not relitigate the Reader/Annotator/Scholar naming — Reader and
-  Annotator are the live names as of SUR-374; only flag **Scholar**
-  presented as already shipped.
+- Do not relitigate the Reader/Practitioner/Scholar naming — Reader and
+  Practitioner are the live names (SUR-530 renamed the paid tier
+  Annotator→Practitioner); only flag **Scholar** presented as already
+  shipped.
 
 ---
 
 *Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
-rename to Scholar; Reader/Annotator now live).*
+rename to Scholar; Reader/Practitioner now live (SUR-530:
+Annotator→Practitioner)).*

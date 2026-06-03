@@ -1,9 +1,9 @@
 ---
 /**
- * Pricing tiers — three cards (Reader / Annotator / Scholar) with a
+ * Pricing tiers — three cards (Reader / Practitioner / Scholar) with a
  * segmented monthly/annual control above. Annual is selected by default;
  * the toggle updates `data-cadence` on the section root, which CSS uses to
- * swap the Annotator price between `$8.99/month` and `$79/year` in place.
+ * swap the Practitioner price between `$8.99/month` and `$79/year` in place.
  *
  * Tier *display names* come from `lib/tiers.ts` (SUR-374). The canonical
  * identifiers stay `free`/`pro` — the `FREE_FEATURES` / `PRO_FEATURES`
@@ -12,7 +12,7 @@
  * Pricing strings are hard-coded here. If Stripe price IDs change, this
  * file changes too. Source of truth: SUR-235.
  *
- * The Annotator CTA on each cadence is a plain `<a>` to
+ * The Practitioner CTA on each cadence is a plain `<a>` to
  * `app.surfc.app/upgrade?…` so the no-JS path still works. When the
  * marketing page detects a signed-in user (`pricing.astro` hydration), it
  * rebinds the click handler to call `startCheckout` directly via the
@@ -108,7 +108,7 @@ const PRO_FEATURES: FeatureBullet[] = [
       </a>
     </article>
 
-    <!-- ── Annotator (pro) ─────────────────────────────────── -->
+    <!-- ── Practitioner (pro) ─────────────────────────────────── -->
     <article class="surfc-card pricing-card pricing-card-recommended">
       <span class="pricing-card-badge">Recommended</span>
       <header class="pricing-card-head">
@@ -172,7 +172,7 @@ const PRO_FEATURES: FeatureBullet[] = [
   // Cadence toggle. Pure DOM swap — no framework. Annual is server-rendered
   // as the default; clicking Monthly flips data-cadence on the section root,
   // which CSS uses to show/hide the right price + cadence labels. Also
-  // updates the Annotator CTA href so deep-links carry the cadence into the
+  // updates the Practitioner CTA href so deep-links carry the cadence into the
   // app. (The `data-cta` value stays `pricing_get_pro_*` — funnel contract.)
   (() => {
     const root = document.querySelector('[data-pricing-tiers]')
