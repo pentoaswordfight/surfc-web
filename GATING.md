@@ -284,12 +284,13 @@ here.** This section adds only the gating-policy framing:
   `surfc-intranet/GATING.md`):
   1. **Tier-name drift** — `surfc/supabase/functions/_shared/entitlements.ts`
      is the SSoT for the tier *code identifiers* (`'free' | 'pro'`, kept
-     as-is). The display rename to **Reader** / **Annotator** has landed
-     as of SUR-374 (in lockstep across this site's pricing copy, the
-     `surfc/` app, and this governance PR — cross-ref surfc PR #194), so
-     Reader/Annotator are now the expected live names here. **Scholar**
+     as-is). The display rename to **Reader** / **Practitioner** has landed
+     (SUR-374 introduced Reader/Annotator; SUR-530 renamed the paid tier
+     Annotator→Practitioner — in lockstep across this site's pricing copy and
+     the `surfc/` app), so Reader/Practitioner are now the expected live names
+     here; a stray **Annotator** is now itself the drift to catch. **Scholar**
      remains the unlanded "Coming Later" tier; presenting it as a
-     shipped/buyable tier is the drift to catch. `pricing-claim-reviewer`
+     shipped/buyable tier is also drift. `pricing-claim-reviewer`
      enforces this.
   2. **Feature-claim drift** — `surfc-web` blog/marketing claims are bound
      to `surfc/` reality. `blog-claim-reviewer` checks against the app.

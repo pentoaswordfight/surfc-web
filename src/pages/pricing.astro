@@ -5,7 +5,7 @@
  * Static composition of:
  *   - Nav (modified to include the Pricing link)
  *   - PricingHero (hero band with headline + headline CTA)
- *   - PricingTiers (segmented monthly/annual control + Reader / Annotator / Scholar)
+ *   - PricingTiers (segmented monthly/annual control + Reader / Practitioner / Scholar)
  *   - PricingFaq (two questions: cancel, student discounts)
  *   - ClosingCta (reused unchanged)
  *   - Footer
@@ -13,7 +13,7 @@
  * The cold-visitor variant is shipped in the static HTML. The hydration
  * lives in `src/scripts/pricingCheckout.ts` (invoked below): it reads the
  * cross-domain access cookie issued by app.surfc.app and, when present, swaps
- * the hero / Annotator CTA copy and rebinds the Annotator CTA to call
+ * the hero / Practitioner CTA copy and rebinds the Practitioner CTA to call
  * `create-checkout-session` directly — saving the round-trip through
  * `app.surfc.app/upgrade`. It also drives the SUR-466 loading/timeout overlay
  * and the SUR-496 failure banner (both rendered hidden by

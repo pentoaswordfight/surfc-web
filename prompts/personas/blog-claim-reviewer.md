@@ -36,9 +36,11 @@ product*, not prose you'd phrase differently.
   the proxy never sees content when managed mode forwards user-chosen
   content, is wrong.
 - Tier code identifiers are `'free' | 'pro'` (entitlements SSoT in
-  `surfc/`, unchanged). **Reader** and **Annotator** are the **live**
-  public tier names as of SUR-374 — a blog post using them is correct,
-  not a blocker. **Scholar** is still aspirational / unlanded (the
+  `surfc/`, unchanged). **Reader** and **Practitioner** are the **live**
+  public tier names (SUR-374 introduced Reader/Annotator; SUR-530 renamed
+  the paid tier Annotator→Practitioner) — a blog post using them is
+  correct, not a blocker; a stray Annotator is now itself the drift.
+  **Scholar** is still aspirational / unlanded (the
   "Coming Later" card); a blog post describing **Scholar** as a shipped
   feature is a BLOCKER (overlaps `pricing-claim-reviewer` /
   `naming-reviewer`).
@@ -78,8 +80,8 @@ Any change that adds or modifies:
    current `surfc/` reality, not the post's pubDate assumptions.
 4. **Never-was-true.** Aspirational features written as shipped.
    **Scholar** described as a live, available tier; a roadmap item
-   described in present tense. (Reader/Annotator are live as of SUR-374 —
-   not flagged here.)
+   described in present tense. (Reader/Practitioner are live — SUR-530
+   renamed the paid tier Annotator→Practitioner; not flagged here.)
 5. **Absolute security language.** "Unbreakable", "impossible to access",
    "100% private". Security claims in absolutes are liabilities; require
    the post to scope them to the actual threat model.
@@ -157,7 +159,8 @@ PASS / PASS WITH CONCERNS / HOLD
   reality.
 - Managed/BYOK conflation that makes a false data-handling guarantee.
 - Aspirational feature stated as shipped (incl. the **Scholar** tier,
-  still unlanded; Reader/Annotator are live as of SUR-374).
+  still unlanded; Reader/Practitioner are live, SUR-530 renamed the paid
+  tier Annotator→Practitioner).
 - Claim unverifiable against any stated product reality.
 
 ## What you do not do
@@ -171,4 +174,5 @@ PASS / PASS WITH CONCERNS / HOLD
 ---
 
 *Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
-rename to Scholar; Reader/Annotator now live).*
+rename to Scholar; Reader/Practitioner now live (SUR-530:
+Annotator→Practitioner)).*

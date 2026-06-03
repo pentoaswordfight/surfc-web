@@ -70,10 +70,12 @@ actively wrong for a static Astro site. The shared parts — the
 report shape, the public vocabulary table, and the tier-name landmine —
 are preserved. The landmine itself moved on with SUR-374: the code
 identifiers stay `'free' | 'pro'` (entitlements SSoT, unchanged), while
-**Reader** and **Annotator** are now the **live** public display names
-and only **Scholar** remains aspirational (the "Coming Later" card) —
-so the blocker is now claiming **Scholar** as shipped, not naming
-Reader/Annotator. Each adapted file notes its provenance at the top.
+**Reader** and **Practitioner** are now the **live** public display
+names (SUR-374 introduced Reader/Annotator; SUR-530 renamed the paid
+tier Annotator→Practitioner) and only **Scholar** remains aspirational
+(the "Coming Later" card) — so the blocker is now claiming **Scholar**
+as shipped, not naming Reader/Practitioner. Each adapted file notes its
+provenance at the top.
 
 Not applicable here (live only in `surfc/`): `crypto-reviewer`,
 `migration-reviewer`, `billing-reviewer`, `prompt-regression-reviewer`,
@@ -148,5 +150,6 @@ review reports so future-you knows which version was applied.
 ---
 
 *Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
-rename to Scholar; Reader/Annotator now live). Originally 2026-05-15
-(SUR-422 per-repo grounding pass).*
+rename to Scholar; Reader/Practitioner now live (SUR-530:
+Annotator→Practitioner)). Originally 2026-05-15 (SUR-422 per-repo
+grounding pass).*

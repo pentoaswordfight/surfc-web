@@ -28,14 +28,16 @@ whether the *name* is the right, consistent, non-leaking one).
     "Syntopicon" was an early dropped working name. Be sceptical of
     jargon-as-name and of names that anchor a half-formed concept.
     Premature naming has been course-corrected before.
-  - **Reader** and **Annotator** are the **live** public tier names as
-    of SUR-374 (the display rename is in flight in lockstep across this
-    marketing site, the `surfc/` app, and this governance PR — cross-ref
-    surfc PR #194). The entitlements SSoT
+  - **Reader** and **Practitioner** are the **live** public tier names
+    (SUR-374 introduced Reader/Annotator; SUR-530 renamed the paid tier
+    Annotator→Practitioner; the display rename is in flight in lockstep
+    across this marketing site, the `surfc/` app, and this governance PR
+    — cross-ref surfc PR #194). The entitlements SSoT
     (`surfc/supabase/functions/_shared/entitlements.ts`) keeps the code
     identifiers `'free' | 'pro'` — display names sit on top of it, they
-    do not rename it. Reader/Annotator in visitor copy is now the
-    **expected, correct** vocabulary, not drift. **Scholar** is the only
+    do not rename it. Reader/Practitioner in visitor copy is now the
+    **expected, correct** vocabulary, not drift; a stray Annotator is now
+    itself the drift. **Scholar** is the only
     tier name still **aspirational / unlanded** — it is the "Coming
     Later" card on `/pricing`. Shipping **Scholar** as a live, buyable
     tier name before its rename lands is the high-risk naming drift in
@@ -50,10 +52,11 @@ whether the *name* is the right, consistent, non-leaking one).
   - **Discover** — the AI step that finds ideas in captured notes
   - **Surface / Surfaced** — re-encountering a previously captured idea
   - **Plan** — billing tier / subscription
-  - **Reader** / **Annotator** — the live tier display names as of
-    SUR-374; **Scholar** is the unlanded "Coming Later" capstone. The
-    code identifiers stay `'free' | 'pro'` (entitlements SSoT) — the
-    display names sit on top, they do not rename it.
+  - **Reader** / **Practitioner** — the live tier display names
+    (SUR-374 introduced Reader/Annotator; SUR-530 renamed the paid tier
+    Annotator→Practitioner); **Scholar** is the unlanded "Coming Later"
+    capstone. The code identifiers stay `'free' | 'pro'` (entitlements
+    SSoT) — the display names sit on top, they do not rename it.
   - **Devices** — linked devices for E2EE multi-device access
 - **Internal vocabulary that must NOT leak into the marketing site**:
   - Ticket IDs (`SUR-XXX`)
@@ -104,8 +107,9 @@ Any change that introduces or modifies:
 2. **Internal jargon leaking into the site.** SUR-IDs, model names,
    `BYOK`, `PRF`, `RLS`, `outbox`, internal tier strings, phase names in
    visitor-facing copy. **BLOCKER.**
-3. **Tier-name mismatch.** Reader / Annotator are the live tier names as
-   of SUR-374 — flag only if copy regresses to `Free`/`Pro` or uses them
+3. **Tier-name mismatch.** Reader / Practitioner are the live tier names
+   (SUR-530 renamed the paid tier Annotator→Practitioner) — flag only if
+   copy regresses to `Free`/`Pro`, still says **Annotator**, or uses them
    inconsistently with the shared vocabulary, not for appearing.
    **Scholar** shipped as a live, buyable tier name before its rename
    lands (Stripe products, the app, help, `GATING.md` §10) is a BLOCKER;
@@ -130,7 +134,7 @@ Any change that introduces or modifies:
     before the concept stabilises.
 11. **Reserved or trademarked terms.** Names that collide with
     established products, especially in the same category. Reader,
-    Annotator, Scholar are generic dictionary words; "Surfc" is
+    Practitioner, Scholar are generic dictionary words; "Surfc" is
     invented. Generic terms carry *more* category collision risk than
     invented ones, not less — "Scholar" in particular is widely used in
     the reading/research category, so check for category-specific
@@ -210,8 +214,8 @@ PASS / PASS WITH CONCERNS / HOLD
   does another).
 - New name without surfacing context.
 - **Scholar** shipped as a live, buyable public tier name before its
-  rename lands (Reader/Annotator are the live names as of SUR-374 and are
-  no longer a blocker by mere presence).
+  rename lands (Reader/Practitioner are the live names; a stray Annotator
+  is now itself the drift).
 - New acronym in visitor copy without inline definition.
 
 ## What you do not do
@@ -227,5 +231,5 @@ PASS / PASS WITH CONCERNS / HOLD
 ---
 
 *Last updated: 2026-05-18 (SUR-429 + SUR-374 landed-state: capstone
-rename to Scholar; Reader/Annotator now live). (Adapted from surfc/
-naming-reviewer.)*
+rename to Scholar; Reader/Practitioner now live (SUR-530:
+Annotator→Practitioner)). (Adapted from surfc/ naming-reviewer.)*

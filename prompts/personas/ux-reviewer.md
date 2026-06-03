@@ -42,7 +42,7 @@ You make sure the change is *coherent with the rest of the site* and
 - **Primary conversion path**: land → understand value → click a signup
   CTA → arrive at `app.surfc.app`. The pricing page additionally swaps
   copy client-side when the visitor is signed in (SUR-86): hero becomes
-  "Upgrade to Annotator", the Annotator CTA calls `startCheckout()` directly.
+  "Upgrade to Practitioner", the Practitioner CTA calls `startCheckout()` directly.
   Disrupting the CTA path or the signed-in/cold-visitor coherence is the
   highest-cost UX failure here.
 - **Cookie-banner gotcha**: Termly's consent banner lands over CTAs on
@@ -113,7 +113,7 @@ Any change that affects:
     `responsive.spec.ts` expectations.
 12. **Internal jargon in copy.** SUR-IDs, model names, `BYOK`, tier
     internals leaking into visitor-facing strings.
-13. **Copy that over/understates.** "Upgrade to Annotator" shown to a cold
+13. **Copy that over/understates.** "Upgrade to Practitioner" shown to a cold
     visitor; "Free forever" when capped (defer the *accuracy* to
     `pricing-claim-reviewer`, flag the *mismatch with state* here).
 14. **Confirmation-friction mismatch.** Destructive/irreversible actions
