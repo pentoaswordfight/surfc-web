@@ -1,0 +1,223 @@
+---
+/**
+ * CommonplaceCarousel — the third "How it works" step (SUR-531).
+ *
+ * Replaces the old WhatSurfcIs "Your Commonplace" diagram card with a manual,
+ * swipe-able carousel of four real idea-tree spheres: the payoff visual that
+ * shows a Commonplace filling up with notes across canonical and custom ideas.
+ *
+ * Engine: native CSS scroll-snap track (touch swipe + trackpad for free, and
+ * it degrades to a plain scroll container if JS is disabled). The inline script
+ * only layers on the niceties — dot sync via IntersectionObserver, prev/next +
+ * keyboard navigation, reduced-motion, and a graceful fallback if an image is
+ * missing. The track never widens the page (it scrolls internally), so the
+ * SUR-228 "no horizontal overflow" regression stays green.
+ *
+ * Asset contract — drop four images into `public/media/` (see `SLIDES.src`).
+ * The plates use a cream mat matching the screenshots' own background, so the
+ * differing aspect ratios letterbox invisibly inside one uniform frame. Export
+ * around ~1600px wide WebP to keep the LP light (perf-budget-reviewer).
+ */
+
+const SLIDES = [
+  {
+    src: '/media/commonplace-truth.webp',
+    fig: 'Fig. i',
+    caption: 'Truth · Goodness · Beauty',
+    alt: 'An idea cloud from a Commonplace — Knowledge, Truth, Wisdom, Science, Education and more — each idea sized by how many notes are filed under it.',
+  },
+  {
+    src: '/media/commonplace-justice.webp',
+    fig: 'Fig. ii',
+    caption: 'Liberty · Equality · Justice',
+    alt: 'An idea cloud of social and political concepts — Justice, Government, Liberty, Wealth, War and Peace and more — sized by note count.',
+  },
+  {
+    src: '/media/commonplace-cosmos.webp',
+    fig: 'Fig. iii',
+    caption: 'The physical & the spiritual',
+    alt: 'An idea cloud of physical and spiritual concepts — Change, God, Mind, Cause, Religion, Time and more — sized by note count.',
+  },
+  {
+    src: '/media/commonplace-custom.webp',
+    fig: 'Fig. iv',
+    caption: 'Your own ideas',
+    alt: 'An idea cloud of your own custom ideas — Systems Thinking, Critical Thinking, Dogma, Applied Learning and more.',
+  },
+]
+---
+
+<section class="hiw-section-v2 hiw-cp-section" id="commonplace" aria-labelledby="cp-heading">
+  <p class="hiw-step-label hiw-step-hero hiw-step-center">03 · The payoff</p>
+  <h2 id="cp-heading" class="hiw-h2 hiw-h2-hero hiw-h2-center">Your Commonplace</h2>
+  <p class="hiw-lede-small hiw-center">
+    The more you read, the more your Commonplace finds connections you didn't
+    see. Surfc gets smarter the longer you use it.
+  </p>
+
+  <div class="hiw-cp-stage" data-carousel>
+    <div
+      class="hiw-cp-viewport"
+      data-carousel-viewport
+      tabindex="0"
+      role="group"
+      aria-roledescription="carousel"
+      aria-label={`Your Commonplace — ${SLIDES.length} idea spheres. Use the left and right arrow keys to browse.`}
+    >
+      {SLIDES.map((slide, i) => (
+        <figure
+          class="hiw-cp-slide"
+          data-carousel-slide
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${i + 1} of ${SLIDES.length}: ${slide.caption}`}
+        >
+          <div class="hiw-cp-plate" data-missing-label={slide.caption}>
+            <img
+              class="hiw-cp-img"
+              src={slide.src}
+              alt={slide.alt}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              draggable="false"
+            />
+          </div>
+          <figcaption class="hiw-cp-caption">
+            <span class="hiw-cp-fig">{slide.fig}</span>{slide.caption}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+
+  <div class="hiw-cp-controls">
+    <button class="hiw-cp-arrow hiw-cp-prev" type="button" data-carousel-prev aria-label="Previous sphere">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <div class="hiw-cp-dots">
+      {SLIDES.map((slide, i) => (
+        <button
+          class="hiw-cp-dot"
+          type="button"
+          data-carousel-dot
+          data-index={i}
+          aria-label={`Show ${slide.caption}`}
+          aria-current={i === 0 ? 'true' : 'false'}
+        ></button>
+      ))}
+    </div>
+
+    <button class="hiw-cp-arrow hiw-cp-next" type="button" data-carousel-next aria-label="Next sphere">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+  </div>
+
+  <p class="hiw-cp-live" data-carousel-live role="status" aria-live="polite"></p>
+</section>
+
+<script is:inline>
+  // Manual carousel: scroll-snap track + dots/arrows/keyboard. No auto-advance.
+  const root = document.querySelector('[data-carousel]')
+  if (root) {
+    const viewport = root.querySelector('[data-carousel-viewport]')
+    const slides   = Array.from(root.querySelectorAll('[data-carousel-slide]'))
+    const dots     = Array.from(document.querySelectorAll('[data-carousel-dot]'))
+    const prevBtn  = document.querySelector('[data-carousel-prev]')
+    const nextBtn  = document.querySelector('[data-carousel-next]')
+    const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const live     = document.querySelector('[data-carousel-live]')
+    let current = 0
+    // While a click/key triggers a programmatic scroll, ignore the
+    // IntersectionObserver so its mid-animation readings can't drag `current`
+    // backwards and swallow rapid presses. It resumes syncing free swipes once
+    // the scroll settles.
+    let navigating = false
+    let navTimer = 0
+
+    const setActive = (i) => {
+      current = i
+      dots.forEach((dot, di) => dot.setAttribute('aria-current', di === i ? 'true' : 'false'))
+      const atStart = i === 0
+      const atEnd   = i === slides.length - 1
+      // Hand focus to the opposite arrow before disabling the one that holds it,
+      // so a keyboard user isn't dropped to <body> when they reach an end.
+      if (atEnd   && nextBtn && prevBtn && document.activeElement === nextBtn) prevBtn.focus()
+      if (atStart && prevBtn && nextBtn && document.activeElement === prevBtn) nextBtn.focus()
+      if (prevBtn) prevBtn.disabled = atStart
+      if (nextBtn) nextBtn.disabled = atEnd
+      // Announce the active sphere for screen readers (the slide's own label).
+      if (live && slides[i]) live.textContent = slides[i].getAttribute('aria-label')
+    }
+
+    const go = (i) => {
+      const idx = Math.max(0, Math.min(slides.length - 1, i))
+      const target = slides[idx]
+      if (!target) return
+      navigating = true
+      clearTimeout(navTimer)
+      navTimer = window.setTimeout(() => { navigating = false }, reduce.matches ? 60 : 550)
+      viewport.scrollTo({ left: target.offsetLeft, behavior: reduce.matches ? 'auto' : 'smooth' })
+      setActive(idx)
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => go(current - 1))
+    if (nextBtn) nextBtn.addEventListener('click', () => go(current + 1))
+    dots.forEach((dot, di) => dot.addEventListener('click', () => go(di)))
+
+    viewport.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight')      { event.preventDefault(); go(current + 1) }
+      else if (event.key === 'ArrowLeft')  { event.preventDefault(); go(current - 1) }
+      else if (event.key === 'Home')       { event.preventDefault(); go(0) }
+      else if (event.key === 'End')        { event.preventDefault(); go(slides.length - 1) }
+    })
+
+    // Keep the dots in sync while the user swipes or trackpad-scrolls.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          let best = null
+          for (const entry of entries) {
+            if (entry.isIntersecting && (!best || entry.intersectionRatio > best.intersectionRatio)) best = entry
+          }
+          if (best && !navigating) {
+            const i = slides.indexOf(best.target)
+            if (i !== -1) setActive(i)
+          }
+        },
+        { root: viewport, threshold: [0.4, 0.6, 0.8, 1] },
+      )
+      slides.forEach((slide) => io.observe(slide))
+    } else {
+      let raf = 0
+      viewport.addEventListener(
+        'scroll',
+        () => {
+          if (raf) return
+          raf = requestAnimationFrame(() => {
+            raf = 0
+            if (navigating) return
+            const i = Math.round(viewport.scrollLeft / viewport.clientWidth)
+            setActive(Math.max(0, Math.min(slides.length - 1, i)))
+          })
+        },
+        { passive: true },
+      )
+    }
+
+    // Graceful fallback if a screenshot hasn't been dropped into public/media yet.
+    root.querySelectorAll('.hiw-cp-img').forEach((img) => {
+      img.addEventListener('error', () => {
+        const plate = img.closest('.hiw-cp-plate')
+        if (plate) plate.classList.add('is-missing')
+        img.style.display = 'none'
+      })
+    })
+
+    setActive(0)
+  }
+</script>

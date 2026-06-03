@@ -5,17 +5,17 @@
  * and so Astro can tree-shake any unused markup.
  */
 
-import BaseLayout      from '../layouts/BaseLayout.astro'
-import Nav             from '../components/Nav.astro'
-import Hero            from '../components/Hero.astro'
-import WhatSurfcIs     from '../components/WhatSurfcIs.astro'
-import CapturePassages from '../components/CapturePassages.astro'
-import TagIdeas        from '../components/TagIdeas.astro'
-import SupportingCards from '../components/SupportingCards.astro'
-import Testimonials    from '../components/Testimonials.astro'
-import Faq             from '../components/Faq.astro'
-import ClosingCta      from '../components/ClosingCta.astro'
-import Footer          from '../components/Footer.astro'
+import BaseLayout          from '../layouts/BaseLayout.astro'
+import Nav                 from '../components/Nav.astro'
+import Hero                from '../components/Hero.astro'
+import CapturePassages     from '../components/CapturePassages.astro'
+import TagIdeas            from '../components/TagIdeas.astro'
+import CommonplaceCarousel from '../components/CommonplaceCarousel.astro'
+import SupportingCards     from '../components/SupportingCards.astro'
+import Testimonials        from '../components/Testimonials.astro'
+import Faq                 from '../components/Faq.astro'
+import ClosingCta          from '../components/ClosingCta.astro'
+import Footer              from '../components/Footer.astro'
 ---
 
 <BaseLayout
@@ -25,9 +25,9 @@ import Footer          from '../components/Footer.astro'
 >
   <Nav />
   <Hero />
-  <WhatSurfcIs />
   <CapturePassages />
   <TagIdeas />
+  <CommonplaceCarousel />
   <SupportingCards />
   <Testimonials />
   <Faq />
