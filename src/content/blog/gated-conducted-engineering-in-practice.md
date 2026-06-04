@@ -4,7 +4,7 @@ description: Breaking down the Gated-Conducted Engineering Framework
 pubDate: 2026-05-22
 author: Deji Dipeolu
 tags: []
-draft: true
+draft: false
 updatedDate: 2026-06-04
 ---
 > Everyone has a plan until they get punched in the face
