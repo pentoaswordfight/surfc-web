@@ -1,14 +1,14 @@
 ---
-title: Gated-Conducted Engineering in Practise
+title: gated-conducted-engineering-in-practice
 description: Breaking down the Gated-Conducted Engineering Framework
 pubDate: 2026-05-22
 author: Deji Dipeolu
 tags: []
 draft: true
-updatedDate: 2026-05-22
+updatedDate: 2026-06-04
 ---
 > Everyone has a plan until they get punched in the face
-> 
+>
 - Mike Tyson
 
 533 Linear tickets. 1551 test cases. 61 PRDs. 281 pull requests. 100+ late nights. 1 patient wife. (All current at time of writing.)
@@ -17,9 +17,9 @@ If this is "vibe-coding" then it's bad vibes. What's funny is that I have always
 
 The screenshot below is from today's interaction with Claude Code over code it would have happily shipped (having actually caught a bug and "fixed" it) if I hadn't pushed back.
 
-![](assets/Pasted%20image%2020260520174234.png)
+![Claude Code catching and "fixing" a bug it would have shipped](assets/gce-claude-code-pushback.png)
 
-A relatively trivial thing, but the sort of death-by-a-thousand-paper-cuts that results in [disaster](https://www.reddit.com/r/vibecoding/comments/1su03dk/vibe_coded_for_6_months_my_codebase_is_a_disaster/). 
+A relatively trivial thing, but the sort of death-by-a-thousand-paper-cuts that results in [disaster](https://www.reddit.com/r/vibecoding/comments/1su03dk/vibe_coded_for_6_months_my_codebase_is_a_disaster/).
 
 I previously covered the "why" and "when" of GCE. In this post, I will explain the (still evolving) framework that allows me to sleep well as a solo founder. My [previous post](https://surfc.app/blog/spine-vs-surface/) laid out the 3 tenets of GCE, and next I will explain how I'm fitting the pieces together.
 
