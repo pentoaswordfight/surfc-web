@@ -44,7 +44,8 @@ import { appUrl, signupUrl } from '../lib/appUrl'
       <a href="/#how-it-works" class="hiw-nav-link">How it works</a>
       <a href="/about/" class="hiw-nav-link" data-cta="nav_about">About</a>
       <a href="/blog/" class="hiw-nav-link" data-cta="nav_blog">Blog</a>
-      <a href="/pricing/" class="hiw-nav-link" data-cta="nav_pricing">Pricing</a>
+      {/* Pricing temporarily hidden from nav (route kept live for the Stripe
+          checkout cancel/failure flow). Re-add this link to restore. */}
       <a href="/#faq" class="hiw-nav-link">FAQ</a>
       <a href={appUrl} class="hiw-nav-signin" data-cta="nav_signin">Sign in</a>
       <a href={signupUrl()} class="btn btn-accent hiw-nav-cta" data-cta="nav_signup">
