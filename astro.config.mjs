@@ -17,12 +17,13 @@ export default defineConfig({
   // in SUR-256 to keep an SSR option open, but the dist/{client,server}
   // split it forces broke the Pages publish-dir convention (and Lychee).
   // Re-add when SSR is actually needed.
-  // /waitlist/ still serves a noindex friendly-redirect page for legacy
-  // bookmarks (SUR-365), but should not appear in the sitemap. Match the
-  // exact path so a future blog post with "waitlist" in its slug doesn't
-  // get silently excluded.
+  // /waitlist/ serves a noindex friendly-redirect page for legacy bookmarks
+  // (SUR-365), and /pricing/ is temporarily hidden from nav + search (kept
+  // live only for the Stripe checkout cancel/failure flow) — neither should
+  // appear in the sitemap. Match the exact path so a future blog post with
+  // "waitlist"/"pricing" in its slug isn't silently excluded.
   integrations: [
-    sitemap({ filter: (page) => !/\/waitlist\/?$/.test(page) }),
+    sitemap({ filter: (page) => !/\/(waitlist|pricing)\/?$/.test(page) }),
     mdx(),
   ],
   markdown: {
