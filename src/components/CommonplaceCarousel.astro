@@ -3,8 +3,10 @@
  * CommonplaceCarousel — the third "How it works" step (SUR-531).
  *
  * Replaces the old WhatSurfcIs "Your Commonplace" diagram card with a manual,
- * swipe-able carousel of four real idea-tree spheres: the payoff visual that
- * shows a Commonplace filling up with notes across canonical and custom ideas.
+ * swipe-able carousel of five real idea-tree spheres — one per canon top
+ * (Inner Life, Thinking & Doing, Living Together, The World) plus your own
+ * custom ideas: the payoff visual that shows a Commonplace filling up with
+ * notes across canonical and custom ideas.
  *
  * Engine: native CSS scroll-snap track (touch swipe + trackpad for free, and
  * it degrades to a plain scroll container if JS is disabled). The inline script
@@ -13,7 +15,7 @@
  * missing. The track never widens the page (it scrolls internally), so the
  * SUR-228 "no horizontal overflow" regression stays green.
  *
- * Asset contract — drop four images into `public/media/` (see `SLIDES.src`).
+ * Asset contract — drop five images into `public/media/` (see `SLIDES.src`).
  * The plates use a cream mat matching the screenshots' own background, so the
  * differing aspect ratios letterbox invisibly inside one uniform frame. Export
  * around ~1600px wide WebP to keep the LP light (perf-budget-reviewer).
@@ -21,28 +23,34 @@
 
 const SLIDES = [
   {
-    src: '/media/commonplace-truth.webp',
+    src: '/media/commonplace-inner-life.webp',
     fig: 'Fig. i',
-    caption: 'Truth · Goodness · Beauty',
-    alt: 'An idea cloud from a Commonplace — Knowledge, Truth, Wisdom, Science, Education and more — each idea sized by how many notes are filed under it.',
+    caption: 'Inner Life',
+    alt: 'An idea cloud from the Inner Life section — its Mind and Self branches — with ideas like Reasoning, Learning, Judgment, Creativity, Consciousness and Habit, each sized by how many notes are filed under it.',
   },
   {
-    src: '/media/commonplace-justice.webp',
+    src: '/media/commonplace-thinking-doing.webp',
     fig: 'Fig. ii',
-    caption: 'Liberty · Equality · Justice',
-    alt: 'An idea cloud of social and political concepts — Justice, Government, Liberty, Wealth, War and Peace and more — sized by note count.',
+    caption: 'Thinking & Doing',
+    alt: 'An idea cloud from the Thinking & Doing section — its Knowledge & Systems and Action & Work branches — with ideas like Systems, Explanation, Language, Causation, Strategy and Decision, sized by note count.',
   },
   {
-    src: '/media/commonplace-cosmos.webp',
+    src: '/media/commonplace-living-together.webp',
     fig: 'Fig. iii',
-    caption: 'The physical & the spiritual',
-    alt: 'An idea cloud of physical and spiritual concepts — Change, God, Mind, Cause, Religion, Time and more — sized by note count.',
+    caption: 'Living Together',
+    alt: 'An idea cloud from the Living Together section — its Power & Society and Relationships & Ethics branches — with ideas like Institutions, Conflict, Morality, Trust, Markets and Freedom, sized by note count.',
+  },
+  {
+    src: '/media/commonplace-world.webp',
+    fig: 'Fig. iv',
+    caption: 'The World',
+    alt: 'An idea cloud from The World — its Time & Change and World & Meaning branches — with ideas like Change, Progress, History, Art, Life and the Sacred, sized by note count.',
   },
   {
     src: '/media/commonplace-custom.webp',
-    fig: 'Fig. iv',
+    fig: 'Fig. v',
     caption: 'Your own ideas',
-    alt: 'An idea cloud of your own custom ideas — Systems Thinking, Critical Thinking, Dogma, Applied Learning and more.',
+    alt: 'An idea cloud of your own custom ideas — Trust and Dogma.',
   },
 ]
 ---
