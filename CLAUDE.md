@@ -190,6 +190,12 @@ Production values live in the Cloudflare Pages dashboard.
   inside `src/pages/pricing.astro` lives outside the repo. Don't chase a
   `.claude/plans/...` path that isn't there.
 
+## Workflow — no stacked PRs
+
+Branch every change from `origin/main` (`git checkout -b feature/short-desc origin/main`), never from another feature branch, and every PR's base must be `main` (not a `feature/*`). Stacked PRs have repeatedly stranded reviewed work off `main` across the surfc repos: when the bottom of a stack squash-merges, the upper PRs target a now-orphaned branch and never reach `main`. If a change depends on unmerged work, fold both parts into one PR off `main`, or wait for the base to merge and branch off the updated `main`.
+
+**If a branch needs `main` merged or rebased into it** (stale base, conflicts, a moved `main`, or a reviewer asking to "update from main"), **STOP and flag the founder** — do not rebase or merge `main` into a branch yourself; the founder runs it.
+
 ## Gating policy
 
 This repo follows the **Gated / Conducted Engineering** pattern. Before
