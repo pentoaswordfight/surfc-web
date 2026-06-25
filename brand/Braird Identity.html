@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Braird — Identity Exploration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --board: #F4F1EA;
+    --card: #FFFFFF;
+    --ink: #1E211C;
+    --muted: #8A887E;
+    --hair: #E2DED3;
+    --chrome: 'Hanken Grotesk', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--board);
+    color: var(--ink);
+    font-family: var(--chrome);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .accent-eyebrow { color: var(--accent); }
+  h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
+
+  /* ── Masthead ─────────────────────────────────────────── */
+  .masthead { padding: 88px 0 48px; }
+  .masthead .title {
+    font-size: clamp(40px, 6vw, 76px); font-weight: 700; letter-spacing: -0.035em; line-height: 0.98;
+    margin: 18px 0 0;
+  }
+  .masthead .lede {
+    font-family: 'Spectral', serif; font-size: clamp(18px, 2.2vw, 23px); font-weight: 400;
+    color: #44483F; max-width: 640px; margin-top: 22px; line-height: 1.55;
+  }
+  .masthead .lede em { font-style: italic; color: var(--ink); }
+
+  /* ── Core-challenge hero proof ────────────────────────── */
+  .challenge {
+    background: var(--ink); color: #ECEFE7; border-radius: 20px; padding: 48px 44px;
+    margin-top: 40px;
+  }
+  .challenge .eyebrow { color: #9FB39C; }
+  .challenge h2 { font-size: 24px; font-weight: 600; margin: 14px 0 30px; color: #fff; letter-spacing: -0.02em; }
+  .triad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .triad .slot {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px; padding: 26px 22px; text-align: center;
+  }
+  .triad .slot.hero { background: rgba(95,176,120,0.10); border-color: rgba(95,176,120,0.42); }
+  .triad .bigword {
+    font-family: 'Spectral', serif; font-size: 46px; font-weight: 500; letter-spacing: -0.01em;
+    color: #BFC4B7; line-height: 1;
+  }
+  .triad .hero .bigword { color: #F3F6EE; }
+  .triad .bigword .R { color: #6FC089; }
+  .triad .note { font-size: 12.5px; color: #9A9E92; margin-top: 16px; letter-spacing: 0.01em; }
+  .triad .hero .note { color: #B9E3C2; }
+  .triad .count {
+    display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #6b6f64;
+  }
+  .triad .hero .count { color: #6FC089; }
+
+  /* ── Direction sections ───────────────────────────────── */
+  .dir { padding: 86px 0 20px; border-top: 1px solid var(--hair); }
+  .dir:first-of-type { border-top: none; }
+  .dir-head { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .dir-num {
+    font-size: 13px; font-weight: 800; letter-spacing: 0.04em; color: var(--accent);
+    border: 1.5px solid var(--accent); border-radius: 999px; padding: 4px 12px;
+  }
+  .dir-name { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; letter-spacing: -0.025em; white-space: nowrap; }
+  .dir-tag { font-family: 'Spectral', serif; font-style: italic; color: var(--muted); font-size: 18px; }
+  .dir-rationale {
+    font-family: 'Spectral', serif; font-size: 18px; color: #45493F; max-width: 720px;
+    margin-top: 16px; line-height: 1.6;
+  }
+  .dir-rationale b { font-weight: 600; color: var(--ink); font-style: normal; }
+
+  /* Wordmark showcase card */
+  .stage {
+    background: var(--paper); border-radius: 18px; margin-top: 30px; padding: 70px 40px;
+    display: flex; flex-direction: column; align-items: center; gap: 26px; text-align: center;
+    border: 1px solid var(--hair);
+  }
+  .wordmark { line-height: 0.9; color: var(--wm-ink); white-space: nowrap; }
+  .wordmark .R { color: var(--accent); }
+  .lockup-def {
+    font-family: 'Spectral', serif; font-size: 15px; color: var(--wm-soft); letter-spacing: 0.01em;
+  }
+  .lockup-def .ipa { opacity: 0.55; }
+  .lockup-tag { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  /* 3-up detail grid */
+  .grid3 { display: grid; grid-template-columns: 1.1fr 1fr 1.1fr; gap: 20px; margin-top: 20px; }
+  .panel {
+    background: var(--card); border: 1px solid var(--hair); border-radius: 16px; padding: 24px 22px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .panel .eyebrow { color: var(--muted); }
+
+  /* App icons */
+  .icon-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .appicon {
+    width: 92px; height: 92px; border-radius: 22px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 22px rgba(40,40,30,0.14); flex-shrink: 0;
+  }
+  .appicon.sm { width: 44px; height: 44px; border-radius: 11px; box-shadow: 0 3px 8px rgba(40,40,30,0.16); }
+  .appicon.xs { width: 26px; height: 26px; border-radius: 7px; box-shadow: 0 2px 5px rgba(40,40,30,0.18); }
+  .icon-cap { font-size: 11px; color: var(--muted); margin-top: 10px; letter-spacing: 0.02em; }
+  .icon-block { display: flex; flex-direction: column; align-items: center; }
+
+  /* Palette */
+  .swatches { display: flex; flex-direction: column; gap: 10px; }
+  .sw { display: flex; align-items: center; gap: 12px; }
+  .sw .chip { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); }
+  .sw .meta { min-width: 0; }
+  .sw .nm { font-size: 13px; font-weight: 600; }
+  .sw .hx { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+  .why { font-family: 'Spectral', serif; font-size: 13.5px; color: #54584E; line-height: 1.55; }
+
+  /* Type pairing */
+  .type-spec { display: flex; flex-direction: column; gap: 14px; }
+  .type-line .role { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .type-line .face { font-size: 13px; font-weight: 600; }
+  .type-sample-serif { font-size: 26px; letter-spacing: -0.01em; color: var(--ink); line-height: 1.1; }
+  .type-sample-sans { font-size: 15px; color: #45493F; line-height: 1.55; }
+
+  /* Logomark explainer */
+  .markwrap { display: flex; align-items: center; gap: 22px; }
+  .markwrap svg { flex-shrink: 0; }
+  .mark-note { font-family: 'Spectral', serif; font-size: 14px; color: #54584E; line-height: 1.55; }
+
+  /* Disambiguation proof per direction */
+  .proof {
+    margin-top: 20px; background: var(--card); border: 1px solid var(--hair); border-radius: 16px;
+    padding: 24px 26px; display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;
+  }
+  .proof-words { display: flex; flex-direction: column; gap: 12px; }
+  .proof-word {
+    font-family: var(--wm-family); font-size: 40px; font-weight: var(--wm-weight); letter-spacing: -0.02em; line-height: 1;
+    color: #B7B5AC;
+  }
+  .proof-word.live { color: var(--wm-ink); }
+  .proof-word.live .R { color: var(--accent); }
+  .proof-meta .eyebrow { color: var(--muted); }
+  .proof-meta p { font-family: 'Spectral', serif; font-size: 15px; color: #45493F; margin-top: 10px; line-height: 1.6; }
+  .proof-meta b { color: var(--accent); font-weight: 600; }
+
+  /* ── Closing ──────────────────────────────────────────── */
+  .closing { padding: 90px 0 110px; border-top: 1px solid var(--hair); }
+  .rec {
+    background: var(--ink); color: #ECEFE7; border-radius: 20px; padding: 46px 44px; margin-top: 28px;
+  }
+  .rec .eyebrow { color: #9FB39C; }
+  .rec h2 { color: #fff; font-size: 26px; margin: 12px 0 16px; letter-spacing: -0.02em; }
+  .rec p { font-family: 'Spectral', serif; font-size: 17px; color: #C9CDC2; line-height: 1.65; max-width: 720px; }
+  .rec p b { color: #fff; font-weight: 600; }
+
+  .footer { margin-top: 40px; font-size: 12px; color: var(--muted); letter-spacing: 0.02em; }
+
+  @media (max-width: 860px) {
+    .grid3 { grid-template-columns: 1fr; }
+    .triad { grid-template-columns: 1fr; }
+    .proof { grid-template-columns: 1fr; gap: 18px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .dir, .closing { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ MASTHEAD ════ -->
+<header class="masthead wrap">
+  <div class="eyebrow">Visual identity · exploration v1</div>
+  <h1 class="title">Braird</h1>
+  <p class="lede">A private archive that turns fragmented reading highlights into something that quietly compounds — <em>a living index where ideas connect across books, notes, and time.</em> Three directions below; the name is the raw material, and the two R's are the device.</p>
+
+  <!-- Core challenge proof, up top -->
+  <section class="challenge">
+    <div class="eyebrow">The core challenge — solve this first</div>
+    <h2>Braird has the only spelling with two R's. The identity must make that unmistakable.</h2>
+    <div class="triad">
+      <div class="slot hero">
+        <div class="bigword">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+        <div class="count">two R's</div>
+        <div class="note">the first green shoots after sowing</div>
+      </div>
+      <div class="slot">
+        <div class="bigword">braid</div>
+        <div class="count">one R</div>
+        <div class="note">to weave — a different word</div>
+      </div>
+      <div class="slot">
+        <div class="bigword">baird</div>
+        <div class="count">one R</div>
+        <div class="note">a surname — a different word</div>
+      </div>
+    </div>
+  </section>
+</header>
+<!-- ════ DIRECTION 1 — FIRST SHOOTS ════ -->
+<section class="dir wrap" style="
+  --accent:#2F9E63; --paper:#F1F5EB; --soft:#DCEAD6;
+  --wm-ink:#15281C; --wm-soft:#5C6A5A;
+  --wm-family:'Hanken Grotesk',sans-serif; --wm-weight:700;">
+  <div class="dir-head">
+    <span class="dir-num">01</span>
+    <span class="dir-name">First Shoots</span>
+    <span class="dir-tag">fresh, botanical, contemporary</span>
+  </div>
+  <p class="dir-rationale">The most literal read of the name. <b>Both R's literally sprout</b> — a young leaf grows from the arm of each one — so the meaning (first shoots after sowing) and the disambiguation device become the same gesture. Clean, optimistic, grounded by a deep-forest ink so it reads considered, never twee.</p>
+
+  <div class="stage">
+    <div class="wordmark" style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:120px; letter-spacing:-0.04em;">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+    <div class="lockup-tag">Resurface and connect.</div>
+    <div class="lockup-def">braird <span class="ipa">/brɛːrd/</span> — the first green shoots after sowing</div>
+  </div>
+
+  <!-- The device: the R as a first shoot -->
+  <div class="proof" style="grid-template-columns:auto 1fr;">
+    <div style="display:flex; gap:24px; align-items:flex-end;">
+      <svg width="96" height="150" viewBox="0 0 86 150" fill="none">
+        <path d="M30 60 V120" stroke="#15281C" stroke-width="7" stroke-linecap="round"/>
+        <path d="M30 70 C30 60 42 56 54 57" stroke="#15281C" stroke-width="7" stroke-linecap="round"/>
+        <path d="M54 57 C58 42 70 38 78 40 C76 53 65 60 54 57 Z" fill="#2F9E63"/>
+        <path d="M40 64 C36 53 26 50 19 52 C22 63 32 68 41 65" fill="#2F9E63" opacity="0.5"/>
+      </svg>
+      <svg width="96" height="150" viewBox="0 0 86 150" fill="none">
+        <path d="M30 60 V120" stroke="#15281C" stroke-width="7" stroke-linecap="round"/>
+        <path d="M30 70 C30 60 42 56 54 57" stroke="#15281C" stroke-width="7" stroke-linecap="round"/>
+        <path d="M54 57 C58 42 70 38 78 40 C76 53 65 60 54 57 Z" fill="#2F9E63"/>
+        <path d="M40 64 C36 53 26 50 19 52 C22 63 32 68 41 65" fill="#2F9E63" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="proof-meta">
+      <div class="eyebrow">The device — the R that sprouts</div>
+      <p>Each R's arm opens into a young leaf. The letter you'd otherwise overlook becomes the picture of the word's meaning — and there are exactly <b>two</b> of them. Used full-strength here as a construction detail; in the wordmark the same two R's simply carry the colour.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <!-- Logomark + app icon -->
+    <div class="panel">
+      <div class="eyebrow">Logomark · app icon</div>
+      <div class="markwrap">
+        <svg width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="#2F9E63">
+          <path d="M24 43 V32" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M24 34 C22 27 18 23 14 19" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M24 33 C26 24 30 17 33 12" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M14 19 C8 19 5 14 6 9 C12 10 15 14 14 19 Z" fill="#2F9E63" stroke="none"/>
+          <path d="M33 12 C39 12 42 7 41 2 C35 3 32 7 33 12 Z" fill="#2F9E63" stroke="none"/>
+        </svg>
+        <div class="mark-note">Two shoots from one sowing — and, read again, the two R's. One stem shorter, one taller: <em>resurface &amp; connect.</em></div>
+      </div>
+      <div class="icon-row">
+        <div class="icon-block">
+          <div class="appicon" style="background:#15281C;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#6FC089">
+              <path d="M24 43 V32" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M24 34 C22 27 18 23 14 19" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M24 33 C26 24 30 17 33 12" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M14 19 C8 19 5 14 6 9 C12 10 15 14 14 19 Z" fill="#6FC089" stroke="none"/>
+              <path d="M33 12 C39 12 42 7 41 2 C35 3 32 7 33 12 Z" fill="#6FC089" stroke="none"/>
+            </svg>
+          </div>
+          <div class="icon-cap">macOS · color</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon sm" style="background:#15281C;">
+            <svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#6FC089">
+              <path d="M24 43 V32" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 34 C22 27 18 23 14 19" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 33 C26 24 30 17 33 12" stroke-width="3" stroke-linecap="round"/>
+              <path d="M14 19 C8 19 5 14 6 9 C12 10 15 14 14 19 Z" fill="#6FC089" stroke="none"/>
+              <path d="M33 12 C39 12 42 7 41 2 C35 3 32 7 33 12 Z" fill="#6FC089" stroke="none"/>
+            </svg>
+          </div>
+          <div class="icon-cap">small</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon xs" style="background:#15281C;">
+            <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#6FC089">
+              <path d="M24 43 V31" stroke-width="3.6" stroke-linecap="round"/>
+              <path d="M24 34 C22 27 18 23 14 19" stroke-width="3.6" stroke-linecap="round"/>
+              <path d="M24 33 C26 24 30 17 33 12" stroke-width="3.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-cap">favicon</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon sm" style="background:#15281C;">
+            <svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#F1F5EB">
+              <path d="M24 43 V32" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 34 C22 27 18 23 14 19" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 33 C26 24 30 17 33 12" stroke-width="3" stroke-linecap="round"/>
+              <path d="M14 19 C8 19 5 14 6 9 C12 10 15 14 14 19 Z" fill="#F1F5EB" stroke="none"/>
+              <path d="M33 12 C39 12 42 7 41 2 C35 3 32 7 33 12 Z" fill="#F1F5EB" stroke="none"/>
+            </svg>
+          </div>
+          <div class="icon-cap">mono</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Palette -->
+    <div class="panel">
+      <div class="eyebrow">Palette · fresh botanical</div>
+      <div class="swatches">
+        <div class="sw"><span class="chip" style="background:#2F9E63;"></span><span class="meta"><div class="nm">Shoot</div><div class="hx">#2F9E63</div></span></div>
+        <div class="sw"><span class="chip" style="background:#15281C;"></span><span class="meta"><div class="nm">Forest ink</div><div class="hx">#15281C</div></span></div>
+        <div class="sw"><span class="chip" style="background:#DCEAD6;"></span><span class="meta"><div class="nm">Pale sage</div><div class="hx">#DCEAD6</div></span></div>
+        <div class="sw"><span class="chip" style="background:#F1F5EB;"></span><span class="meta"><div class="nm">Paper</div><div class="hx">#F1F5EB</div></span></div>
+      </div>
+      <div class="why">A single fresh-shoot green carries all the meaning; the deep forest ink keeps it adult and durable, and the pale sage gives quiet surfaces for a dense archive to breathe.</div>
+    </div>
+
+    <!-- Type pairing -->
+    <div class="panel">
+      <div class="eyebrow">Type pairing</div>
+      <div class="type-spec">
+        <div class="type-line">
+          <div class="role">Wordmark &amp; UI</div>
+          <div class="face">Hanken Grotesk</div>
+          <div class="type-sample-serif" style="font-family:'Hanken Grotesk',sans-serif; font-weight:600;">Aa Rr — calm clarity</div>
+        </div>
+        <div class="type-line">
+          <div class="role">Reading &amp; long-form</div>
+          <div class="face">Spectral</div>
+          <div class="type-sample-sans" style="font-family:'Spectral',serif;">“The right old idea resurfaces and connects at the right moment.”</div>
+        </div>
+      </div>
+      <div class="why">A humanist grotesque for the interface — friendly but precise — paired with Spectral for the reading content the archive is made of.</div>
+    </div>
+  </div>
+
+  <!-- Disambiguation proof -->
+  <div class="proof" style="--wm-family:'Hanken Grotesk',sans-serif; --wm-weight:700;">
+    <div class="proof-words">
+      <div class="proof-word live">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+      <div class="proof-word">braid</div>
+      <div class="proof-word">baird</div>
+    </div>
+    <div class="proof-meta">
+      <div class="eyebrow">How it can't be misread</div>
+      <p>Only Braird lights up <b>twice</b>. Because both R's sprout, the eye counts two green marks before it reads the word — and neither <em>braid</em> nor <em>baird</em> can ever do that with a single R. The odd spelling becomes the logic of the mark.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ DIRECTION 2 — RESURFACE ════ -->
+<section class="dir wrap" style="
+  --accent:#6E8E66; --paper:#EDECE5; --soft:#D8D6CC;
+  --wm-ink:#1B241F; --wm-soft:#5A5F55;
+  --wm-family:'Spectral',serif; --wm-weight:500;">
+  <div class="dir-head">
+    <span class="dir-num">02</span>
+    <span class="dir-name">Resurface</span>
+    <span class="dir-tag">restrained, intelligent, near-monochrome</span>
+  </div>
+  <p class="dir-rationale">The most durable and "app-like" route. A quiet ink-on-paper serif with <b>one</b> accent that does a single job: it lights the two R's and draws a fine arc that surfaces from below to <b>connect them</b> — the verbal identity, <em>resurface and connect,</em> made literal. Reads as a tool you'll keep for a decade, not a launch.</p>
+
+  <div class="stage">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+      <div class="wordmark" style="font-family:'Spectral',serif; font-weight:500; font-size:118px; letter-spacing:-0.01em;">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+      <svg width="300" height="34" viewBox="0 0 300 34" fill="none" style="margin-top:-6px;">
+        <path d="M70 6 C70 24 120 28 150 28 C180 28 230 24 230 6" stroke="#6E8E66" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="70" cy="6" r="3.4" fill="#6E8E66"/>
+        <circle cx="230" cy="6" r="3.4" fill="#6E8E66"/>
+      </svg>
+    </div>
+    <div class="lockup-tag">Resurface and connect.</div>
+    <div class="lockup-def">braird <span class="ipa">/brɛːrd/</span> — the first green shoots after sowing</div>
+  </div>
+
+  <!-- The device: the connect-arc -->
+  <div class="proof" style="grid-template-columns:auto 1fr;">
+    <svg width="150" height="120" viewBox="0 0 150 120" fill="none">
+      <path d="M52 96 V52" stroke="#1B241F" stroke-width="6" stroke-linecap="round"/>
+      <path d="M98 96 V52" stroke="#1B241F" stroke-width="6" stroke-linecap="round"/>
+      <path d="M52 52 C52 28 98 28 98 52" stroke="#6E8E66" stroke-width="6" stroke-linecap="round"/>
+      <path d="M75 38 C71 30 71 22 75 17 C79 22 79 30 75 38 Z" fill="#6E8E66"/>
+    </svg>
+    <div class="proof-meta">
+      <div class="eyebrow">The device — two stems, one arc</div>
+      <p>Two upright stems are the pair of R's; the accent arc rises between them and a single leaf opens at the crown. An idea <b>resurfaces</b> and <b>connects</b> — the same mark whether at headline size or shrunk to a 16px favicon.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="panel">
+      <div class="eyebrow">Logomark · app icon</div>
+      <div class="markwrap">
+        <svg width="64" height="64" viewBox="0 0 48 48" fill="none">
+          <path d="M17 36 V22" stroke="#1B241F" stroke-width="3" stroke-linecap="round"/>
+          <path d="M31 36 V22" stroke="#1B241F" stroke-width="3" stroke-linecap="round"/>
+          <path d="M17 22 C17 13 31 13 31 22" stroke="#6E8E66" stroke-width="3" stroke-linecap="round"/>
+          <path d="M24 16 C21.5 11 21.5 7 24 4 C26.5 7 26.5 11 24 16 Z" fill="#6E8E66"/>
+        </svg>
+        <div class="mark-note">An arch between two stems: connection, and a shoot at its crown. Near-monochrome by design, so it survives any context.</div>
+      </div>
+      <div class="icon-row">
+        <div class="icon-block">
+          <div class="appicon" style="background:#EDECE5;">
+            <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
+              <path d="M17 36 V22" stroke="#1B241F" stroke-width="3" stroke-linecap="round"/>
+              <path d="M31 36 V22" stroke="#1B241F" stroke-width="3" stroke-linecap="round"/>
+              <path d="M17 22 C17 13 31 13 31 22" stroke="#6E8E66" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 16 C21.5 11 21.5 7 24 4 C26.5 7 26.5 11 24 16 Z" fill="#6E8E66"/>
+            </svg>
+          </div>
+          <div class="icon-cap">macOS · color</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon sm" style="background:#1B241F;">
+            <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+              <path d="M17 36 V22" stroke="#EDECE5" stroke-width="3.4" stroke-linecap="round"/>
+              <path d="M31 36 V22" stroke="#EDECE5" stroke-width="3.4" stroke-linecap="round"/>
+              <path d="M17 22 C17 13 31 13 31 22" stroke="#9DBE93" stroke-width="3.4" stroke-linecap="round"/>
+              <path d="M24 16 C21.5 11 21.5 7 24 4 C26.5 7 26.5 11 24 16 Z" fill="#9DBE93"/>
+            </svg>
+          </div>
+          <div class="icon-cap">small · dark</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon xs" style="background:#1B241F;">
+            <svg width="15" height="15" viewBox="0 0 48 48" fill="none">
+              <path d="M17 36 V22" stroke="#EDECE5" stroke-width="4.2" stroke-linecap="round"/>
+              <path d="M31 36 V22" stroke="#EDECE5" stroke-width="4.2" stroke-linecap="round"/>
+              <path d="M17 22 C17 13 31 13 31 22" stroke="#9DBE93" stroke-width="4.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-cap">favicon</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Palette · ink + one accent</div>
+      <div class="swatches">
+        <div class="sw"><span class="chip" style="background:#1B241F;"></span><span class="meta"><div class="nm">Ink</div><div class="hx">#1B241F</div></span></div>
+        <div class="sw"><span class="chip" style="background:#6E8E66;"></span><span class="meta"><div class="nm">Moss accent</div><div class="hx">#6E8E66</div></span></div>
+        <div class="sw"><span class="chip" style="background:#D8D6CC;"></span><span class="meta"><div class="nm">Stone</div><div class="hx">#D8D6CC</div></span></div>
+        <div class="sw"><span class="chip" style="background:#EDECE5;"></span><span class="meta"><div class="nm">Paper</div><div class="hx">#EDECE5</div></span></div>
+      </div>
+      <div class="why">Restraint as a feature: a deep green-black and a soft paper carry 95% of every surface, so the lone moss accent always means the same thing — growth, and the double-R.</div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Type pairing</div>
+      <div class="type-spec">
+        <div class="type-line">
+          <div class="role">Wordmark &amp; editorial</div>
+          <div class="face">Spectral</div>
+          <div class="type-sample-serif" style="font-family:'Spectral',serif; font-weight:500;">Aa Rr — considered</div>
+        </div>
+        <div class="type-line">
+          <div class="role">Product UI</div>
+          <div class="face">Hanken Grotesk</div>
+          <div class="type-sample-sans" style="font-family:'Hanken Grotesk',sans-serif;">Settings · Library · Connections · Surfaced today</div>
+        </div>
+      </div>
+      <div class="why">Spectral's transitional serif gives the wordmark a quiet scholarly authority; Hanken Grotesk keeps the dense interface neutral and legible.</div>
+    </div>
+  </div>
+
+  <div class="proof" style="--wm-family:'Spectral',serif; --wm-weight:500;">
+    <div class="proof-words">
+      <div class="proof-word live">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+      <div class="proof-word">braid</div>
+      <div class="proof-word">baird</div>
+    </div>
+    <div class="proof-meta">
+      <div class="eyebrow">How it can't be misread</div>
+      <p>The accent appears <b>exactly twice</b> and the connect-arc only exists when there are two stems to bridge. <em>Braid</em> and <em>baird</em> have a single R, so neither the colour-pair nor the arc can resolve — the mark simply won't form.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ DIRECTION 3 — TAKE ROOT ════ -->
+<section class="dir wrap" style="
+  --accent:#B0552F; --paper:#F3E9D9; --soft:#E4D7BF;
+  --wm-ink:#2C231B; --wm-soft:#6A5C49;
+  --wm-family:'Newsreader',serif; --wm-weight:500;">
+  <div class="dir-head">
+    <span class="dir-num">03</span>
+    <span class="dir-name">Take Root</span>
+    <span class="dir-tag">warm, literary, earthy</span>
+  </div>
+  <p class="dir-rationale">The warmest, most bookish route — a hand-bound, well-worn register where a garden meets a library. The two R's are <b>terracotta</b>, the colour of sown earth; the logomark is a single seed splitting into two shoots with roots beneath. <em>Resurface. Reconnect. Take root.</em> Old-world without being twee, thanks to the literary serif and grounded clay.</p>
+
+  <div class="stage">
+    <div class="wordmark" style="font-family:'Newsreader',serif; font-weight:500; font-size:122px; letter-spacing:-0.005em;">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+    <div class="lockup-tag">Resurface. Reconnect. Take root.</div>
+    <div class="lockup-def">braird <span class="ipa">/brɛːrd/</span> — the first green shoots after sowing</div>
+  </div>
+
+  <!-- The device: seed → two shoots -->
+  <div class="proof" style="grid-template-columns:auto 1fr;">
+    <svg width="150" height="130" viewBox="0 0 150 130" fill="none">
+      <ellipse cx="75" cy="70" rx="9" ry="12" fill="#B0552F"/>
+      <path d="M75 60 C70 44 58 38 49 37" stroke="#7E9468" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M75 60 C80 44 92 38 101 37" stroke="#7E9468" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M49 37 C42 31 41 22 44 16 C51 20 53 30 49 37 Z" fill="#7E9468"/>
+      <path d="M101 37 C108 31 109 22 106 16 C99 20 97 30 101 37 Z" fill="#7E9468"/>
+      <path d="M75 82 C72 96 64 102 56 106" stroke="#9A7A52" stroke-width="3" stroke-linecap="round"/>
+      <path d="M75 82 C78 96 86 102 94 106" stroke="#9A7A52" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="proof-meta">
+      <div class="eyebrow">The device — one seed, two shoots</div>
+      <p>A single highlight, sown, splits into <b>two shoots</b> that resurface and a quiet root system that connects below the soil — the archive's whole promise in one mark, and the two R's stated as the two shoots.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="panel">
+      <div class="eyebrow">Logomark · app icon</div>
+      <div class="markwrap">
+        <svg width="64" height="64" viewBox="0 0 48 48" fill="none">
+          <ellipse cx="24" cy="27" rx="4.4" ry="6" fill="#B0552F"/>
+          <path d="M24 22 C21 14 15 11 11 11" stroke="#7E9468" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M24 22 C27 14 33 11 37 11" stroke="#7E9468" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M11 11 C7 8 7 3 9 1 C13 3 14 8 11 11 Z" fill="#7E9468"/>
+          <path d="M37 11 C41 8 41 3 39 1 C35 3 34 8 37 11 Z" fill="#7E9468"/>
+          <path d="M24 33 C22 39 18 42 14 44" stroke="#9A7A52" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M24 33 C26 39 30 42 34 44" stroke="#9A7A52" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="mark-note">Seed, two shoots, roots. Earthy and unmistakably organic — and it reduces cleanly to the two shoots alone at small sizes.</div>
+      </div>
+      <div class="icon-row">
+        <div class="icon-block">
+          <div class="appicon" style="background:#F3E9D9;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <ellipse cx="24" cy="27" rx="4.4" ry="6" fill="#B0552F"/>
+              <path d="M24 22 C21 14 15 11 11 11" stroke="#7E9468" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M24 22 C27 14 33 11 37 11" stroke="#7E9468" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M11 11 C7 8 7 3 9 1 C13 3 14 8 11 11 Z" fill="#7E9468"/>
+              <path d="M37 11 C41 8 41 3 39 1 C35 3 34 8 37 11 Z" fill="#7E9468"/>
+              <path d="M24 33 C22 39 18 42 14 44" stroke="#9A7A52" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M24 33 C26 39 30 42 34 44" stroke="#9A7A52" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-cap">macOS · color</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon sm" style="background:#2C231B;">
+            <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+              <ellipse cx="24" cy="28" rx="5" ry="6.5" fill="#D08A5E"/>
+              <path d="M24 23 C21 15 15 12 11 12" stroke="#A7BE92" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 23 C27 15 33 12 37 12" stroke="#A7BE92" stroke-width="3" stroke-linecap="round"/>
+              <path d="M11 12 C7 9 7 4 9 2 C13 4 14 9 11 12 Z" fill="#A7BE92"/>
+              <path d="M37 12 C41 9 41 4 39 2 C35 4 34 9 37 12 Z" fill="#A7BE92"/>
+            </svg>
+          </div>
+          <div class="icon-cap">small · dark</div>
+        </div>
+        <div class="icon-block">
+          <div class="appicon xs" style="background:#2C231B;">
+            <svg width="15" height="15" viewBox="0 0 48 48" fill="none">
+              <ellipse cx="24" cy="30" rx="5.5" ry="6.5" fill="#D08A5E"/>
+              <path d="M24 25 C21 16 15 13 11 13" stroke="#A7BE92" stroke-width="3.8" stroke-linecap="round"/>
+              <path d="M24 25 C27 16 33 13 37 13" stroke="#A7BE92" stroke-width="3.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="icon-cap">favicon</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Palette · earthy literary</div>
+      <div class="swatches">
+        <div class="sw"><span class="chip" style="background:#B0552F;"></span><span class="meta"><div class="nm">Clay</div><div class="hx">#B0552F</div></span></div>
+        <div class="sw"><span class="chip" style="background:#7E9468;"></span><span class="meta"><div class="nm">Sage</div><div class="hx">#7E9468</div></span></div>
+        <div class="sw"><span class="chip" style="background:#2C231B;"></span><span class="meta"><div class="nm">Walnut ink</div><div class="hx">#2C231B</div></span></div>
+        <div class="sw"><span class="chip" style="background:#F3E9D9;"></span><span class="meta"><div class="nm">Cream</div><div class="hx">#F3E9D9</div></span></div>
+      </div>
+      <div class="why">Clay is sown earth; sage is the shoot; walnut and cream are the worn page. Two organic hues instead of one keeps the warmth literary rather than clinical.</div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Type pairing</div>
+      <div class="type-spec">
+        <div class="type-line">
+          <div class="role">Wordmark &amp; reading</div>
+          <div class="face">Newsreader</div>
+          <div class="type-sample-serif" style="font-family:'Newsreader',serif; font-weight:500;">Aa Rr — bookish warmth</div>
+        </div>
+        <div class="type-line">
+          <div class="role">Product UI</div>
+          <div class="face">Hanken Grotesk</div>
+          <div class="type-sample-sans" style="font-family:'Hanken Grotesk',sans-serif;">A living index — ideas connect across books, notes, and time.</div>
+        </div>
+      </div>
+      <div class="why">Newsreader carries the literary, archival feeling all the way into the reading content; Hanken Grotesk keeps controls and metadata quiet and modern.</div>
+    </div>
+  </div>
+
+  <div class="proof" style="--wm-family:'Newsreader',serif; --wm-weight:500;">
+    <div class="proof-words">
+      <div class="proof-word live">b<span class="R">r</span>ai<span class="R">r</span>d</div>
+      <div class="proof-word">braid</div>
+      <div class="proof-word">baird</div>
+    </div>
+    <div class="proof-meta">
+      <div class="eyebrow">How it can't be misread</div>
+      <p>Two clay R's read as the two shoots from one seed. The warmth makes the unusual spelling feel <b>intentional and old</b> — a real word with roots — so <em>braid</em> and <em>baird</em>, each with one R, never enter the frame.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CLOSING ════ -->
+<section class="closing wrap">
+  <div class="eyebrow">Side by side — the proof that has to hold</div>
+  <div style="background:#fff; border:1px solid var(--hair); border-radius:18px; padding:48px 40px; margin-top:22px; display:flex; flex-direction:column; gap:30px; align-items:center;">
+    <div style="display:flex; gap:48px; align-items:baseline; flex-wrap:wrap; justify-content:center;">
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:84px; letter-spacing:-0.04em; color:#15281C; line-height:1;">b<span style="color:#2F9E63;">r</span>ai<span style="color:#2F9E63;">r</span>d</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:84px; letter-spacing:-0.04em; color:#C2C0B7; line-height:1;">braid</div>
+      <div style="font-family:'Hanken Grotesk',sans-serif; font-weight:700; font-size:84px; letter-spacing:-0.04em; color:#C2C0B7; line-height:1;">baird</div>
+    </div>
+    <div style="font-family:'Spectral',serif; font-size:16px; color:#54584E; text-align:center; max-width:560px; line-height:1.6;">
+      Across all three directions the rule is the same: <b style="color:#2F9E63;">two accent marks, never one.</b> The reader counts the colour before they read the letters, so Braird can't collapse into either near-homophone.
+    </div>
+  </div>
+
+  <div class="rec">
+    <div class="eyebrow">Recommendation</div>
+    <h2>Lead with 02 · Resurface; keep 01 in reserve.</h2>
+    <p><b>Resurface</b> best fits a private, durable desktop tool for contemplative knowledge workers — the near-monochrome restraint ages well, the connect-arc carries the product's whole promise, and a single accent is the cleanest possible answer to the two-R problem at favicon size. <b>First Shoots</b> is the strongest if the brand wants to feel more alive and approachable up front. <b>Take Root</b> is the move if the product leans hard into the literary, archival register. Next step: pick a lead, then I'll tighten the wordmark spacing, draw the full app-icon grid (16–1024px), and build the name+definition lockup in horizontal and stacked forms.</p>
+  </div>
+
+  <div class="footer">Braird — identity exploration v1 · wordmarks set in Hanken Grotesk, Spectral &amp; Newsreader · three directions for review</div>
+</section>
+
+</body>
+</html>
