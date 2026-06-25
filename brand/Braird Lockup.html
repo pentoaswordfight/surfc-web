@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Braird — primary lockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root { --ink:#1B241F; --paper:#EDECE5; --shoot:#2F9E63; --forest:#15281C; --leaf:#6FC089; --hair:#DAD7CC; --muted:#8A887E; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Hanken Grotesk', sans-serif; -webkit-font-smoothing: antialiased; padding: 56px 40px 90px; }
+  .wrap { max-width: 940px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 10px 0 6px; }
+  .sub { font-family: 'Spectral', serif; font-size: 17px; color: #4A4E45; max-width: 600px; line-height: 1.55; }
+  .sub em { font-style: italic; }
+
+  .card { background: #fff; border: 1px solid var(--hair); border-radius: 18px; padding: 60px 44px; margin-top: 22px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .card.ink { background: var(--forest); border-color: #2c3a30; }
+  .card .cap { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .card.ink .cap { color: #9FB39C; }
+
+  /* lockup primitives */
+  .mark { display: block; flex-shrink: 0; }
+  .wm { font-family: 'Spectral', serif; font-weight: 500; color: var(--ink); letter-spacing: -0.012em; white-space: nowrap; line-height: 0.8; }
+  .wm .r { color: var(--shoot); }
+  .wm.rev { color: #ECEFE7; }
+
+  /* horizontal lockup */
+  .lock-h { display: flex; align-items: center; gap: 0.30em; }
+  .lock-h .mark { width: 1em; height: 1.3em; }       /* sized in wordmark em */
+
+  /* stacked lockup */
+  .lock-v { display: flex; flex-direction: column; align-items: center; gap: 0.16em; }
+  .lock-v .mark { width: 1.35em; height: 1.35em; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+
+  /* editorial lockup with definition */
+  .editorial { align-items: flex-start; gap: 22px; padding: 56px 48px; }
+  .editorial .def { font-family: 'Spectral', serif; font-size: 16px; color: #54584E; letter-spacing: 0.01em; }
+  .editorial .def .ipa { opacity: 0.55; }
+  .editorial .tag { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--shoot); }
+  .editorial .rule { width: 56px; height: 2px; background: var(--shoot); border: none; margin: 4px 0; }
+
+  /* clear space / sizes */
+  .spec-row { display: flex; align-items: flex-end; gap: 50px; flex-wrap: wrap; justify-content: center; }
+  .spec-block { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .spec-cap { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .note { font-family: 'Spectral', serif; font-style: italic; font-size: 14px; color: #6A6E63; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Braird · 02 Resurface</div>
+  <h1>Primary lockup</h1>
+  <p class="sub">The First Shoots logomark with the Resurface wordmark — Spectral, deep ink, the two r’s and the mark sharing one shoot-green. <em>Resurface and connect.</em></p>
+
+  <!-- HERO — horizontal -->
+  <div class="card">
+    <div class="cap">Primary · horizontal</div>
+    <div class="lock-h" style="font-size:120px;">
+      <svg class="mark" viewBox="0 0 48 48" fill="none" data-mark></svg>
+      <span class="wm">b<span class="r">r</span>ai<span class="r">r</span>d</span>
+    </div>
+  </div>
+
+  <div class="row2">
+    <!-- stacked -->
+    <div class="card">
+      <div class="cap">Stacked</div>
+      <div class="lock-v" style="font-size:74px;">
+        <svg class="mark" viewBox="0 0 48 48" fill="none" data-mark></svg>
+        <span class="wm">b<span class="r">r</span>ai<span class="r">r</span>d</span>
+      </div>
+    </div>
+    <!-- reversed on ink -->
+    <div class="card ink">
+      <div class="cap">Reversed · on ink</div>
+      <div class="lock-h" style="font-size:74px;">
+        <svg class="mark" viewBox="0 0 48 48" fill="none" data-mark data-dark></svg>
+        <span class="wm rev">b<span class="r" style="color:var(--leaf)">r</span>ai<span class="r" style="color:var(--leaf)">r</span>d</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- editorial lockup with definition -->
+  <div class="card editorial">
+    <div class="cap">Editorial lockup · with definition</div>
+    <div class="lock-h" style="font-size:88px;">
+      <svg class="mark" viewBox="0 0 48 48" fill="none" data-mark></svg>
+      <span class="wm">b<span class="r">r</span>ai<span class="r">r</span>d</span>
+    </div>
+    <hr class="rule" />
+    <div class="def">braird <span class="ipa">/brɛːrd/</span> — the first green shoots after sowing</div>
+    <div class="tag">Resurface and connect.</div>
+  </div>
+
+  <!-- size / clear-space -->
+  <div class="card">
+    <div class="cap">Holds at size</div>
+    <div class="spec-row">
+      <div class="spec-block">
+        <div class="lock-h" style="font-size:54px;"><svg class="mark" viewBox="0 0 48 48" fill="none" data-mark></svg><span class="wm">b<span class="r">r</span>ai<span class="r">r</span>d</span></div>
+        <div class="spec-cap">54px</div>
+      </div>
+      <div class="spec-block">
+        <div class="lock-h" style="font-size:30px;"><svg class="mark" viewBox="0 0 48 48" fill="none" data-mark></svg><span class="wm">b<span class="r">r</span>ai<span class="r">r</span>d</span></div>
+        <div class="spec-cap">30px</div>
+      </div>
+      <div class="spec-block">
+        <svg viewBox="0 0 48 48" fill="none" data-mark style="width:34px;height:34px;"></svg>
+        <div class="spec-cap">mark only · favicon</div>
+      </div>
+    </div>
+    <div class="note">The mark carries the brand alone at small sizes; the full lockup stays legible to ~30px.</div>
+  </div>
+</div>
+
+<script>
+  // First Shoots logomark — two shoots from one sowing. viewBox 0..48.
+  function markPaths(leaf, stemDark) {
+    const stem = stemDark || leaf;
+    return `
+      <path d="M24 44 V32" stroke="${stem}" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M24 34 C22 27 18 23 14 19" stroke="${leaf}" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M24 33 C26 24 30 17 33 12" stroke="${leaf}" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M14 19 C8 19 5 14 6 9 C12 10 15 14 14 19 Z" fill="${leaf}"/>
+      <path d="M33 12 C39 12 42 7 41 2 C35 3 32 7 33 12 Z" fill="${leaf}"/>`;
+  }
+  document.querySelectorAll('[data-mark]').forEach((svg) => {
+    const dark = svg.hasAttribute('data-dark');
+    svg.innerHTML = markPaths(dark ? 'var(--leaf)' : 'var(--shoot)');
+  });
+</script>
+</body>
+</html>

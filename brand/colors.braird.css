@@ -1,0 +1,74 @@
+/* ============================================================
+   Braird — colors.css DROP-IN  (experiment)
+   A straight value-swap of Surfc's colour tokens to the
+   Braird · Resurface palette: forest ink, shoot-green accent,
+   cool paper. Same variable NAMES as tokens/colors.css, so it
+   drops in with zero component edits — everything aliased to
+   these tokens recolours automatically.
+
+   NOT wired into styles.css. To try it, replace tokens/colors.css
+   with this, or load it after styles.css.
+
+   What this CANNOT reach: colours baked directly into a
+   component (NoteCard's amber dot-grid + dog-ear, the warm-brown
+   shadow tokens live in shadows.css). Those need a design pass.
+   ============================================================ */
+
+:root {
+  /* ---- Backgrounds ---- */
+  --color-bg-primary:  #EFEEE7;  /* cool paper, was warm parchment #FFF8F2 */
+  --color-bg-input:    #F5F4ED;
+  --color-bg-card:     #FFFFFF;
+  --color-bg-subtle:   #E3E4DA;
+  --color-bg-overlay:  rgba(21, 27, 21, 0.40);
+
+  /* ---- Accent — shoot green (was amber) ---- */
+  --color-accent:       #2F9E63;
+  --color-accent-light: #DEEEDD;
+  --color-accent-dark:  #154029;
+  --color-accent-text:  #1E6B40;   /* AA-safe green for text on tints */
+
+  /* ---- Text — forest ink (was walnut) ---- */
+  --color-text-primary:   #1B241F;
+  --color-text-secondary: #586056;
+  --color-text-muted:     #7B847A;
+
+  /* ---- Borders ---- */
+  --color-border:        #DBDCD1;
+  --color-border-strong: #B6BAAB;
+
+  /* ---- Semantic ---- */
+  --color-destructive:    #B23B2E;
+  --color-destructive-bg: #F4E6E3;
+
+  /* Custom = the reader's OWN ideas. Now that the canon accent is
+     green, custom shifts to clay so the two never collide. */
+  --color-custom:      #B0552F;
+  --color-custom-text: #8C4321;
+  --color-custom-bg:   #F1E6DC;
+
+  --color-warning:      #8A6A1F;
+  --color-warning-bg:   #F3EAD5;
+  --color-warning-text: #6E5316;
+
+  /* ---- Scope colours — re-tuned over a cool base ---- */
+  --color-scope-source:      #A24E76;
+  --color-scope-source-text: #7E3A5A;
+  --color-scope-source-bg:   #F2E4EB;
+  --color-lens:              #6E6420;
+  --color-lens-text:         #524A14;
+  --color-lens-bg:           #F1ECD5;
+  --color-collection:        #2B5B8A;
+  --color-collection-text:   #1F4670;
+  --color-collection-bg:     #E5ECF4;
+
+  /* ---- Idea-tree inks — kept distinguishable, nudged cooler ---- */
+  --ink-mind:                 #2B5B8A;
+  --ink-self:                 #5A4A7A;
+  --ink-knowledge-systems:    #6E6420;
+  --ink-action-work:          #2F7D5C;
+  --ink-power-society:        #A8392F;
+  --ink-relationships-ethics: #6B3A7A;
+  --ink-time-change:          #3F6470;
+  --ink-world-meaning:        #7A4A2E;
+}
