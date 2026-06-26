@@ -12,12 +12,17 @@
    Colour — Backgrounds
    ------------------------------------------------------------ */
 :root {
-  --color-bg-primary:   #FFF8F2;  /* app background — warm off-white */
-  --color-bg-input:     #FDF6EE;  /* input background - slightly warm */
+  /* SUR-679 — Braird · Resurface palette (value-swap of the Surfc tokens;
+     names unchanged so every aliased component recolours automatically).
+     Cross-repo note: these duplicate surfc/src/tokens.css by design — the
+     marketing site moves to Braird ahead of the app, a deliberate divergence
+     flagged for founder sign-off. */
+  --color-bg-primary:   #EFEEE7;  /* cool paper (was warm off-white) */
+  --color-bg-input:     #F5F4ED;  /* input background — cool paper */
   --color-bg-card:      #FFFFFF;  /* elevated surfaces — cards, modals */
-  --color-bg-subtle:    #F5EDE0;  /* inactive chips, viewfinder, shimmer */
-  --color-bg-overlay:   rgba(26, 20, 16, 0.40); /* lightbox / modal scrim */
-  --color-bg-marketing: #EFE4D0;  /* marketing / landing page parchment background */
+  --color-bg-subtle:    #E3E4DA;  /* inactive chips, viewfinder, shimmer */
+  --color-bg-overlay:   rgba(21, 27, 21, 0.40); /* lightbox / modal scrim */
+  --color-bg-marketing: #EFEEE7;  /* marketing inner-page ground — cool paper */
 }
 
 
@@ -36,15 +41,15 @@
    Colour — Accent (amber)
    Use for: active states, primary CTAs, idea tag dots,
    active nav indicator. Nowhere else.
-   IMPORTANT: --color-accent (#C8860A) is only 2.9:1 on light
-      backgrounds — never use for body text. Large UI elements only:
-      buttons, active states, nav indicators, the logo wordmark. 
+   IMPORTANT: --color-accent (#2F9E63) is a large-UI accent — buttons,
+      active states, nav indicators, the logo wordmark. For text on light
+      tints use --color-accent-text (#1E6B40, AA-safe), never --color-accent.
    ------------------------------------------------------------ */
 :root {
-  --color-accent:       #C8860A;  /* primary amber */
-  --color-accent-light: #FAEEDA;  /* chip fills, active chip bg */
-  --color-accent-dark:  #5C3A00;  /* hover / pressed states */
-  --color-accent-text:  #7A4F00;  /* text on accent-light backgrounds */
+  --color-accent:       #2F9E63;  /* shoot green (was amber) */
+  --color-accent-light: #DEEEDD;  /* chip fills, active chip bg */
+  --color-accent-dark:  #154029;  /* hover / pressed states — deep forest */
+  --color-accent-text:  #1E6B40;  /* AA-safe green for text on tints */
 }
 
 
@@ -52,9 +57,9 @@
    Colour — Text
    ------------------------------------------------------------ */
 :root {
-  --color-text-primary:   #1A1410;  /* body copy, headings */
-  --color-text-secondary: #6B5A47;  /* metadata, source labels, captions */
-  --color-text-muted:     #755F4A;  /* timestamps, hints, placeholders */
+  --color-text-primary:   #1B241F;  /* forest ink — body copy, headings */
+  --color-text-secondary: #586056;  /* metadata, source labels, captions */
+  --color-text-muted:     #7B847A;  /* timestamps, hints, placeholders */
 }
 
 
@@ -62,8 +67,8 @@
    Colour — Borders
    ------------------------------------------------------------ */
 :root {
-  --color-border:       #E8D9C5;  /* card borders, dividers, nav bar */
-  --color-border-strong: #C8B49A; /* input borders, dashed viewfinder */
+  --color-border:       #DBDCD1;  /* card borders, dividers, nav bar */
+  --color-border-strong: #B6BAAB; /* input borders, dashed viewfinder */
 }
 
 
@@ -71,16 +76,18 @@
    Colour — Semantic
    ------------------------------------------------------------ */
 :root {
-  --color-destructive:      #C0392B;  /* delete actions — text only */
-  --color-destructive-bg:   #FCEBEB;  /* destructive chip/button bg */
+  --color-destructive:      #B23B2E;  /* delete actions — text only */
+  --color-destructive-bg:   #F4E6E3;  /* destructive chip/button bg */
 
-  --color-custom:      #3D7A5C;  /* custom ideas — deep forest green */
-  --color-custom-text: #1F6B4F;  /* text/borders for custom idea elements */
-  --color-custom-bg:   #EAF3E8;  /* background fill for custom idea chips */
+  /* Custom = the reader's OWN ideas. With the canon accent now green,
+     custom shifts to clay so the two never collide. */
+  --color-custom:      #B0552F;  /* custom ideas — clay */
+  --color-custom-text: #8C4321;  /* text/borders for custom idea elements */
+  --color-custom-bg:   #F1E6DC;  /* background fill for custom idea chips */
 
-  --color-warning:     #9A6200;  /* rate limit / quota notices — warm amber-brown */
-  --color-warning-bg:  #FFF4DC;  /* background for warning banners */
-  --color-warning-text:#7A4C00;  /* body text inside warning banners */
+  --color-warning:     #8A6A1F;  /* rate limit / quota notices */
+  --color-warning-bg:  #F3EAD5;  /* background for warning banners */
+  --color-warning-text:#6E5316;  /* body text inside warning banners */
 }
 
 
@@ -99,6 +106,13 @@
      files are duplicated by design and a divergent value is a cross-repo
      escalation trigger. */
   --font-front-door: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* SUR-679 — Braird type roles. Display serif (wordmark + headlines) and a
+     grotesk UI/body face. Self-hosted via fonts.css. These are NEW roles, so
+     they don't touch the cross-repo-locked --font-base / --font-front-door;
+     the Braird marketing surfaces opt in explicitly (see braird.css). */
+  --font-display: 'Lora', Georgia, 'Times New Roman', serif;
+  --font-ui:      'Hanken Grotesk', system-ui, -apple-system, sans-serif;
 }
 
 

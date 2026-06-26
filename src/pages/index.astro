@@ -1,36 +1,29 @@
 ---
 /**
- * Landing page — composes the 11 sections ported from surfc/src/components/
- * LandingPage.jsx. Each section lives in its own component for readability
- * and so Astro can tree-shake any unused markup.
+ * Braird front door (SUR-679). Stripped right down: a forest-ground hero
+ * (the four-verb taxonomy with CONNECT lit), three supporting verb beats, and
+ * a quiet close. The old explanatory sections moved to /how-it-works/.
+ *
+ * Design lives in src/styles/braird.css; the body opts into the forest
+ * treatment via `braird-front-door`.
  */
-
-import BaseLayout          from '../layouts/BaseLayout.astro'
-import Nav                 from '../components/Nav.astro'
-import Hero                from '../components/Hero.astro'
-import CapturePassages     from '../components/CapturePassages.astro'
-import TagIdeas            from '../components/TagIdeas.astro'
-import CommonplaceCarousel from '../components/CommonplaceCarousel.astro'
-import SupportingCards     from '../components/SupportingCards.astro'
-import Testimonials        from '../components/Testimonials.astro'
-import Faq                 from '../components/Faq.astro'
-import ClosingCta          from '../components/ClosingCta.astro'
-import Footer              from '../components/Footer.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav        from '../components/Nav.astro'
+import Hero       from '../components/braird/Hero.astro'
+import Beats      from '../components/braird/Beats.astro'
+import Close      from '../components/braird/Close.astro'
+import Footer     from '../components/Footer.astro'
 ---
 
 <BaseLayout
-  title="Surfc — turn marked books into a searchable index of ideas"
-  description="Capture highlights from physical books and handwritten notes. Tag them to 87 built-in ideas or your own. Surfc is a private, offline-first idea index for serious readers."
-  bodyClass="lp-page-v2 front-door-surface"
+  title="braird — every note finds its kin"
+  description="braird turns the books you read into a living index of ideas. Resurface, connect, compound, and create — so the next time you sit down to write, you're not starting from a blank page."
+  ogImage="/braird-og-connect.png"
+  bodyClass="braird-front-door"
 >
   <Nav />
   <Hero />
-  <CapturePassages />
-  <TagIdeas />
-  <CommonplaceCarousel />
-  <SupportingCards />
-  <Testimonials />
-  <Faq />
-  <ClosingCta />
+  <Beats />
+  <Close />
   <Footer />
 </BaseLayout>

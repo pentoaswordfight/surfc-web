@@ -88,8 +88,9 @@ test.describe('nav adapts to viewport', () => {
 
     await expect(page.locator('[data-nav-toggle]')).toBeHidden()
     await expect(page.locator('.hiw-nav-link').first()).toBeVisible()
-    await expect(page.locator('.hiw-nav-signin').first()).toBeVisible()
-    await expect(page.locator('.hiw-nav-cta').first()).toBeVisible()
+    // SUR-679 — the nav now carries a single "Open braird" CTA (.bf-cta) and
+    // no standalone sign-in link.
+    await expect(page.locator('.hiw-nav-links .bf-cta').first()).toBeVisible()
   })
 
   test('hamburger toggle carries the nav_menu_toggle CTA attribute', async ({ page }) => {
@@ -105,7 +106,7 @@ test.describe('hamburger menu behaviour', () => {
     await page.goto('/')
   })
 
-  test('clicking toggle opens the panel and exposes all four links', async ({ page }) => {
+  test('clicking toggle opens the panel and exposes the nav destinations', async ({ page }) => {
     const toggle = page.locator('[data-nav-toggle]')
     const menu   = page.locator('[data-nav-menu]')
 
@@ -113,11 +114,13 @@ test.describe('hamburger menu behaviour', () => {
     await toggle.click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'true')
 
-    // All four navigation destinations are reachable once the menu is open.
+    // SUR-679 — destinations are How it works / Blog + the single "Open braird"
+    // CTA (sign-in/up collapsed into one; About hidden until its copy is
+    // rebranded).
     await expect(menu.locator('a', { hasText: 'How it works' })).toBeVisible()
-    await expect(menu.locator('a', { hasText: 'FAQ' })).toBeVisible()
-    await expect(menu.locator('a', { hasText: 'Sign in' })).toBeVisible()
-    await expect(menu.locator('a', { hasText: 'Sign up' })).toBeVisible()
+    await expect(menu.locator('a', { hasText: 'Blog' })).toBeVisible()
+    await expect(menu.locator('a', { hasText: 'Open braird' })).toBeVisible()
+    await expect(menu.locator('a', { hasText: 'About' })).toHaveCount(0)
   })
 
   test('clicking toggle again closes the panel', async ({ page }) => {
@@ -140,13 +143,23 @@ test.describe('hamburger menu behaviour', () => {
     const toggle = page.locator('[data-nav-toggle]')
     const menu   = page.locator('[data-nav-menu]')
 
+    // SUR-679 — the nav links are now page navigations (no in-page anchors),
+    // so suppress the navigation to observe the post-click panel state. The
+    // menu's delegated click handler calls setOpen(false) synchronously before
+    // the browser would navigate, which is exactly the contract under test.
+    await page.evaluate(() => {
+      document
+        .querySelector('[data-nav-menu]')
+        ?.addEventListener('click', (e) => {
+          const a = (e.target as HTMLElement | null)?.closest?.('a')
+          if (a) e.preventDefault()
+        })
+    })
+
     await toggle.click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'true')
 
-    // Clicking an in-page anchor doesn't trigger a full navigation, so we
-    // can observe the post-click state. This asserts the click handler
-    // closes the panel before any hash-change takes effect.
-    await menu.locator('a', { hasText: 'FAQ' }).click()
+    await menu.locator('a', { hasText: 'Blog' }).click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   })
 })

@@ -1,0 +1,29 @@
+---
+/**
+ * Braird wordmark lockup — the "two shoots" sprout mark + "braird" in Lora
+ * with the two r's in shoot-green (per brand/brand.css `.wm .r`). Renders as
+ * an <a> when `href` is given (nav/footer home link), else a <span> (the
+ * closing lockup). Sizing is controlled by the parent class via braird.css.
+ *
+ * Sprout paths are inlined from brand/braird/assets/mark-color-dark.svg so the
+ * mark inherits no external request and tints with the forest ground.
+ */
+interface Props {
+  class?:     string
+  href?:      string
+  ariaLabel?: string
+}
+const { class: cls = '', href, ariaLabel = 'braird home' } = Astro.props
+const Tag = href ? 'a' : 'span'
+---
+
+<Tag class={`braird-wm ${cls}`.trim()} {...(href ? { href, 'aria-label': ariaLabel } : {})}>
+  <svg class="braird-wm-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <path d="M50 89.6 V66.7" stroke="#6FC089" stroke-width="7" stroke-linecap="round" fill="none"></path>
+    <path d="M50 70.8 C45.8 56.3 37.5 47.9 29.2 39.6" stroke="#6FC089" stroke-width="7" stroke-linecap="round" fill="none"></path>
+    <path d="M50 68.8 C54.2 50 62.5 35.4 68.8 25" stroke="#6FC089" stroke-width="7" stroke-linecap="round" fill="none"></path>
+    <path d="M29.2 39.6 C16.7 39.6 10.4 29.2 12.5 18.8 C25 20.8 31.3 29.2 29.2 39.6 Z" fill="#6FC089"></path>
+    <path d="M68.8 25 C81.3 25 87.5 14.6 85.4 4.2 C72.9 6.3 66.7 14.6 68.8 25 Z" fill="#6FC089"></path>
+  </svg>
+  <span class="braird-wm-text">b<span class="r">r</span>ai<span class="r">r</span>d</span>
+</Tag>

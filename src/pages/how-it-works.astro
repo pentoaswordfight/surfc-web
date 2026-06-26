@@ -1,0 +1,54 @@
+---
+/**
+ * How Braird works (SUR-679). The explanatory sections + FAQ that used to live
+ * on the landing page were extracted here when the front door was stripped down
+ * to its forest hero. Renders on the cool-paper inner-page ground (recoloured
+ * tokens) under the shared forest chrome.
+ */
+import BaseLayout         from '../layouts/BaseLayout.astro'
+import Nav                from '../components/Nav.astro'
+import CapturePassages    from '../components/CapturePassages.astro'
+import TagIdeas           from '../components/TagIdeas.astro'
+import CommonplaceCarousel from '../components/CommonplaceCarousel.astro'
+import SupportingCards    from '../components/SupportingCards.astro'
+import Faq                from '../components/Faq.astro'
+import ClosingCta         from '../components/ClosingCta.astro'
+import Footer             from '../components/Footer.astro'
+---
+
+<BaseLayout
+  title="How braird works — capture, tag, resurface"
+  description="How braird turns marked books and handwritten notes into a searchable index of ideas: capture passages, tag them to canonical ideas, and resurface them when you write."
+  bodyClass="lp-page-v2 braird-howto"
+>
+  <Nav />
+  <main>
+    <header class="hiw-section-v2 hiw-howto-intro">
+      <p class="hiw-step-label hiw-step-hero">How it works</p>
+      <h1 class="hiw-h2 hiw-h2-hero hiw-h2-center">Keep inspiration alive</h1>
+      <p class="hiw-lede-small hiw-center">
+        From your book highlights to your margin notes to your inspired
+        scribbles, braird captures and tags them to ideas, so the right
+        passage resurfaces when you need it.
+      </p>
+    </header>
+
+    <CapturePassages />
+    <TagIdeas />
+    <CommonplaceCarousel />
+    <SupportingCards />
+    <Faq />
+    <ClosingCta />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* The intro inherits the section rhythm; just centre it and lift the top
+     gutter clear of the fixed nav. */
+  .hiw-howto-intro {
+    text-align: center;
+    padding-top: 64px;
+    padding-bottom: 24px;
+  }
+</style>

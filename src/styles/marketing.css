@@ -1802,10 +1802,21 @@ select.inp { cursor: pointer; }
 .hiw-faq-chev {
   width: 28px; height: 28px; border-radius: 50%;
   background: var(--color-accent-light); color: var(--color-accent-dark);
-  font-size: 20px; font-weight: 400;
+  font-size: 20px; font-weight: 400; line-height: 1;
   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.hiw-faq-item-v2.open .hiw-faq-chev { background: var(--color-accent); color: #1A1410; }
+/* The circle's affordance: a "+" that rotates into an "×" when the item opens.
+   The glyph was missing entirely before (the span was empty). */
+.hiw-faq-chev::before {
+  content: '+';
+  display: block;
+  transition: transform var(--transition-fast);
+}
+/* Native <details> exposes the [open] ATTRIBUTE, not a `.open` class — the old
+   `.hiw-faq-item-v2.open` selector never matched, so the open state was dead.
+   Use the attribute so the colour swap + glyph rotation actually fire. */
+.hiw-faq-item-v2[open] .hiw-faq-chev { background: var(--color-accent); color: #15281C; }
+.hiw-faq-item-v2[open] .hiw-faq-chev::before { transform: rotate(45deg); }
 .hiw-faq-a {
   margin: 0; padding: 0 4px 22px;
   font-size: 15.5px; line-height: 1.65; color: var(--color-text-secondary); max-width: 680px;

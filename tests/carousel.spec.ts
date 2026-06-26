@@ -21,7 +21,7 @@ import { expect, test } from './fixtures'
 
 test.describe('Commonplace carousel (SUR-531)', () => {
   test('renders five framed slides, five dots, and both arrows on the LP', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     await expect(page.locator('[data-carousel]')).toBeVisible()
     await expect(page.locator('[data-carousel-slide]')).toHaveCount(5)
     await expect(page.locator('[data-carousel-dot]')).toHaveCount(5)
@@ -31,14 +31,14 @@ test.describe('Commonplace carousel (SUR-531)', () => {
   })
 
   test('starts on the first slide with prev disabled', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     await expect(page.locator('[data-carousel-dot]').nth(0)).toHaveAttribute('aria-current', 'true')
     await expect(page.locator('[data-carousel-prev]')).toBeDisabled()
     await expect(page.locator('[data-carousel-next]')).toBeEnabled()
   })
 
   test('next button and dots change the active slide; next disables at the end', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     const dots = page.locator('[data-carousel-dot]')
 
     await page.locator('[data-carousel-next]').click()
@@ -53,7 +53,7 @@ test.describe('Commonplace carousel (SUR-531)', () => {
   })
 
   test('arrow keys and Home navigate when the viewport is focused', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     const dots = page.locator('[data-carousel-dot]')
 
     await page.locator('[data-carousel-viewport]').focus()
@@ -66,29 +66,31 @@ test.describe('Commonplace carousel (SUR-531)', () => {
 
   test('stays navigable under prefers-reduced-motion', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     await page.locator('[data-carousel-next]').click()
     await expect(page.locator('[data-carousel-dot]').nth(1)).toHaveAttribute('aria-current', 'true')
   })
 
-  test('nav "How it works" repoints to #how-it-works; the old band id is gone', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.locator('#how-it-works')).toHaveCount(1)
+  test('nav "How it works" points at /how-it-works/ where the carousel now lives', async ({ page }) => {
+    // SUR-679 — the carousel + explanatory sections moved off the landing to a
+    // dedicated /how-it-works/ page; the nav link is a page navigation now.
+    await page.goto('/how-it-works/')
+    await expect(page.locator('#commonplace')).toContainText('Your Commonplace')
     await expect(page.locator('#what-is-surfc')).toHaveCount(0)
     await expect(page.locator('.hiw-nav-link', { hasText: 'How it works' })).toHaveAttribute(
       'href',
-      '/#how-it-works',
+      '/how-it-works/',
     )
   })
 
   test('carries the payoff lede and the closing existential line', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.locator('#commonplace')).toContainText('Surfc gets smarter the longer you use it')
+    await page.goto('/how-it-works/')
+    await expect(page.locator('#commonplace')).toContainText('braird gets smarter the longer you use it')
     await expect(page.locator('.hiw-closing-v2')).toContainText("you're not starting from a blank page")
   })
 
   test('does not strand focus when an end arrow disables itself', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     const next = page.locator('[data-carousel-next]')
     // Walk to the last slide via the Next button itself (4 hops from slide 0).
     await next.click()
@@ -101,14 +103,14 @@ test.describe('Commonplace carousel (SUR-531)', () => {
   })
 
   test('announces the active sphere via a polite live region', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     await page.locator('[data-carousel-next]').click()
     await expect(page.locator('[data-carousel-live]')).toContainText('Thinking & Doing')
   })
 
   test('shows a captioned fallback when an idea-cloud image is missing', async ({ page }) => {
     await page.route('**/media/commonplace-*.webp', (route) => route.abort())
-    await page.goto('/')
+    await page.goto('/how-it-works/')
     // The eager first-slide image errors → its plate shows the captioned fallback.
     await expect(page.locator('.hiw-cp-plate.is-missing').first()).toBeVisible()
   })

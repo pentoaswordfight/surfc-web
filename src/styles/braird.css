@@ -1,0 +1,378 @@
+/* ============================================================
+ * braird.css — SUR-679
+ *
+ * The Braird "field notes on a forest ground" front door, plus the
+ * shared-chrome flip (forest nav + footer on every marketing page).
+ *
+ * Loaded AFTER marketing.css in BaseLayout so these rules win over the
+ * legacy parchment chrome. The front-door system is scoped to
+ * `.braird-front-door` (set on the landing body); the chrome overrides
+ * are global by design — the whole site moves to forest nav/footer.
+ *
+ * Palette + type derive from brand/brand.css + brand/colors.braird.css
+ * (the locked brand kit). Colours are literal here, not tokenised,
+ * because the forest ground is a fixed brand surface — not theme-driven.
+ * ============================================================ */
+
+:root {
+  --bf-forest:    #15281C;  /* primary ground */
+  --bf-ink:       #1B241F;  /* deeper ground */
+  --bf-paper:     #EFEEE7;  /* body text on forest */
+  --bf-head:      #EAF2E6;  /* headline text on forest */
+  --bf-shoot:     #2F9E63;  /* accent green */
+  --bf-leaf:      #6FC089;  /* italic accent on dark */
+  --bf-muted:     #9DB3A2;  /* muted sage text on forest */
+  --bf-hair:      rgba(111, 192, 137, 0.16);  /* hairline on forest */
+  --bf-dot:       rgba(111, 192, 137, 0.09);  /* dot-grid on forest */
+}
+
+/* Dot-grid texture, reused across front-door bands. */
+.bf-dots {
+  background-image: radial-gradient(circle at 1px 1px, var(--bf-dot) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+
+/* ============================================================
+   1. WORDMARK — Lora, green r's, sprout mark
+   Used in nav, footer, and the closing lockup.
+   ============================================================ */
+.braird-wm {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  line-height: 1;
+}
+.braird-wm-mark {
+  flex-shrink: 0;
+  display: block;
+}
+.braird-wm-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--bf-head);
+}
+.braird-wm .r { color: var(--bf-leaf); }
+
+/* ============================================================
+   2. SHARED CHROME — forest nav + footer (all marketing pages)
+   Overrides the parchment chrome defined in marketing.css.
+   ============================================================ */
+.hiw-nav {
+  background: rgba(21, 40, 28, 0.82);
+  -webkit-backdrop-filter: saturate(1.1) blur(10px);
+  backdrop-filter: saturate(1.1) blur(10px);
+  border-bottom: 1px solid transparent;
+}
+.hiw-nav-scrolled {
+  background: rgba(18, 33, 23, 0.94);
+  border-bottom-color: var(--bf-hair);
+}
+/* Wordmark in the nav: tuned to the nav scale. */
+.hiw-wordmark.braird-wm .braird-wm-text { font-size: 24px; }
+.hiw-wordmark.braird-wm .braird-wm-mark { width: 24px; height: 24px; }
+
+.hiw-nav-link { color: rgba(220, 234, 214, 0.72); }
+.hiw-nav-link:hover { color: var(--bf-paper); }
+
+.hiw-nav-toggle { color: var(--bf-head); }
+.hiw-nav-toggle:hover { background: rgba(111, 192, 137, 0.12); }
+.hiw-nav-toggle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(111, 192, 137, 0.35);
+  border-color: var(--bf-leaf);
+}
+
+/* Single CTA — shoot-green pill, forest text. */
+.bf-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  color: var(--bf-forest);
+  background: var(--bf-shoot);
+  border: 1px solid var(--bf-shoot);
+  border-radius: var(--radius-input);
+  padding: 11px 20px;
+  min-height: 44px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+.bf-cta:hover {
+  background: var(--bf-leaf);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(47, 158, 99, 0.28);
+}
+.bf-cta:active { transform: translateY(0); }
+.bf-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(111, 192, 137, 0.4);
+}
+.bf-cta-arrow { transition: transform var(--transition-fast); }
+.bf-cta:hover .bf-cta-arrow { transform: translateX(3px); }
+
+/* Nav CTA sizing parity with the old .hiw-nav-cta slot. */
+.hiw-nav .bf-cta { font-size: 14px; padding: 9px 16px; min-height: 40px; }
+
+@media (max-width: 767.98px) {
+  .hiw-nav-links {
+    background: rgba(18, 33, 23, 0.98);
+    border-bottom-color: var(--bf-hair);
+    box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.5);
+  }
+  .hiw-nav .bf-cta { justify-content: center; margin-top: 4px; min-height: 48px; }
+}
+
+/* Footer — forest. */
+.hiw-footer-v2 {
+  background: var(--bf-forest);
+  border-top-color: var(--bf-hair);
+}
+.hiw-footer-mark.braird-wm .braird-wm-text { font-size: 20px; }
+.hiw-footer-mark.braird-wm .braird-wm-mark { width: 20px; height: 20px; }
+.hiw-footer-links { color: rgba(220, 234, 214, 0.6); }
+.hiw-footer-links a { color: rgba(220, 234, 214, 0.6); }
+.hiw-footer-links a:hover { color: var(--bf-leaf); }
+.hiw-footer-links span[aria-hidden] { color: rgba(220, 234, 214, 0.3); }
+.bf-foot-note {
+  width: 100%;
+  margin-top: 14px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: rgba(220, 234, 214, 0.42);
+}
+.bf-foot-note strong { color: var(--bf-leaf); font-weight: 700; }
+
+/* ============================================================
+   2b. HOW-IT-WORKS — Lora display on the cool-paper inner page
+   Scoped to `.braird-howto` so the section titles + closing line move to the
+   Braird serif without disturbing pricing/blog (which still use .hiw-h2).
+   ============================================================ */
+.braird-howto .hiw-h2,
+.braird-howto .hiw-closing-line {
+  font-family: var(--font-display);
+}
+
+/* ============================================================
+   3. FRONT-DOOR PAGE — forest ground
+   ============================================================ */
+.braird-front-door {
+  font-family: var(--font-ui);
+  background-color: var(--bf-forest);
+  color: var(--bf-paper);
+  /* marketing.css pins `html, body { height: 100% }`, which would cap the body
+     box at one viewport and let the beats/close overflow onto the html element's
+     cool-paper background. Let the body grow with its content so the forest
+     ground covers the whole page. */
+  height: auto;
+  min-height: 100vh;
+}
+
+/* Belt-and-braces: paint the root forest too, so overscroll/rubber-banding on
+   the front door never flashes the inner-page cool-paper. Scoped via :has so
+   only the landing is affected; other pages keep their light ground. */
+html:has(> body.braird-front-door) {
+  background-color: var(--bf-forest);
+}
+.braird-front-door ::selection { background: rgba(111, 192, 137, 0.28); }
+
+.bf-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* The shared eyebrow taxonomy: RESURFACE · CONNECT · COMPOUND · CREATE. */
+.bf-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.bf-verb { color: var(--bf-muted); }
+.bf-verb.is-active { color: var(--bf-leaf); }
+.bf-tax-dot { color: rgba(157, 179, 162, 0.5); }
+
+/* Italic-green accent shared by every Lora line on the front door. */
+.bf-accent {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--bf-leaf);
+}
+
+/* ── HERO ───────────────────────────────────────────────── */
+.bf-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(120px, 18vh, 180px) 0 clamp(64px, 10vh, 110px);
+}
+.bf-hero-glow {
+  position: absolute;
+  right: -10%;
+  bottom: -30%;
+  width: 70%;
+  height: 130%;
+  pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(111, 192, 137, 0.20), transparent 70%);
+}
+.bf-hero > .bf-wrap,
+.bf-close > .bf-wrap { position: relative; z-index: 1; }
+.bf-hero-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(40px, 7vw, 76px);
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  color: var(--bf-head);
+  margin: 0 0 18px;
+  max-width: 16ch;
+}
+.bf-hero-sub {
+  font-size: clamp(16px, 2.2vw, 20px);
+  line-height: 1.5;
+  color: var(--bf-muted);
+  margin: 0 0 34px;
+  max-width: 40ch;
+}
+.bf-cta-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+
+/* ── BEATS — the verb arc with the brand illustration underlaying it ──
+   The art sits on the right, faded and decorative, bleeding off the edge so it
+   spans the three beats; each lines up with the matching region (Create ↔
+   sprout/top, Compound ↔ braid/middle, Resurface ↔ books/base). */
+.bf-beats {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(44px, 7vh, 88px) 0 clamp(60px, 10vh, 110px);
+}
+.bf-beats > .bf-wrap { position: relative; z-index: 1; }
+.bf-beats-art {
+  position: absolute;
+  top: 50%;
+  right: -3%;
+  transform: translateY(-50%);
+  width: clamp(600px, 72%, 1080px);
+  height: auto;
+  max-width: none;
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  /* Fade the left edge so the illustration slips under the beat text rather
+     than ending in a hard line. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 100%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 100%);
+}
+@media (max-width: 760px) {
+  /* On narrow screens the underlay would crowd the stacked text — calm it. */
+  .bf-beats-art { width: 90%; right: -24%; opacity: 0.24; }
+}
+
+.bf-beat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+.bf-beat {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: clamp(16px, 4vw, 64px);
+  align-items: baseline;
+  padding: clamp(34px, 5vh, 52px) 0;
+  border-top: 1px solid var(--bf-hair);
+}
+.bf-beat:last-child { border-bottom: 1px solid var(--bf-hair); }
+.bf-beat-verb {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bf-leaf);
+  margin: 0;
+  padding-top: 0.45em;
+}
+.bf-beat-body { margin: 0; }
+.bf-beat-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--bf-head);
+  margin: 0 0 10px;
+  max-width: 18ch;
+}
+.bf-beat-sub {
+  font-size: clamp(15px, 1.6vw, 17px);
+  line-height: 1.5;
+  color: var(--bf-muted);
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .bf-beat { grid-template-columns: 1fr; gap: 12px; }
+  .bf-beat-verb { padding-top: 0; }
+}
+
+/* ── CLOSE ──────────────────────────────────────────────── */
+.bf-close {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: clamp(72px, 12vh, 130px) 0 clamp(80px, 13vh, 140px);
+  border-top: 1px solid var(--bf-hair);
+}
+.bf-close-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+.bf-close-lockup .braird-wm-text { font-size: 34px; }
+.bf-close-lockup .braird-wm-mark { width: 34px; height: 34px; }
+.bf-close-line {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(26px, 4vw, 44px);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--bf-head);
+  margin: 0 auto 34px;
+  max-width: 20ch;
+}
+.bf-close .bf-cta-row { justify-content: center; }
+
+/* ── Motion: a restrained hero settle, reduced-motion safe ── */
+@media (prefers-reduced-motion: no-preference) {
+  /* A slower, more deliberate settle so the entrance reads (was 600ms — too
+     quick to notice): eyebrow → headline → sub → CTA. */
+  .bf-hero .bf-taxonomy,
+  .bf-hero-title,
+  .bf-hero-sub,
+  .bf-hero .bf-cta-row {
+    animation: bfRise 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .bf-hero .bf-taxonomy { animation-delay: 80ms; }
+  .bf-hero-title    { animation-delay: 240ms; }
+  .bf-hero-sub      { animation-delay: 400ms; }
+  .bf-hero .bf-cta-row { animation-delay: 560ms; }
+}
+@keyframes bfRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

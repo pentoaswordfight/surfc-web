@@ -1,0 +1,34 @@
+---
+/**
+ * Braird front-door hero (SUR-679). The 4-verb taxonomy eyebrow (CONNECT lit)
+ * sits above a left-aligned Lora headline. The brand illustration now lives in
+ * the Beats section as a right-side underlay (not here).
+ */
+import { signupUrl } from '../../lib/appUrl'
+---
+
+<header class="bf-hero bf-dots">
+  <span class="bf-hero-glow" aria-hidden="true"></span>
+  <div class="bf-wrap">
+    <p class="bf-taxonomy">
+      <span class="bf-verb">Resurface</span>
+      <span class="bf-tax-dot" aria-hidden="true">·</span>
+      <span class="bf-verb is-active">Connect</span>
+      <span class="bf-tax-dot" aria-hidden="true">·</span>
+      <span class="bf-verb">Compound</span>
+      <span class="bf-tax-dot" aria-hidden="true">·</span>
+      <span class="bf-verb">Create</span>
+    </p>
+
+    <h1 class="bf-hero-title">
+      Every note <span class="bf-accent">finds its kin</span>.
+    </h1>
+    <p class="bf-hero-sub">One idea pulls the next into view.</p>
+
+    <div class="bf-cta-row">
+      <a href={signupUrl()} class="bf-cta" data-cta="hero_signup">
+        Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</header>

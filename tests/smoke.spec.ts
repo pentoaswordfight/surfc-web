@@ -23,7 +23,7 @@ test.describe('public pages respond 200 and render correctly', () => {
   // loads. We assert on <title> instead — cheap, reliable, and proves the
   // Astro route resolved to the right page.
   const pages: Array<{ path: string; title: RegExp }> = [
-    { path: '/',                   title: /Surfc/i },
+    { path: '/',                   title: /Braird/i },
     // /waitlist/ now serves a noindex sunset page after SUR-365.
     { path: '/waitlist/',          title: /open|sign up directly/i },
     { path: '/policies/privacy/',  title: /Privacy/i },
@@ -49,7 +49,8 @@ test('nav adds scrolled class after 8px scroll', async ({ page }) => {
 })
 
 test('FAQ enforces single-open behaviour', async ({ page }) => {
-  await page.goto('/')
+  // SUR-679 — the FAQ moved off the stripped-down landing to /how-it-works/.
+  await page.goto('/how-it-works/')
 
   const items = page.locator('[data-faq] details')
   const count = await items.count()
@@ -162,20 +163,20 @@ test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', as
   expect(signupEvent[1]).toEqual({ cta: 'pricing_start_free' })
 })
 
-test('"Sign in" CTAs point at bare app.surfc.app, "Sign up" CTAs deep-link to /signin?intent=signup', async ({ page }) => {
+test('single "Open braird" CTA deep-links to /signin?intent=signup (SUR-679)', async ({ page }) => {
   await page.goto('/')
 
-  // "Sign in" lives in the nav and closing-CTA section. Bare appUrl —
-  // AuthScreen treats a no-query landing as the default sign-in framing.
-  const signIn = page.locator('a', { hasText: /^Sign in$/ }).first()
-  await expect(signIn).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/?$/)
+  // SUR-679 collapsed the old Sign in / Sign up pair into one CTA, "Open
+  // braird". It keeps the signup deep-link past the PWA's catch-all unauth
+  // redirect onto /signin?intent=signup (SUR-370), so AuthScreen renders the
+  // signup-framed UI (returning users sign in from there). The build-time
+  // href carries no UTMs on a plain `/` load; preserveUtm.ts appends them on a
+  // real ad landing. data-cta stays in the SIGNUP_CTAS allowlist so the funnel
+  // is unbroken.
+  const cta = page.locator('a', { hasText: /Open braird/i }).first()
+  await expect(cta).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/signin\?intent=signup$/)
+  await expect(cta).toHaveAttribute('data-cta', /signup$/)
 
-  // "Sign up" deep-links past the PWA's catch-all unauth redirect
-  // straight onto /signin?intent=signup (SUR-370). AuthScreen reads the
-  // intent and renders signup-framed UI. The `preserveUtm.ts` rewriter
-  // would append UTMs here on a real ad landing, but this test loads `/`
-  // with no UTMs so the build-time href is unchanged. Matches the post-SUR-510
-  // CTA copy ("Sign up", was "Sign up free").
-  const signUp = page.locator('a', { hasText: /Sign up/i }).first()
-  await expect(signUp).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/signin\?intent=signup$/)
+  // The standalone "Sign in" link is gone from the front door.
+  await expect(page.locator('a', { hasText: /^Sign in$/ })).toHaveCount(0)
 })

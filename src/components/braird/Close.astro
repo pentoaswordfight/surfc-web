@@ -1,0 +1,23 @@
+---
+/**
+ * Braird front-door close (SUR-679). Wordmark lockup + a single promise line
+ * and the one CTA. Closing copy is the founder's line, not an OG card.
+ */
+import { signupUrl } from '../../lib/appUrl'
+import Wordmark from './Wordmark.astro'
+---
+
+<section class="bf-close bf-dots">
+  <span class="bf-hero-glow" aria-hidden="true"></span>
+  <div class="bf-wrap">
+    <Wordmark class="bf-close-lockup" />
+    <p class="bf-close-line">
+      You never have to start from a <span class="bf-accent">blank page</span> again.
+    </p>
+    <div class="bf-cta-row">
+      <a href={signupUrl()} class="bf-cta" data-cta="closing_signup">
+        Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>

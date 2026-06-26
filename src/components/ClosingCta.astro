@@ -1,7 +1,7 @@
 ---
 // Port source: surfc/src/components/LandingPage.jsx lines 389-406.
 
-import { appUrl, signupUrl } from '../lib/appUrl'
+import { signupUrl } from '../lib/appUrl'
 import { TIER_NAMES } from '../lib/tiers'
 ---
 
@@ -13,14 +13,11 @@ import { TIER_NAMES } from '../lib/tiers'
       So the next time you sit down to write, you're not starting from a blank page.
     </p>
     <p class="hiw-lede-small hiw-center">
-      Surfc is free to use. {TIER_NAMES.pro} is for heavier readers when you're ready.
+      braird is free to use. {TIER_NAMES.pro} is for heavier readers when you're ready.
     </p>
     <div class="hiw-cta-row-v2 hiw-cta-center">
-      <a href={signupUrl()} class="btn btn-accent hiw-cta-primary" data-cta="closing_signup">
-        Sign up
-      </a>
-      <a href={appUrl} class="hiw-cta-secondary" data-cta="closing_signin">
-        Sign in
+      <a href={signupUrl()} class="bf-cta" data-cta="closing_signup">
+        Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
       </a>
     </div>
   </div>
