@@ -216,7 +216,7 @@ html:has(> body.braird-front-door) {
 .bf-hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(120px, 18vh, 180px) 0 clamp(64px, 10vh, 110px);
+  padding: clamp(116px, 16vh, 168px) 0 clamp(64px, 10vh, 110px);
 }
 .bf-hero-glow {
   position: absolute;
@@ -229,6 +229,35 @@ html:has(> body.braird-front-door) {
 }
 .bf-hero > .bf-wrap,
 .bf-close > .bf-wrap { position: relative; z-index: 1; }
+/* Two columns: copy left, illustration right. Collapses to one on narrow. */
+.bf-hero > .bf-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  gap: clamp(28px, 5vw, 76px);
+  align-items: center;
+}
+.bf-hero-copy { min-width: 0; }
+
+/* Brand illustration — its ground is the forest, so feather all four edges to
+   dissolve it into the page (no hard rectangle). */
+.bf-hero-art {
+  margin: 0;
+  min-width: 0;
+}
+.bf-hero-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 13%, #000 93%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+          mask-image:
+    linear-gradient(to right, transparent 0%, #000 13%, #000 93%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+}
+
 .bf-hero-title {
   font-family: var(--font-display);
   font-weight: 500;
@@ -248,37 +277,20 @@ html:has(> body.braird-front-door) {
 }
 .bf-cta-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
 
-/* ── BEATS — the verb arc with the brand illustration underlaying it ──
-   The art sits on the right, faded and decorative, bleeding off the edge so it
-   spans the three beats; each lines up with the matching region (Create ↔
-   sprout/top, Compound ↔ braid/middle, Resurface ↔ books/base). */
+@media (max-width: 880px) {
+  /* Stack: copy first, illustration beneath it, full-bleed-ish. */
+  .bf-hero > .bf-wrap { grid-template-columns: 1fr; gap: clamp(28px, 6vw, 44px); }
+  .bf-hero-art { max-width: 560px; margin: 0 auto; }
+  .bf-hero-title { max-width: 18ch; }
+}
+
+/* ── BEATS — the verb arc, clean and typographic ── */
 .bf-beats {
   position: relative;
   overflow: hidden;
   padding: clamp(44px, 7vh, 88px) 0 clamp(60px, 10vh, 110px);
 }
 .bf-beats > .bf-wrap { position: relative; z-index: 1; }
-.bf-beats-art {
-  position: absolute;
-  top: 50%;
-  right: -3%;
-  transform: translateY(-50%);
-  width: clamp(600px, 72%, 1080px);
-  height: auto;
-  max-width: none;
-  opacity: 0.5;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-  /* Fade the left edge so the illustration slips under the beat text rather
-     than ending in a hard line. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 100%);
-          mask-image: linear-gradient(to right, transparent 0%, #000 30%, #000 100%);
-}
-@media (max-width: 760px) {
-  /* On narrow screens the underlay would crowd the stacked text — calm it. */
-  .bf-beats-art { width: 90%; right: -24%; opacity: 0.24; }
-}
 
 .bf-beat-list {
   list-style: none;
@@ -295,7 +307,8 @@ html:has(> body.braird-front-door) {
   padding: clamp(34px, 5vh, 52px) 0;
   border-top: 1px solid var(--bf-hair);
 }
-.bf-beat:last-child { border-bottom: 1px solid var(--bf-hair); }
+/* No bottom rule on the last beat — the Close section's own top border is the
+   divider, so a border here would double up with it. */
 .bf-beat-verb {
   font-family: var(--font-ui);
   font-weight: 700;
@@ -341,10 +354,27 @@ html:has(> body.braird-front-door) {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 26px;
+  margin-bottom: 12px;
 }
 .bf-close-lockup .braird-wm-text { font-size: 34px; }
 .bf-close-lockup .braird-wm-mark { width: 34px; height: 34px; }
+
+/* Dictionary gloss beneath the wordmark — the name's meaning, verbatim from the
+   brand identity sheet. Reads as a lexicon entry: headword (the wordmark above)
+   → pronunciation → definition. */
+.bf-close-def {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  color: var(--bf-muted);
+  margin: 0 auto 30px;
+  max-width: 54ch;
+}
+.bf-close-def .bf-ipa {
+  font-style: italic;
+  color: rgba(157, 179, 162, 0.8);
+}
 .bf-close-line {
   font-family: var(--font-display);
   font-weight: 500;
@@ -371,8 +401,19 @@ html:has(> body.braird-front-door) {
   .bf-hero-title    { animation-delay: 240ms; }
   .bf-hero-sub      { animation-delay: 400ms; }
   .bf-hero .bf-cta-row { animation-delay: 560ms; }
+
+  /* The illustration drifts up into place a beat behind the copy — slower and
+     gentler so the scene reads as it surfaces from the forest ground. */
+  .bf-hero-art {
+    animation: bfSurface 1400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 360ms;
+  }
 }
 @keyframes bfRise {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes bfSurface {
+  from { opacity: 0; transform: translateY(26px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
