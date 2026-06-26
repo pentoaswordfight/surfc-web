@@ -1,8 +1,10 @@
 ---
 /**
  * Braird front-door hero (SUR-679). The 4-verb taxonomy eyebrow (CONNECT lit)
- * sits above a left-aligned Lora headline. The brand illustration now lives in
- * the Beats section as a right-side underlay (not here).
+ * sits above a left-aligned Lora headline, with the brand illustration in the
+ * right column — a book sprouting an idea, threads connecting it to notes, a
+ * stack of books, and a phone. Its own ground is the forest, so the edges are
+ * feathered (mask) to dissolve into the page rather than end in a hard frame.
  */
 import { signupUrl } from '../../lib/appUrl'
 ---
@@ -10,25 +12,38 @@ import { signupUrl } from '../../lib/appUrl'
 <header class="bf-hero bf-dots">
   <span class="bf-hero-glow" aria-hidden="true"></span>
   <div class="bf-wrap">
-    <p class="bf-taxonomy">
-      <span class="bf-verb">Resurface</span>
-      <span class="bf-tax-dot" aria-hidden="true">·</span>
-      <span class="bf-verb is-active">Connect</span>
-      <span class="bf-tax-dot" aria-hidden="true">·</span>
-      <span class="bf-verb">Compound</span>
-      <span class="bf-tax-dot" aria-hidden="true">·</span>
-      <span class="bf-verb">Create</span>
-    </p>
+    <div class="bf-hero-copy">
+      <p class="bf-taxonomy">
+        <span class="bf-verb">Resurface</span>
+        <span class="bf-tax-dot" aria-hidden="true">·</span>
+        <span class="bf-verb is-active">Connect</span>
+        <span class="bf-tax-dot" aria-hidden="true">·</span>
+        <span class="bf-verb">Compound</span>
+        <span class="bf-tax-dot" aria-hidden="true">·</span>
+        <span class="bf-verb">Create</span>
+      </p>
 
-    <h1 class="bf-hero-title">
-      Every note <span class="bf-accent">finds its kin</span>.
-    </h1>
-    <p class="bf-hero-sub">One idea pulls the next into view.</p>
+      <h1 class="bf-hero-title">
+        Every note <span class="bf-accent">finds its kin</span>.
+      </h1>
+      <p class="bf-hero-sub">Kahneman and Gibran debate Self-Deception. You have a front row seat.</p>
 
-    <div class="bf-cta-row">
-      <a href={signupUrl()} class="bf-cta" data-cta="hero_signup">
-        Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
-      </a>
+      <div class="bf-cta-row">
+        <a href={signupUrl()} class="bf-cta" data-cta="hero_signup">
+          Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
     </div>
+
+    <figure class="bf-hero-art">
+      <img
+        src="/braird-hero.webp"
+        alt="An open book on a desk sprouting a seedling, glowing green threads linking it to a stack of books, handwritten notes, and a phone playing an audiobook."
+        width="1400"
+        height="788"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </figure>
   </div>
 </header>
