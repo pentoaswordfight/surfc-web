@@ -62,9 +62,12 @@ test.describe('/about page', () => {
     await expect(page.locator('.hiw-quote-body')).toBeVisible()
   })
 
-  test('exposes /about links in the nav and footer', async ({ page }) => {
+  test('is hidden from the nav and footer until its copy is rebranded (SUR-679)', async ({ page }) => {
     await page.goto('/about/')
-    await expect(page.locator('[data-cta="nav_about"]')).toHaveCount(1)
-    await expect(page.locator('.hiw-footer-links a[href="/about/"]')).toHaveCount(1)
+    // About is unlinked from the chrome (and noindexed) while it still says
+    // "Surfc"; the route itself still resolves so old links don't 404.
+    await expect(page.locator('[data-cta="nav_about"]')).toHaveCount(0)
+    await expect(page.locator('.hiw-footer-links a[href="/about/"]')).toHaveCount(0)
+    await expect(page.locator('head meta[name="robots"]')).toHaveAttribute('content', /noindex/)
   })
 })
