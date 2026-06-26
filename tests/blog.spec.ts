@@ -139,11 +139,11 @@ test.describe('global Twitter meta', () => {
       await page.goto(path)
       await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute(
         'content',
-        '@surfcapp',
+        '@brairdapp',
       )
       await expect(page.locator('meta[name="twitter:creator"]')).toHaveAttribute(
         'content',
-        '@surfcapp',
+        '@brairdapp',
       )
     })
   }

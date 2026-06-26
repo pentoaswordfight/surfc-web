@@ -8,14 +8,16 @@
  * scrolls past the 8px threshold — unchanged from the original port.
  *
  * Port source: surfc/src/components/LandingPage.jsx lines 137-150.
+ * SUR-679 — Braird wordmark + forest chrome; single "Open braird" CTA.
  */
 
-import { appUrl, signupUrl } from '../lib/appUrl'
+import { signupUrl } from '../lib/appUrl'
+import Wordmark from './braird/Wordmark.astro'
 ---
 
 <nav class="hiw-nav" aria-label="Primary" data-nav>
   <div class="hiw-nav-inner">
-    <a href="/" class="hiw-wordmark" aria-label="Surfc home">Surfc</a>
+    <Wordmark class="hiw-wordmark" href="/" ariaLabel="braird home" />
 
     <button
       type="button"
@@ -41,15 +43,14 @@ import { appUrl, signupUrl } from '../lib/appUrl'
     </button>
 
     <div id="hiw-nav-menu" class="hiw-nav-links" data-nav-menu>
-      <a href="/#how-it-works" class="hiw-nav-link">How it works</a>
-      <a href="/about/" class="hiw-nav-link" data-cta="nav_about">About</a>
+      <a href="/how-it-works/" class="hiw-nav-link" data-cta="nav_how_it_works">How it works</a>
+      {/* About temporarily hidden (SUR-679) — page still says "Surfc"; re-add
+          this link once the About copy is rebranded. */}
       <a href="/blog/" class="hiw-nav-link" data-cta="nav_blog">Blog</a>
       {/* Pricing temporarily hidden from nav (route kept live for the Stripe
           checkout cancel/failure flow). Re-add this link to restore. */}
-      <a href="/#faq" class="hiw-nav-link">FAQ</a>
-      <a href={appUrl} class="hiw-nav-signin" data-cta="nav_signin">Sign in</a>
-      <a href={signupUrl()} class="btn btn-accent hiw-nav-cta" data-cta="nav_signup">
-        Sign up
+      <a href={signupUrl()} class="bf-cta" data-cta="nav_signup">
+        Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
       </a>
     </div>
   </div>

@@ -1,18 +1,20 @@
 ---
 // Port source: surfc/src/components/LandingPage.jsx lines 409-420.
+// SUR-679 — Braird wordmark + forest chrome + pronunciation note.
+import Wordmark from './braird/Wordmark.astro'
 ---
 
 <footer class="hiw-footer-v2">
   <div class="hiw-footer-inner">
-    <span class="hiw-footer-mark">Surfc</span>
+    <Wordmark class="hiw-footer-mark" />
     <div class="hiw-footer-links">
       <a href="/policies/privacy">Privacy</a>
       <span aria-hidden="true">·</span>
       <a href="/policies/terms">Terms</a>
       <span aria-hidden="true">·</span>
-      <a href="/about/">About</a>
-      <span aria-hidden="true">·</span>
+      {/* About temporarily hidden (SUR-679) until its copy is rebranded. */}
       <a href="#" class="termly-display-preferences">Consent preferences</a>
     </div>
+    <p class="bf-foot-note">Not braid. Not baird. <strong>Two r's.</strong></p>
   </div>
 </footer>

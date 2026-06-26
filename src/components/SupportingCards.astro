@@ -1,5 +1,9 @@
 ---
 // Port source: surfc/src/components/LandingPage.jsx lines 322-336.
+// SUR-679 — section reframed around connecting across reading sources.
+
+// Reading sources braird pulls highlights + notes in from.
+const INTEGRATIONS = ['Kindle', 'Kobo', 'Instapaper', 'Readwise']
 
 const SUPPORTING_CARDS = [
   { icon: '📖', label: 'Library & notes',       body: 'Capture by photo or jot insights directly. Every note keeps its page and book attribution.' },
@@ -11,7 +15,15 @@ const SUPPORTING_CARDS = [
 <section class="hiw-section-v2">
   <div class="hiw-threeup">
     <p class="hiw-step-label hiw-step-center">04 · Plus</p>
-    <h2 class="hiw-h2 hiw-h2-center">Built for how you actually read</h2>
+    <h2 class="hiw-h2 hiw-h2-center">Connect across sources, no matter how you read</h2>
+    <ul class="hiw-integrations" aria-label="Reading sources braird connects with">
+      {INTEGRATIONS.map((name) => (
+        <li class="hiw-integration">
+          <span class="hiw-integration-dot" aria-hidden="true"></span>
+          {name}
+        </li>
+      ))}
+    </ul>
     <div class="hiw-threeup-grid">
       {SUPPORTING_CARDS.map((card) => (
         <article class="surfc-card hiw-mini-card">
@@ -23,3 +35,36 @@ const SUPPORTING_CARDS = [
     </div>
   </div>
 </section>
+
+<style>
+  /* Integration chips — cool-paper pills with a shoot-green "connected" dot.
+     Tokens recolour to the Braird palette automatically. */
+  .hiw-integrations {
+    list-style: none;
+    margin: 0 auto 36px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .hiw-integration {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: var(--radius-chip);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .hiw-integration-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    flex-shrink: 0;
+  }
+</style>
