@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls",
+               "delegate_permission/common.get_login_creds"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.braird.app",
+    "sha256_cert_fingerprints": ["9A:1E:97:70:68:CF:88:54:92:E7:8D:30:E4:70:C1:EB:05:3B:F9:42:06:B3:78:0A:7B:D9:3D:B8:C2:65:7C:0A"]
+  }
+}]
