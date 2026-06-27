@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Braird PRF enrollment (SUR-700, throwaway)</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 760px; margin: 24px auto; padding: 0 16px; }
+  h1 { font-size: 1.2rem; }
+  button { font: inherit; padding: 10px 14px; margin: 6px 6px 6px 0; cursor: pointer; }
+  pre { background: #111; color: #0f0; padding: 12px; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .warn { color: #b00; }
+  code { background: #eee; padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Braird PRF enrollment — SUR-700 (throwaway)</h1>
+<p>Must be served over <b>HTTPS from a <code>braird.app</code> origin</b> (origin must be a
+registrable suffix of the RP ID). <span class="warn">Will not work on localhost or any non-braird.app host.</span></p>
+<p>When the passkey dialog appears, choose <b>Google Password Manager</b> (so the credential
+syncs to the S25 Ultra) — not Windows Hello / a local platform authenticator.</p>
+
+<button id="enroll">1. Enroll braird.app passkey + emit blob</button>
+<button id="assert">2. Assert &amp; show web-side PRF (for comparison)</button>
+
+<h3>Output</h3>
+<pre id="out">(idle)</pre>
+
+<script>
+// Mirrors surfc/src/crypto exactly. Domain-separation strings stay surfc-* (NOT braird-*).
+const RP_ID = 'braird.app';
+const PRF_EVAL_INPUT = 'surfc-prf-eval-v1';
+const HKDF_INFO = 'surfc-master-key-wrap-v1';
+
+const out = document.getElementById('out');
+const log = (s) => { out.textContent += s + '\n'; };
+const reset = () => { out.textContent = ''; };
+const hex = (buf) => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+
+async function prfSalt() {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(PRF_EVAL_INPUT));
+}
+
+async function deriveWrappingKey(prfOutput, salt) {
+  const km = await crypto.subtle.importKey('raw', prfOutput, 'HKDF', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'HKDF', hash: 'SHA-256', salt, info: new TextEncoder().encode(HKDF_INFO) },
+    km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+
+async function wrapMasterKey(rawMk, prfOutput) {
+  const salt = crypto.getRandomValues(new Uint8Array(32));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const wk = await deriveWrappingKey(prfOutput, salt);
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, wk, rawMk);
+  return { wrappedKey: b64(ct), iv: b64(iv), salt: b64(salt) };
+}
+
+async function encryptNote(rawMk, plaintext, noteId) {
+  const key = await crypto.subtle.importKey('raw', rawMk, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv, additionalData: new TextEncoder().encode(noteId) },
+    key, new TextEncoder().encode(plaintext)
+  );
+  return `enc:v2:${b64(iv)}.${b64(ct)}`;
+}
+
+document.getElementById('enroll').onclick = async () => {
+  reset();
+  try {
+    if (location.protocol !== 'https:' || !location.hostname.endsWith('braird.app')) {
+      log('✗ Not on an https braird.app origin — enrollment will fail. Current: ' + location.origin);
+    }
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { id: RP_ID, name: 'Braird' },
+        user: { id: userId, name: 'sur700-throwaway', displayName: 'SUR-700 throwaway' },
+        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+        // NOTE: authenticatorAttachment intentionally OMITTED so the chooser can route to
+        // Google Password Manager (a synced passkey), not the local platform authenticator.
+        authenticatorSelection: { residentKey: 'required', userVerification: 'required' },
+        extensions: { prf: { eval: { first: await prfSalt() } } },
+      },
+    });
+    const prf = cred.getClientExtensionResults()?.prf?.results?.first;
+    if (!prf) { log('✗ No PRF on creation — this authenticator did not return prf.results.first.'); return; }
+
+    const rawMk = crypto.getRandomValues(new Uint8Array(32)).buffer;
+    const noteId = 'sur700-' + b64(crypto.getRandomValues(new Uint8Array(6))).replace(/[^a-z0-9]/gi, '');
+    const plaintext = 'braird PRF parity — cross-client round-trip';
+    const blob = await wrapMasterKey(rawMk, prf);
+    const encV2 = await encryptNote(rawMk, plaintext, noteId);
+
+    log('credentialId (base64url): ' + cred.id);
+    log('create-time PRF (hex): ' + hex(prf));
+    log('');
+    log('// ---- paste into braird-android Config.kt ----');
+    log('REAL_BLOB    = WrappedKeyBlob(');
+    log('    wrappedKey = "' + blob.wrappedKey + '",');
+    log('    iv = "' + blob.iv + '",');
+    log('    salt = "' + blob.salt + '",');
+    log(')');
+    log('REAL_NOTE_ID = "' + noteId + '"');
+    log('REAL_ENC_V2  = "' + encV2 + '"');
+    log('// expected decrypted note: ' + JSON.stringify(plaintext));
+  } catch (e) {
+    log('✗ ' + e.name + ': ' + e.message);
+  }
+};
+
+document.getElementById('assert').onclick = async () => {
+  reset();
+  try {
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge, rpId: RP_ID, allowCredentials: [], userVerification: 'required',
+        extensions: { prf: { eval: { first: await prfSalt() } } },
+      },
+    });
+    const prf = assertion.getClientExtensionResults()?.prf?.results?.first;
+    log('credentialId (base64url): ' + assertion.id);
+    log(prf ? 'web-side PRF (hex): ' + hex(prf) : '✗ No PRF in assertion results.');
+    log('');
+    log('➡ This hex must equal the Android harness "Capture PRF" hex for the same credential.');
+  } catch (e) {
+    log('✗ ' + e.name + ': ' + e.message);
+  }
+};
+</script>
+</body>
+</html>
