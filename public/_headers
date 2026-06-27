@@ -12,3 +12,9 @@
 
 /robots.txt
   Cache-Control: public, max-age=86400
+
+# ponytail: extensionless file — CF Pages infers Content-Type from the
+# extension, and there isn't one, so the ROR file would ship as text/plain.
+# Chrome's Related Origin Requests fetch rejects it unless application/json (SUR-686).
+/.well-known/webauthn
+  Content-Type: application/json
