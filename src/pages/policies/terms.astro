@@ -1,7 +1,17 @@
 ---
+/**
+ * Terms of Use (SUR-619) — rendered from in-repo markdown, replacing the Termly
+ * embed. Static HTML (crawlable, no noindex/CLS).
+ *
+ * Policy text is duplicated from `surfc/src/policies/terms.md` — keep in
+ * lockstep (no shared artifact across repos). Only intended divergence is
+ * internal-link trailing slashes (`trailingSlash: 'always'`).
+ *
+ * Termly consent banner stays in BaseLayout (SUR-620 Klaro / SUR-621 removal).
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro'
-
-const TERMLY_DATA_ID = 'f893c672-1fd9-4022-a214-e51b367e4ed1'
+import { Content as TermsDoc } from '../../policies/terms.md'
+import '../../styles/policy.css'
 ---
 
 <BaseLayout
@@ -14,9 +24,7 @@ const TERMLY_DATA_ID = 'f893c672-1fd9-4022-a214-e51b367e4ed1'
       <a class="policy-back-link" href="/">← Back to Surfc</a>
     </header>
     <main class="policy-content">
-      <div name="termly-embed" data-id={TERMLY_DATA_ID} data-type="iframe"></div>
+      <TermsDoc />
     </main>
   </div>
 </BaseLayout>
-
-<script is:inline src="https://app.termly.io/embed-policy.min.js" async></script>

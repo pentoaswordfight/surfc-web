@@ -1,13 +1,19 @@
 ---
 /**
- * Privacy policy — rendered by Termly via their embed SDK. Same data-id as
- * the legacy PolicyPage.jsx route at /policies/privacy, so the document
- * content stays identical across the cutover.
+ * Privacy Policy (SUR-618) — rendered from in-repo markdown, replacing the
+ * Termly embed. Static HTML (crawlable, no noindex/CLS).
+ *
+ * The policy text is duplicated from `surfc/src/policies/privacy.md` — there is
+ * no shared artifact across the two repos, so keep them in lockstep (same
+ * PRICE_COPY / UTM pattern). The only intended divergence is internal-link
+ * trailing slashes, required here by `trailingSlash: 'always'`.
+ *
+ * The Termly consent banner stays in BaseLayout (resource-blocker) — that
+ * migrates to Klaro under SUR-620 and Termly is decommissioned last (SUR-621).
  */
-
 import BaseLayout from '../../layouts/BaseLayout.astro'
-
-const TERMLY_DATA_ID = '3269e493-7d73-430a-bdef-e05479c111f6'
+import { Content as PrivacyDoc } from '../../policies/privacy.md'
+import '../../styles/policy.css'
 ---
 
 <BaseLayout
@@ -20,9 +26,7 @@ const TERMLY_DATA_ID = '3269e493-7d73-430a-bdef-e05479c111f6'
       <a class="policy-back-link" href="/">← Back to Surfc</a>
     </header>
     <main class="policy-content">
-      <div name="termly-embed" data-id={TERMLY_DATA_ID} data-type="iframe"></div>
+      <PrivacyDoc />
     </main>
   </div>
 </BaseLayout>
-
-<script is:inline src="https://app.termly.io/embed-policy.min.js" async></script>
