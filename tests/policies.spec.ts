@@ -1,38 +1,41 @@
 /**
- * Policy page smoke — confirms the Termly embed plumbing is intact so
- * the actual policy copy (which Termly hosts) has somewhere to land.
+ * Policy page smoke — the Privacy Policy and Terms of Use are now rendered from
+ * in-repo markdown as static HTML (SUR-618 / SUR-619), replacing the Termly
+ * embed. So unlike before, the visible copy is present at load time and we can
+ * assert on it directly.
  *
- * We don't assert the iframe rendered — Termly's embed script fetches
- * the policy body asynchronously from app.termly.io and the resulting
- * iframe may be blocked in CI by consent/network. Verifying the embed
- * div + script tag is a strong enough signal that the client is wired
- * up correctly.
- *
- * [SUR-218]
+ * [SUR-218][SUR-618][SUR-619]
  */
 
 import { expect, test } from './fixtures'
 
 const POLICY_PAGES = [
   {
-    path:   '/policies/privacy/',
-    dataId: '3269e493-7d73-430a-bdef-e05479c111f6',
+    path:    '/policies/privacy/',
+    heading: 'Privacy Policy',
+    phrase:  'end-to-end encrypted',
   },
   {
-    path:   '/policies/terms/',
-    dataId: 'f893c672-1fd9-4022-a214-e51b367e4ed1',
+    path:    '/policies/terms/',
+    heading: 'Terms of Use',
+    phrase:  'personal reading index',
   },
 ] as const
 
-for (const { path, dataId } of POLICY_PAGES) {
-  test(`${path} renders the Termly embed with the expected data-id`, async ({ page }) => {
+for (const { path, heading, phrase } of POLICY_PAGES) {
+  test(`${path} renders the internalized policy text`, async ({ page }) => {
     await page.goto(path)
 
-    const embed = page.locator(`div[name="termly-embed"][data-id="${dataId}"]`)
-    await expect(embed).toBeAttached()
+    // The heading and body copy are in the static HTML — no async iframe.
+    await expect(page.locator('.policy-content h1')).toHaveText(heading)
+    await expect(page.locator('.policy-content')).toContainText(phrase)
 
-    const script = page.locator('script[src="https://app.termly.io/embed-policy.min.js"]')
-    await expect(script).toBeAttached()
+    // Termly is gone from the policy text surface (the consent banner in
+    // BaseLayout is separate and migrates under SUR-620).
+    await expect(page.locator('div[name="termly-embed"]')).toHaveCount(0)
+    await expect(
+      page.locator('script[src="https://app.termly.io/embed-policy.min.js"]')
+    ).toHaveCount(0)
 
     await expect(page.locator('.policy-back-link')).toHaveAttribute('href', '/')
   })
