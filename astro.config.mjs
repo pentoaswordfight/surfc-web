@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
 import mdx from '@astrojs/mdx'
+import { unified } from '@astrojs/markdown-remark'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs'
@@ -26,15 +27,25 @@ export default defineConfig({
     sitemap({ filter: (page) => !/\/(waitlist|pricing)\/?$/.test(page) }),
     mdx(),
   ],
+  // Astro 7 defaults the Markdown pipeline to the Sätteri (Rust) processor,
+  // which does NOT run remark/rehype plugins. Pin the unified processor so our
+  // three plugins keep running on both .md and .mdx posts (the mdx integration
+  // re-extracts the plugin lists from the unified processor): remarkReadingTime
+  // (reading time → frontmatter, read by blog/[slug].astro), rehype-slug
+  // (heading IDs that feed `headings`), and rehype-autolink-headings (.anchor
+  // links). Sätteri migration is deferred — at this page count its build-speed
+  // win isn't worth rewriting remarkReadingTime as a Sätteri plugin. SUR-690.
   markdown: {
-    remarkPlugins: [remarkReadingTime],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        { behavior: 'append', properties: { className: ['anchor'], 'aria-hidden': 'true', tabindex: -1 } },
+    processor: unified({
+      remarkPlugins: [remarkReadingTime],
+      rehypePlugins: [
+        rehypeSlug,
+        [
+          rehypeAutolinkHeadings,
+          { behavior: 'append', properties: { className: ['anchor'], 'aria-hidden': 'true', tabindex: -1 } },
+        ],
       ],
-    ],
+    }),
   },
   compressHTML: true,
   build: {
