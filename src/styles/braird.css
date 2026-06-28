@@ -284,6 +284,73 @@ html:has(> body.braird-front-door) {
   .bf-hero-title { max-width: 18ch; }
 }
 
+/* ── WHAT — the plain-language explainer (SUR-709) ──
+   The one factual band on a poetic page: Google's branding review needs a block
+   that says, in plain words, what braird is and does. Deliberately the quietest
+   section — UI font, no Lora, no heading — so it reads as fact. The three
+   function columns are ruled like a spec sheet, encoding three parallel
+   capabilities (not a numbered sequence). */
+.bf-what {
+  position: relative;
+  padding: clamp(40px, 6vh, 72px) 0;
+  border-top: 1px solid var(--bf-hair);
+}
+.bf-what-body { margin: 0; min-width: 0; }
+.bf-what-lead {
+  font-family: var(--font-ui);
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.55;
+  color: var(--bf-paper);
+  margin: 0 0 clamp(26px, 4vh, 38px);
+  max-width: 56ch;
+}
+.bf-what-name { font-weight: 700; color: var(--bf-head); }
+
+.bf-what-fns {
+  list-style: none;
+  margin: 0 0 26px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 3vw, 40px);
+}
+.bf-what-fns li {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 16px;
+  border-top: 1px solid var(--bf-hair);
+}
+.bf-what-fn {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bf-leaf);
+}
+.bf-what-fn-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--bf-muted);
+}
+.bf-what-scope {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--bf-muted);
+  margin: 0;
+  max-width: 56ch;
+}
+
+@media (max-width: 720px) {
+  .bf-what-grid { grid-template-columns: 1fr; gap: 14px; }
+  .bf-what-eyebrow { padding-top: 0; }
+  .bf-what-fns { grid-template-columns: 1fr; gap: 0; }
+  .bf-what-fns li { padding: 14px 0; }
+  .bf-what-fns li:first-child { padding-top: 0; border-top: 0; }
+}
+
 /* ── BEATS — the verb arc, clean and typographic ── */
 .bf-beats {
   position: relative;
