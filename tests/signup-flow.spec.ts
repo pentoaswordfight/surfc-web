@@ -17,12 +17,12 @@
  * Cross-domain CTA destination matrix (this file pins each row):
  *   | CTA                          | Destination                              |
  *   |------------------------------|------------------------------------------|
- *   | nav_signup                   | /signin?intent=signup  (signup framing)  |
- *   | hero_signup                  | /signin?intent=signup  (smoke.spec.ts)   |
+ *   | nav_signup                   | /signin             (SUR-711)            |
+ *   | hero_signup                  | /signin             (smoke.spec.ts)      |
  *   | pricing_start_free           | bare /              (smoke.spec.ts)      |
  *   | pricing_hero_start_free      | bare /                                   |
  *   | pricing_get_pro_annual       | /upgrade?…           (SUR-357 surface)   |
- *   | waitlist_legacy_signup       | /signin?intent=signup  (SUR-365 sunset)  |
+ *   | waitlist_legacy_signup       | /signin             (SUR-365 sunset)     |
  *
  * Out of scope (covered by the manual incognito smoke per SUR-368 AC #6):
  *   - The actual signup form on `app.surfc.app` rendering / accepting input.
@@ -41,10 +41,13 @@
 
 import { expect, test } from './fixtures'
 
-const SIGNUP_HREF_RE = /^https:\/\/app\.surfc\.app\/signin\?intent=signup(?:&|$)/
+// SUR-711 — "Open braird" CTAs now deep-link to bare /signin (no intent param);
+// preserveUtm may append a UTM query, so allow an optional `?…` but never an
+// `intent=` param.
+const SIGNUP_HREF_RE = /^https:\/\/app\.surfc\.app\/signin(?:\?(?!.*\bintent=)|$)/
 
-test.describe('SUR-368 — signup-intent CTAs deep-link past the unauth redirect', () => {
-  test('home page: nav_signup resolves to /signin?intent=signup', async ({ page }) => {
+test.describe('SUR-368 — signup CTAs deep-link past the unauth redirect', () => {
+  test('home page: nav_signup resolves to /signin', async ({ page }) => {
     // hero_signup is pinned by smoke.spec.ts. Only nav_signup is unique here.
     // Some CTAs render multiple times across the page; pin every instance so
     // a regression that only flips one copy can't slip past `.first()`.
@@ -64,9 +67,9 @@ test.describe('SUR-368 — signup-intent CTAs deep-link past the unauth redirect
     await page.route('**/app.surfc.app/**', route => route.abort())
     const response = await page.goto('/waitlist/')
     expect(response?.status()).toBe(200)
-    // Target the explicit signup CTA, not the bare appUrl link in the
-    // explainer paragraph (which intentionally lacks ?intent=signup so the
-    // friendly-redirect default lands on the standard /signin screen).
+    // Target the explicit signup CTA (→ /signin), not the bare appUrl link in
+    // the explainer paragraph (→ app root /, which the catch-all redirects to
+    // /signin anyway).
     const directSignup = page.locator('a[data-cta="waitlist_legacy_signup"]')
     await expect(directSignup).toHaveAttribute('href', SIGNUP_HREF_RE)
   })
@@ -113,32 +116,34 @@ test.describe('SUR-368 — preserveUtm.ts round-trips campaign attribution', () 
       .toMatch(/utm_source=twitter/)
 
     const href = await hero.getAttribute('href')!
-    expect(href).toMatch(/^https:\/\/app\.surfc\.app\/signin\?intent=signup/)
+    expect(href).toMatch(/^https:\/\/app\.surfc\.app\/signin\?/)
     expect(href).toMatch(/utm_source=twitter/)
     expect(href).toMatch(/utm_campaign=launch/)
     expect(href).toMatch(/gclid=goog-xyz/)
+    // SUR-711 — no intent param survives the rewrite onto the bare /signin href.
+    expect(href).not.toMatch(/intent=/)
     // Origin-equality safeguard in preserveUtm.ts: keys we didn't pass in
     // must NOT appear (no accidental null-stamping).
     expect(href).not.toMatch(/utm_medium=/)
     expect(href).not.toMatch(/fbclid=/)
   })
 
-  test('UTM rewrite is idempotent — pre-existing query params survive', async ({ page }) => {
+  test('UTM is appended cleanly to the bare /signin href (single, well-formed query)', async ({ page }) => {
+    // The build-time href now carries no query (SUR-711 dropped ?intent=signup),
+    // so preserveUtm must append the UTM as the FIRST param — exactly one `?`,
+    // no leftover intent, no malformed `/signin??`.
     await page.goto('/?utm_source=twitter')
     const hero = page.locator('a[data-cta="hero_signup"]').first()
     await expect.poll(async () => hero.getAttribute('href'))
       .toMatch(/utm_source=twitter/)
     const href = await hero.getAttribute('href')!
-    // `intent=signup` was on the href at build time. The rewrite must
-    // preserve it — otherwise the cross-domain landing on AuthScreen loses
-    // the SUR-370 framing.
-    expect(href).toMatch(/intent=signup/)
+    expect(href).toBe('https://app.surfc.app/signin?utm_source=twitter')
   })
 
   test('CTA without UTM in the URL is left untouched (no trailing "?")', async ({ page }) => {
     await page.goto('/')
     const hero = page.locator('a[data-cta="hero_signup"]').first()
     const href = await hero.getAttribute('href')
-    expect(href).toBe('https://app.surfc.app/signin?intent=signup')
+    expect(href).toBe('https://app.surfc.app/signin')
   })
 })

@@ -78,7 +78,7 @@ These are the places `surfc-web` does not stand alone. Changing them here
 | Cross-domain access token | `src/lib/auth.ts` reads cookie `sb-surfc-access` on `.surfc.app` | `surfc/src/supabase.js` `onAuthStateChange` writes it | Marketing treats cookie *presence* = "signed in"; stale tokens 401 on checkout and fall back to the redirect path. See `surfc/CLAUDE.md` → "Cross-domain auth cookie (SUR-86)". |
 | Stripe checkout | `src/lib/checkout.ts` POSTs to `${PUBLIC_SUPABASE_URL}/functions/v1/create-checkout-session` | Edge Function source: `surfc/supabase/functions/create-checkout-session/index.ts` | Sends Bearer JWT + `apikey` header. Restricted set of `successUrl`/`cancelUrl` prefixes. `successUrl` lands on `${PUBLIC_APP_URL}/upgrade/success`; `cancelUrl` stays on the current origin so preview deploys (`*.pages.dev`) bounce within themselves. The `error` codes on the failure-bounce URL (`?canceled=1&error=<code>`, read by `src/lib/stripeTransition.ts`) come from surfc's `UpgradeRoute` `buildFailureUrl` — keep the code set aligned (SUR-496 / SUR-498). |
 | Stripe transition telemetry (SUR-466) | `src/lib/stripeTransition.ts` — mirrors the timeout (8s), trust copy, `stripe_transition_start`/`stripe_transition_end` names + `{ surface, duration_ms, outcome }` shape | `surfc/src/lib/stripeTransition.js` (SUR-419) | **No shared build artifact — edit in lockstep.** surfc-web adds the `web_pricing` `surface` value (in-app uses `upgrade_route` / `settings_manage`) so one funnel groups all three. |
-| Signup deep-link | `src/lib/appUrl.ts` → `signupUrl()` returns `${PUBLIC_APP_URL}/signin?intent=signup` | React app's AuthScreen reads `intent=signup` to render the signup-framed UI | Targeting `/signin` directly (not `/`) skips the catch-all redirect round-trip. SUR-370 also patches App.jsx to preserve query string across that redirect. |
+| Signup deep-link | `src/lib/appUrl.ts` → `signupUrl()` returns `${PUBLIC_APP_URL}/signin` | React app's AuthScreen renders the (single) signed-out landing; `/signin` is itself the signup route | SUR-711 dropped the old `?intent=signup` param (AuthScreen no longer has separate signup framing). Targeting `/signin` directly (not `/`) still skips the catch-all redirect round-trip. |
 | UTM passthrough | `src/scripts/preserveUtm.ts` `UTM_KEYS` array | `surfc/src/lib/utmParams.js` `UTM_KEYS` | **Must be edited in lockstep.** No shared build artifact. Adding a new click-ID (e.g. `ttclid`) requires two commits, one per repo. |
 | PostHog project | Shared token via `PUBLIC_POSTHOG_PROJECT_TOKEN` | Same project on the React side | One funnel: marketing → app signup lives in one PostHog stream. |
 
@@ -223,8 +223,8 @@ The marketing site's spine is different from the app's. Highlights (see
   caller. Spine because it conducts money. Personas:
   `auth-bridge-reviewer` (JWT/apikey concern), `pricing-claim-reviewer`
   (tier-name match).
-- **`src/lib/appUrl.ts`** — the signup deep-link
-  (`/signin?intent=signup`). Spine because it conducts the cross-domain
+- **`src/lib/appUrl.ts`** — the signup deep-link (`/signin`; SUR-711
+  dropped `?intent=signup`). Spine because it conducts the cross-domain
   handoff. Persona: `auth-bridge-reviewer`.
 - **Pricing copy in `src/components/Pricing*.astro` and
   `src/pages/pricing.astro`** — must match

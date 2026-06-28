@@ -8,11 +8,10 @@
  *   - The FAQ <details> accordion enforces single-open: opening one
  *     closes any previously-open sibling.
  *   - "Sign in" CTAs resolve to bare `app.surfc.app` (default landing).
- *   - "Sign up" CTAs resolve to `app.surfc.app/signin?intent=signup`
- *     (SUR-370: signup intent is propagated across the cross-domain hop
- *     so AuthScreen renders signup-framed UI).
+ *   - The "Open braird" CTA resolves to `app.surfc.app/signin` (SUR-711:
+ *     the signup-intent param was dropped; /signin is the signup route).
  *
- * [SUR-218, SUR-365, SUR-370]
+ * [SUR-218, SUR-365, SUR-370, SUR-711]
  */
 
 import { expect, test } from './fixtures'
@@ -163,18 +162,18 @@ test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', as
   expect(signupEvent[1]).toEqual({ cta: 'pricing_start_free' })
 })
 
-test('single "Open braird" CTA deep-links to /signin?intent=signup (SUR-679)', async ({ page }) => {
+test('single "Open braird" CTA deep-links to /signin (SUR-679, SUR-711)', async ({ page }) => {
   await page.goto('/')
 
   // SUR-679 collapsed the old Sign in / Sign up pair into one CTA, "Open
-  // braird". It keeps the signup deep-link past the PWA's catch-all unauth
-  // redirect onto /signin?intent=signup (SUR-370), so AuthScreen renders the
-  // signup-framed UI (returning users sign in from there). The build-time
-  // href carries no UTMs on a plain `/` load; preserveUtm.ts appends them on a
-  // real ad landing. data-cta stays in the SIGNUP_CTAS allowlist so the funnel
-  // is unbroken.
+  // braird". It deep-links past the PWA's catch-all unauth redirect straight
+  // onto /signin — itself the signup route. SUR-711 dropped the old
+  // ?intent=signup param (AuthScreen no longer renders separate signup
+  // framing). The build-time href carries no UTMs on a plain `/` load;
+  // preserveUtm.ts appends them on a real ad landing. data-cta stays in the
+  // SIGNUP_CTAS allowlist so the funnel is unbroken.
   const cta = page.locator('a', { hasText: /Open braird/i }).first()
-  await expect(cta).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/signin\?intent=signup$/)
+  await expect(cta).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/signin$/)
   await expect(cta).toHaveAttribute('data-cta', /signup$/)
 
   // The standalone "Sign in" link is gone from the front door.

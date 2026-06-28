@@ -36,12 +36,13 @@ user is bounced to, and what leaves the page as telemetry.
   deploys (`*.pages.dev`) bounce within themselves rather than dumping
   users on prod. The Edge Function source of truth is
   `surfc/supabase/functions/create-checkout-session/index.ts`.
-- **`src/lib/appUrl.ts`** `signupUrl()` returns
-  `${PUBLIC_APP_URL}/signin?intent=signup`. It targets `/signin`
-  **directly**, not `/`, to skip the catch-all redirect round-trip. The
-  React app reads `intent=signup` to frame the UI; surfc/ SUR-370 patches
-  App.jsx to preserve the query string across that redirect. Changing the
-  path or dropping the query param breaks the funnel.
+- **`src/lib/appUrl.ts`** `signupUrl()` returns `${PUBLIC_APP_URL}/signin`.
+  It targets `/signin` **directly**, not `/`, to skip the catch-all redirect
+  round-trip. SUR-711 dropped the old `?intent=signup` param: the React app
+  no longer renders separate signup-framed UI, and the param's only live
+  effect was auto-opening the email sheet over the consent notice. Changing
+  the path (e.g. to `/`) re-introduces the redirect round-trip; re-adding an
+  `intent=signup` param re-introduces the bypass SUR-711 fixed.
 - **Analytics wiring** (`src/layouts/BaseLayout.astro`,
   `src/lib/posthog.ts`, `src/scripts/blog-engagement.ts`): PostHog boots
   inline; a capture-phase listener fires `app_cta_clicked` for every
@@ -83,10 +84,10 @@ Any change touching:
 4. **`successUrl`/`cancelUrl` escapes the allowlist.** A new redirect
    target outside the restricted prefixes; `cancelUrl` hardcoded to prod
    instead of `window.location.origin` (breaks preview deploys).
-5. **Signup deep-link regressed.** Pointing at `/` instead of `/signin`,
-   dropping `intent=signup`, or dropping the query string — any of these
-   silently re-introduces the redirect round-trip or breaks the
-   signup-framed UI. Cross-repo with surfc/ SUR-370.
+5. **Signup deep-link regressed.** Pointing at `/` instead of `/signin`
+   silently re-introduces the catch-all redirect round-trip; re-adding an
+   `intent=signup` param re-introduces the consent-bypass SUR-711 fixed.
+   Cross-repo with surfc/ AuthScreen.
 6. **Analytics listener conditionalised on the token.** Wrapping the
    `[data-cta]` registration in `if (PUBLIC_POSTHOG_PROJECT_TOKEN)` breaks
    Playwright stubbing and SUR-367/368 assertions. The guard must stay on
@@ -167,7 +168,7 @@ PASS / PASS WITH CONCERNS / HOLD
 - Checkout call missing `apikey` or Bearer, or targeting the wrong origin.
 - `successUrl`/`cancelUrl` outside the restricted prefixes, or `cancelUrl`
   hardcoded away from `window.location.origin`.
-- Signup deep-link no longer `/signin?intent=signup` with query preserved.
+- Signup deep-link no longer `/signin` (e.g. points at `/`, or re-adds `intent=signup`).
 - `[data-cta]` listener gated on the PostHog token instead of
   `window.posthog`.
 - New telemetry property carrying PII / JWT / raw cookie.

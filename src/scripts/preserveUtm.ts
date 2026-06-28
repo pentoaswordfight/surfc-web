@@ -3,11 +3,11 @@
  * carry the originating UTM / click-ID params across to `app.surfc.app`.
  *
  * Why: marketing CTAs (Nav, Hero, ClosingCta, waitlist) are static
- * `<a href="https://app.surfc.app/signin?intent=signup">` elements. By
- * default they drop any UTM params the landing page received. Without
- * this preservation, an ad campaign tagged `?utm_source=twitter` loses
- * attribution the moment a visitor clicks any signup CTA — the resulting
- * `auth_landing_viewed` event on app.surfc.app would record `null` UTMs.
+ * `<a href="https://app.surfc.app/signin">` elements. By default they drop
+ * any UTM params the landing page received. Without this preservation, an
+ * ad campaign tagged `?utm_source=twitter` loses attribution the moment a
+ * visitor clicks any "Open braird" CTA — the resulting `auth_landing_viewed`
+ * event on app.surfc.app would record `null` UTMs.
  *
  * Canonical UTM/click-ID keys are mirrored in `surfc/src/lib/utmParams.js`
  * (`UTM_KEYS`). Both arrays must be edited in lockstep when a new key is
@@ -19,8 +19,7 @@
  * later enabled), read the seven canonical UTM/click-ID keys from
  * `window.location.search` and append them to every `<a data-cta>` whose
  * href points at the app origin. Idempotent — keys already present on
- * the href (e.g. `?intent=signup`) survive untouched; missing UTM keys
- * are skipped, not nulled.
+ * the href survive untouched; missing UTM keys are skipped, not nulled.
  *
  * `<button data-cta>` elements (e.g. Nav's hamburger toggle) are
  * intentionally excluded — they have no href to rewrite. The PostHog
