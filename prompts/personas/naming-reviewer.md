@@ -73,7 +73,7 @@ whether the *name* is the right, consistent, non-leaking one).
   (`Faq.astro`, `PricingFaq.astro`), blog titles/frontmatter in
   `src/content/blog/*.mdx`, route paths under `src/pages/**`, and the
   signup deep-link target in `src/lib/appUrl.ts`
-  (`/signin?intent=signup` — a user-visible URL shape; SUR-365/SUR-370).
+  (`/signin` — a user-visible URL shape; SUR-365/SUR-370/SUR-711).
 - **Adler-102 / `GREAT_IDEAS` taxonomy** is *not* surfaced on this
   marketing site (it lives in the app). If a blog post or page starts
   quoting specific canon idea names, they are canonical strings — treat
@@ -95,7 +95,7 @@ Any change that introduces or modifies:
 - Tier / plan names and capability descriptions
 - Blog post titles and frontmatter `title` / `description`
 - New URL paths under `src/pages/**`, or a change to the
-  `?intent=signup` deep-link shape
+  `/signin` deep-link shape
 - New feature names referenced in tickets that will become public on the
   site
 
