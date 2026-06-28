@@ -1,8 +1,9 @@
 ---
 /**
  * Braird front door (SUR-679). Stripped right down: a forest-ground hero
- * (the four-verb taxonomy with CONNECT lit), three supporting verb beats, and
- * a quiet close. The old explanatory sections moved to /how-it-works/.
+ * (the four-verb taxonomy with CONNECT lit), a plain-language "What Braird is"
+ * explainer (SUR-709, for Google's OAuth branding review), three supporting
+ * verb beats, and a quiet close. The old sections moved to /how-it-works/.
  *
  * Design lives in src/styles/braird.css; the body opts into the forest
  * treatment via `braird-front-door`.
@@ -10,6 +11,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav        from '../components/Nav.astro'
 import Hero       from '../components/braird/Hero.astro'
+import What       from '../components/braird/What.astro'
 import Beats      from '../components/braird/Beats.astro'
 import Close      from '../components/braird/Close.astro'
 import Footer     from '../components/Footer.astro'
@@ -23,6 +25,7 @@ import Footer     from '../components/Footer.astro'
 >
   <Nav />
   <Hero />
+  <What />
   <Beats />
   <Close />
   <Footer />
