@@ -1,10 +1,11 @@
 ---
 /**
- * Braird front-door hero (SUR-679). The 4-verb taxonomy eyebrow (CONNECT lit)
- * sits above a left-aligned Lora headline, with the brand illustration in the
- * right column — a book sprouting an idea, threads connecting it to notes, a
- * stack of books, and a phone. Its own ground is the forest, so the edges are
- * feathered (mask) to dissolve into the page rather than end in a hard frame.
+ * Braird front-door hero (SUR-679, copy SUR-727). A left-aligned Lora headline
+ * over the brand illustration in the right column — a book sprouting an idea,
+ * threads connecting it to notes, a stack of books, and a phone. Its own ground
+ * is the forest, so the edges are feathered (mask) to dissolve into the page
+ * rather than end in a hard frame. The four-verb taxonomy eyebrow now lives on
+ * each section beat (Beats.astro), not here.
  */
 import { signupUrl } from '../../lib/appUrl'
 ---
@@ -13,24 +14,14 @@ import { signupUrl } from '../../lib/appUrl'
   <span class="bf-hero-glow" aria-hidden="true"></span>
   <div class="bf-wrap">
     <div class="bf-hero-copy">
-      <p class="bf-taxonomy">
-        <span class="bf-verb">Resurface</span>
-        <span class="bf-tax-dot" aria-hidden="true">·</span>
-        <span class="bf-verb is-active">Connect</span>
-        <span class="bf-tax-dot" aria-hidden="true">·</span>
-        <span class="bf-verb">Compound</span>
-        <span class="bf-tax-dot" aria-hidden="true">·</span>
-        <span class="bf-verb">Create</span>
-      </p>
-
       <h1 class="bf-hero-title">
-        Every note <span class="bf-accent">finds its kin</span>.
+        Turn scattered notes into <span class="bf-accent">connected thinking</span>.
       </h1>
-      <p class="bf-hero-sub">Kahneman and Gibran debate Self-Deception. You have a front row seat.</p>
+      <p class="bf-hero-sub">Braird brings your highlights, scraps, and reflections together so related ideas can resurface when they matter.</p>
 
       <div class="bf-cta-row">
         <a href={signupUrl()} class="bf-cta" data-cta="hero_signup">
-          Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
+          Open braird
         </a>
       </div>
     </div>

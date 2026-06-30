@@ -1,7 +1,8 @@
 ---
 /**
- * Braird front-door close (SUR-679). Wordmark lockup + a single promise line
- * and the one CTA. Closing copy is the founder's line, not an OG card.
+ * Braird front-door close (SUR-679). Wordmark lockup + a single promise line,
+ * the encryption/sync trust line (SUR-727, relocated from the retired
+ * explainer), and the one CTA. Closing copy is the founder's line, not an OG card.
  */
 import { signupUrl } from '../../lib/appUrl'
 import Wordmark from './Wordmark.astro'
@@ -17,9 +18,10 @@ import Wordmark from './Wordmark.astro'
     <p class="bf-close-line">
       You never have to start from a <span class="bf-accent">blank page</span> again.
     </p>
+    <p class="bf-close-trust">Your notes are encrypted, kept in your account, and synced across your devices.</p>
     <div class="bf-cta-row">
       <a href={signupUrl()} class="bf-cta" data-cta="closing_signup">
-        Open braird <span class="bf-cta-arrow" aria-hidden="true">→</span>
+        Open braird
       </a>
     </div>
   </div>
