@@ -1,34 +1,78 @@
 ---
 /**
- * Braird front-door beats (SUR-679). The verb arc — Create / Compound /
- * Resurface, top to bottom — each its own Lora line, copy lifted verbatim from
- * the brand OG cards. The brand illustration now leads the hero; the beats are
- * a clean, typographic arc beneath it.
+ * Braird front-door sections (SUR-679, copy SUR-727). The four-verb arc in
+ * canonical order — Resurface → Connect → Compound → Create — each a Lora line
+ * beneath the full taxonomy eyebrow, with the section's own verb lit and marked
+ * aria-current="step" (so the "you are here" cue isn't carried by colour alone).
+ * The lit verb advances down the page as a progress rail: the eyebrow encodes
+ * the reader's journey rather than decorating it.
+ *
+ * The eyebrow is written out per section on purpose — flat brand markup, like
+ * its sibling front-door components, so the copy stays inline and editable.
  */
 ---
 
-<section class="bf-beats bf-dots" aria-label="What braird does">
+<section class="bf-beats bf-dots" aria-label="What Braird does">
   <div class="bf-wrap">
     <ol class="bf-beat-list">
       <li class="bf-beat">
-        <p class="bf-beat-verb">Create</p>
+        <p class="bf-taxonomy">
+          <span class="bf-verb is-active" aria-current="step">Resurface</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Connect</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Compound</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Create</span>
+        </p>
         <div class="bf-beat-body">
-          <h2 class="bf-beat-title">Fragments become <span class="bf-accent">something new</span>.</h2>
-          <p class="bf-beat-sub">Note scraps, book highlights and podcast snips come together to fuel your creative process.</p>
+          <h2 class="bf-beat-title">Find the right note when you're <span class="bf-accent">making something</span>.</h2>
+          <p class="bf-beat-sub">Bring back the ideas, quotes, and connections you need for writing, research, and creative work.</p>
         </div>
       </li>
       <li class="bf-beat">
-        <p class="bf-beat-verb">Compound</p>
+        <p class="bf-taxonomy">
+          <span class="bf-verb">Resurface</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb is-active" aria-current="step">Connect</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Compound</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Create</span>
+        </p>
         <div class="bf-beat-body">
-          <h2 class="bf-beat-title">Reading that <span class="bf-accent">adds up</span> over time.</h2>
-          <p class="bf-beat-sub">Knowledge, with interest.</p>
+          <h2 class="bf-beat-title">Never lose the ideas <span class="bf-accent">worth returning to</span>.</h2>
+          <p class="bf-beat-sub">Braird helps you capture, connect, and revisit the best ideas from what you read, hear, and write.</p>
         </div>
       </li>
       <li class="bf-beat">
-        <p class="bf-beat-verb">Resurface</p>
+        <p class="bf-taxonomy">
+          <span class="bf-verb">Resurface</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Connect</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb is-active" aria-current="step">Compound</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Create</span>
+        </p>
         <div class="bf-beat-body">
-          <h2 class="bf-beat-title">The right idea, <span class="bf-accent">back</span> when you need it.</h2>
-          <p class="bf-beat-sub">Read, write, listen. Save it all to braird and let serendipity happen.</p>
+          <h2 class="bf-beat-title">Watch your notes <span class="bf-accent">build on each other</span>.</h2>
+          <p class="bf-beat-sub">The more you save, the easier it becomes to spot patterns, themes and recurring questions.</p>
+        </div>
+      </li>
+      <li class="bf-beat">
+        <p class="bf-taxonomy">
+          <span class="bf-verb">Resurface</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Connect</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb">Compound</span>
+          <span class="bf-tax-dot" aria-hidden="true">·</span>
+          <span class="bf-verb is-active" aria-current="step">Create</span>
+        </p>
+        <div class="bf-beat-body">
+          <h2 class="bf-beat-title">Turn fragments into <span class="bf-accent">working material</span>.</h2>
+          <p class="bf-beat-sub">Drop in passages, snippets, rough notes; Braird keeps them ready for your next idea.</p>
         </div>
       </li>
     </ol>
