@@ -39,6 +39,21 @@ test.describe('public pages respond 200 and render correctly', () => {
   }
 })
 
+// The pre-rebrand Surfc PWA registered a service worker at /sw.js on the
+// marketing origins (braird.app served the app for a while). public/sw.js is a
+// kill-switch that unregisters that stale worker. It only works if /sw.js is
+// served as a real script — if the file goes missing it falls through to the
+// SPA HTML fallback (text/html), an invalid worker, and the stale worker
+// survives. This guards both the content-type and the self-destruct logic.
+test('kill-switch service worker is served as JS at /sw.js', async ({ request }) => {
+  const res = await request.get('/sw.js')
+  expect(res.status()).toBe(200)
+  expect(res.headers()['content-type'] ?? '').toMatch(/javascript/)
+  const body = await res.text()
+  expect(body).toContain('registration.unregister()')
+  expect(body).toContain('skipWaiting()')
+})
+
 test('nav adds scrolled class after 8px scroll', async ({ page }) => {
   await page.goto('/')
   const nav = page.locator('[data-nav]')
