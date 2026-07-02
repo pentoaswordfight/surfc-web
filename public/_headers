@@ -18,3 +18,9 @@
 # Chrome's Related Origin Requests fetch rejects it unless application/json (SUR-686).
 /.well-known/webauthn
   Content-Type: application/json
+
+# Extensionless like /webauthn above — CF Pages would otherwise ship it as
+# text/plain. iOS fetches the AASA over HTTPS and requires application/json.
+# SUR-697.
+/.well-known/apple-app-site-association
+  Content-Type: application/json
