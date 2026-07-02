@@ -1,0 +1,30 @@
+# Backup project generator (XcodeGen) — only needed if the checked-in
+# PrfParity.xcodeproj won't open on your Xcode. Install: `brew install xcodegen`
+# then run `xcodegen generate` in this folder to regenerate the .xcodeproj.
+name: PrfParity
+options:
+  bundleIdPrefix: com.braird
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: "7732348SM7"
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  PrfParity:
+    type: application
+    platform: iOS
+    sources:
+      - PrfParity
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.braird.app
+        CODE_SIGN_ENTITLEMENTS: PrfParity/PrfParity.entitlements
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: "YES"

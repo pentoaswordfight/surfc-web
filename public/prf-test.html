@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>PRF parity — web baseline (SUR-655 / SUR-699)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; padding: 20px; max-width: 780px; }
+    h1 { font-size: 20px; }
+    p.lede { opacity: .8; }
+    button { font-size: 16px; padding: 12px 16px; margin: 6px 6px 6px 0; border-radius: 10px; border: 1px solid #8888; cursor: pointer; }
+    button:disabled { opacity: .4; cursor: default; }
+    section { border: 1px solid #8884; border-radius: 12px; padding: 12px 16px; margin: 14px 0; }
+    .k { font-weight: 600; }
+    pre { white-space: pre-wrap; word-break: break-all; background: #8881; padding: 10px; border-radius: 8px; margin: 6px 0; }
+    .hex { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+    .ok { color: #1a7f37; } .err { color: #c0362c; }
+    #log { max-height: 260px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>PRF parity — web baseline</h1>
+  <p class="lede">
+    Mints an iCloud-Keychain passkey on <span class="k">braird.app</span>, reads its
+    WebAuthn&nbsp;PRF for a fixed eval salt, and builds a <span class="k">prf-v1</span> unwrap blob.
+    Compare the PRF hex against the native iOS harness (must be byte-identical), then
+    unwrap the blob with the native PRF to recover the test master key.
+    <br />Throwaway spike artifact — SUR-655 / SUR-699. Not linked from the site.
+  </p>
+
+  <section>
+    <div class="k">Shared constants (must match native + web app)</div>
+    <pre>RP ID            : braird.app
+PRF eval salt    : SHA-256(UTF8("surfc-prf-eval-v1"))  → 32 bytes, hex below
+HKDF (blob)      : HKDF-SHA256(ikm=PRF, salt=random32, info="surfc-master-key-wrap-v1")
+Wrap            : AES-GCM-256, iv=random12  →  blob { wrappedKey, iv, salt } (std base64)</pre>
+    <div>PRF eval salt (hex): <span id="saltHex" class="hex">computing…</span></div>
+  </section>
+
+  <section>
+    <div class="k">Step 1 — Enrol + read PRF</div>
+    <p>Creates a platform passkey (residentKey required, UV required, prf enabled), then does an
+       assertion with <code>prf.eval.first = salt</code> to read the PRF (Safari does not return PRF at create).</p>
+    <button id="btnEnroll">Enrol + read PRF</button>
+    <button id="btnGet" disabled>Read PRF only (assertion)</button>
+    <div>Web PRF output (hex):</div>
+    <pre id="prfHex" class="hex">—</pre>
+  </section>
+
+  <section>
+    <div class="k">Step 2 — Make blob (criterion-3 unwrap material)</div>
+    <p>Derives a wrapping key from the PRF, wraps a random 32-byte test master key, and prints the
+       <code>prf-v1</code> blob + the raw MK. Off-device, unwrap the blob with the <em>native</em> PRF and confirm you recover this same MK.</p>
+    <button id="btnBlob" disabled>Make blob</button>
+    <div>Test master key (hex) — expected unwrap result:</div>
+    <pre id="mkHex" class="hex">—</pre>
+    <div><code>prf-v1</code> blob (JSON, base64 fields):</div>
+    <pre id="blobJson" class="hex">—</pre>
+  </section>
+
+  <section>
+    <div class="k">Log</div>
+    <pre id="log"></pre>
+  </section>
+
+  <script>
+    // ── Shared constants — keep byte-identical to the native harness and to
+    //    surfc/src/crypto/passkeyEnrollment.js getPrfSalt() + keyManager.js wrapMasterKey().
+    const RP_ID = 'braird.app';
+    const HKDF_INFO = 'surfc-master-key-wrap-v1';
+    const PRF_EVAL_LABEL = 'surfc-prf-eval-v1';
+
+    // ── State carried between steps
+    let lastCredentialId = null;   // Uint8Array rawId from create()
+    let lastPrf = null;            // ArrayBuffer PRF output from get()
+
+    // ── Helpers
+    const $ = (id) => document.getElementById(id);
+    const enc = new TextEncoder();
+    function toHex(buf) {
+      return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    function b64(bytes) {
+      let s = '';
+      const u = new Uint8Array(bytes);
+      for (let i = 0; i < u.length; i++) s += String.fromCharCode(u[i]);
+      return btoa(s);
+    }
+    function log(msg, cls) {
+      const el = $('log');
+      const line = document.createElement('div');
+      if (cls) line.className = cls;
+      line.textContent = new Date().toISOString().slice(11, 23) + '  ' + msg;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+      // eslint-disable-next-line no-console
+      console.log('[prf-test]', msg);
+    }
+    function showError(where, e) {
+      const detail = e && (e.name || e.message)
+        ? `${e.name || 'Error'}: ${e.message || ''}` + (e.stack ? '\n' + e.stack : '')
+        : String(e);
+      log(`${where} FAILED — ${detail}`, 'err');
+    }
+
+    // ── PRF eval salt: SHA-256(UTF8("surfc-prf-eval-v1")) — identical to getPrfSalt()
+    async function getPrfSalt() {
+      const digest = await crypto.subtle.digest('SHA-256', enc.encode(PRF_EVAL_LABEL));
+      return new Uint8Array(digest); // 32 bytes, used verbatim as prf.eval.first
+    }
+
+    // ── Step 1a: create a platform passkey with PRF enabled
+    async function createCredential() {
+      const salt = await getPrfSalt(); // enable-only at create; results read via get()
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      const userId = crypto.getRandomValues(new Uint8Array(16));
+      const publicKey = {
+        rp: { id: RP_ID, name: 'braird PRF parity spike' },
+        user: { id: userId, name: 'prf-parity@braird.app', displayName: 'PRF parity test' },
+        challenge,
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 },   // ES256
+          { type: 'public-key', alg: -257 }, // RS256
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          residentKey: 'required',
+          requireResidentKey: true,
+          userVerification: 'required',
+        },
+        timeout: 120000,
+        attestation: 'none',
+        extensions: { prf: { eval: { first: salt } } }, // declare prf; Safari ignores results here
+      };
+      log('navigator.credentials.create() — approve the passkey prompt…');
+      const cred = await navigator.credentials.create({ publicKey });
+      lastCredentialId = new Uint8Array(cred.rawId);
+      log('create() OK — credential id (hex): ' + toHex(cred.rawId), 'ok');
+      const ext = cred.getClientExtensionResults?.() || {};
+      log('create() prf ext: ' + JSON.stringify(ext.prf || null));
+      return cred;
+    }
+
+    // ── Step 1b: assertion with prf.eval.first = salt → read PRF
+    async function readPrf() {
+      const salt = await getPrfSalt();
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      const publicKey = {
+        rpId: RP_ID,
+        challenge,
+        userVerification: 'required',
+        timeout: 120000,
+        // Empty allowCredentials → discoverable credential picker. If we just enrolled
+        // in this session, narrow to that credential so the right passkey is used.
+        allowCredentials: lastCredentialId
+          ? [{ type: 'public-key', id: lastCredentialId }]
+          : [],
+        extensions: { prf: { eval: { first: salt } } },
+      };
+      log('navigator.credentials.get() — approve the passkey prompt…');
+      const assertion = await navigator.credentials.get({ publicKey });
+      const ext = assertion.getClientExtensionResults?.() || {};
+      const first = ext.prf && ext.prf.results && ext.prf.results.first;
+      if (!first) {
+        throw new Error(
+          'No prf.results.first in assertion — PRF not returned. ' +
+          'Ensure iOS/iPadOS 18.x (past the early-18 PRF bug) and that the passkey was enrolled with prf enabled. ' +
+          'ext=' + JSON.stringify(ext)
+        );
+      }
+      lastPrf = first; // ArrayBuffer
+      const hex = toHex(first);
+      $('prfHex').textContent = hex;
+      log('get() OK — PRF output (' + new Uint8Array(first).length + ' bytes): ' + hex, 'ok');
+      $('btnBlob').disabled = false;
+      return first;
+    }
+
+    // ── Step 2: derive wrapping key from PRF and wrap a random test MK → prf-v1 blob
+    async function makeBlob() {
+      if (!lastPrf) throw new Error('No PRF captured yet — run step 1 first.');
+      const salt = crypto.getRandomValues(new Uint8Array(32)); // blob salt (HKDF salt)
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const mk = crypto.getRandomValues(new Uint8Array(32));    // random test master key
+
+      const keyMaterial = await crypto.subtle.importKey('raw', lastPrf, 'HKDF', false, ['deriveKey']);
+      const wrappingKey = await crypto.subtle.deriveKey(
+        { name: 'HKDF', hash: 'SHA-256', salt, info: enc.encode(HKDF_INFO) },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+      const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, wrappingKey, mk);
+      const blob = { wrappedKey: b64(ct), iv: b64(iv), salt: b64(salt) };
+
+      $('mkHex').textContent = toHex(mk);
+      $('blobJson').textContent = JSON.stringify(blob, null, 2);
+      log('Blob built. Unwrap it with the NATIVE PRF and confirm you recover the MK hex above.', 'ok');
+    }
+
+    // ── Wire up
+    (async function init() {
+      try {
+        const salt = await getPrfSalt();
+        $('saltHex').textContent = toHex(salt);
+        if (!window.PublicKeyCredential) {
+          log('WebAuthn not available in this browser.', 'err');
+        }
+      } catch (e) {
+        showError('salt init', e);
+      }
+    })();
+
+    $('btnEnroll').addEventListener('click', async () => {
+      $('btnEnroll').disabled = true;
+      try {
+        await createCredential();
+        await readPrf(); // chained within the same user gesture
+      } catch (e) {
+        showError('Enrol + read PRF', e);
+        // Fall back: let the user run the assertion on its own tap.
+        $('btnGet').disabled = false;
+      } finally {
+        $('btnEnroll').disabled = false;
+        $('btnGet').disabled = false;
+      }
+    });
+
+    $('btnGet').addEventListener('click', async () => {
+      $('btnGet').disabled = true;
+      try {
+        await readPrf();
+      } catch (e) {
+        showError('Read PRF only', e);
+      } finally {
+        $('btnGet').disabled = false;
+      }
+    });
+
+    $('btnBlob').addEventListener('click', async () => {
+      try {
+        await makeBlob();
+      } catch (e) {
+        showError('Make blob', e);
+      }
+    });
+  </script>
+</body>
+</html>
