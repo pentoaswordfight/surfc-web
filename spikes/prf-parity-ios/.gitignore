@@ -1,0 +1,7 @@
+# Xcode build artefacts / local state for this throwaway harness
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+.DS_Store
