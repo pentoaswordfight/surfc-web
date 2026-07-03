@@ -21,7 +21,7 @@ The screenshot below is from today's interaction with Claude Code over code it w
 
 A relatively trivial thing, but the sort of death-by-a-thousand-paper-cuts that results in [disaster](https://www.reddit.com/r/vibecoding/comments/1su03dk/vibe_coded_for_6_months_my_codebase_is_a_disaster/).
 
-I previously covered the "why" and "when" of GCE. In this post, I will explain the (still evolving) framework that allows me to sleep well as a solo founder. My [previous post](https://surfc.app/blog/spine-vs-surface/) laid out the 3 tenets of GCE, and next I will explain how I'm fitting the pieces together.
+I previously covered the "why" and "when" of GCE. In this post, I will explain the (still evolving) framework that allows me to sleep well as a solo founder. My [previous post](/blog/spine-vs-surface/) laid out the 3 tenets of GCE, and next I will explain how I'm fitting the pieces together.
 
 ### The first thing I built was a test
 

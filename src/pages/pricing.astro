@@ -15,7 +15,7 @@
  * cross-domain access cookie issued by app.surfc.app and, when present, swaps
  * the hero / Practitioner CTA copy and rebinds the Practitioner CTA to call
  * `create-checkout-session` directly — saving the round-trip through
- * `app.surfc.app/upgrade`. It also drives the SUR-466 loading/timeout overlay
+ * `app.braird.app/upgrade`. It also drives the SUR-466 loading/timeout overlay
  * and the SUR-496 failure banner (both rendered hidden by
  * <StripeCheckoutStates />). See the plan in
  * .claude/plans/sur-86-sur-235-defines-the-fluttering-locket.md for the
@@ -35,10 +35,13 @@ import { TIER_NAMES }       from '../lib/tiers.ts'
 import '../styles/pricing.css'
 ---
 
+{/* SUR-779 — og-pricing.jpg had the old Surfc wordmark baked in; share unfurls
+    render og:image even on a noindex page. Use the rebranded primary card
+    until a pricing-specific braird card exists. */}
 <BaseLayout
   title="Plans & Pricing — Surfc"
   description={`Surfc ${TIER_NAMES.free} is generous enough to build a real reading index. Surfc ${TIER_NAMES.pro} keeps it alive as your reading evolves. $8.99/month or $79/year — annual saves 27%.`}
-  ogImage="/og-pricing.jpg"
+  ogImage="/braird-og-primary.png"
   path="/pricing/"
   noindex
 >

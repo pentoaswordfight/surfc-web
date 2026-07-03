@@ -1,13 +1,13 @@
 /**
  * preserveUtm — rewrites cross-domain CTA hrefs on the marketing site to
- * carry the originating UTM / click-ID params across to `app.surfc.app`.
+ * carry the originating UTM / click-ID params across to `app.braird.app`.
  *
  * Why: marketing CTAs (Nav, Hero, ClosingCta, waitlist) are static
- * `<a href="https://app.surfc.app/signin">` elements. By default they drop
+ * `<a href="https://app.braird.app/signin">` elements. By default they drop
  * any UTM params the landing page received. Without this preservation, an
  * ad campaign tagged `?utm_source=twitter` loses attribution the moment a
- * visitor clicks any "Open braird" CTA — the resulting `auth_landing_viewed`
- * event on app.surfc.app would record `null` UTMs.
+ * visitor clicks any "Get braird" CTA — the resulting `auth_landing_viewed`
+ * event on app.braird.app would record `null` UTMs.
  *
  * Canonical UTM/click-ID keys are mirrored in `surfc/src/lib/utmParams.js`
  * (`UTM_KEYS`). Both arrays must be edited in lockstep when a new key is
@@ -41,7 +41,7 @@ const UTM_KEYS = [
   'fbclid',
 ] as const
 
-const APP_URL = (import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app') as string
+const APP_URL = (import.meta.env.PUBLIC_APP_URL ?? 'https://app.braird.app') as string
 const APP_ORIGIN = new URL(APP_URL).origin
 
 function appendUtmToAppHrefs(): void {
@@ -66,7 +66,7 @@ function appendUtmToAppHrefs(): void {
       return
     }
     // Origin equality, not `startsWith` — defends against lookalike hosts
-    // like `app.surfc.app-evil.com` which would slip past a string-prefix
+    // like `app.braird.app-evil.com` which would slip past a string-prefix
     // check. We control every `data-cta` anchor today, but cheap insurance
     // against future CMS / markdown integrations.
     if (url.origin !== APP_ORIGIN) return

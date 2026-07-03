@@ -54,8 +54,8 @@ if (noindex)  robotsParts.push('noindex')
 if (nofollow) robotsParts.push('nofollow')
 const robotsContent = robotsParts.join(', ')
 
-const canonical = new URL(path, Astro.site ?? 'https://surfc.app').toString()
-const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://surfc.app').toString()
+const canonical = new URL(path, Astro.site ?? 'https://braird.app').toString()
+const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://braird.app').toString()
 
 // PostHog — same project as the React app so we get the landing → app sign-up
 // funnel in one stream. Token may be empty locally; the init guard below
@@ -161,7 +161,7 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
     <slot />
 
     <!-- SUR-370 — Forward UTM / click-ID params from the marketing page's
-         URL onto cross-domain `app.surfc.app` CTAs so AuthScreen's
+         URL onto cross-domain `app.braird.app` CTAs so AuthScreen's
          `auth_landing_viewed` event carries campaign attribution. -->
     <script>
       import '../scripts/preserveUtm'

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://surfc.app/sitemap-index.xml
+Sitemap: https://braird.app/sitemap-index.xml

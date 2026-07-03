@@ -7,8 +7,8 @@
  *     the 8px threshold (mirrors the React LandingPage.jsx behaviour).
  *   - The FAQ <details> accordion enforces single-open: opening one
  *     closes any previously-open sibling.
- *   - "Sign in" CTAs resolve to bare `app.surfc.app` (default landing).
- *   - The "Open braird" CTA resolves to `app.surfc.app/signin` (SUR-711:
+ *   - "Sign in" CTAs resolve to bare `app.braird.app` (default landing).
+ *   - The "Get braird" CTA resolves to `app.braird.app/signin` (SUR-711:
  *     the signup-intent param was dropped; /signin is the signup route).
  *
  * [SUR-218, SUR-365, SUR-370, SUR-711]
@@ -91,7 +91,7 @@ test('signup CTAs emit both app_cta_clicked and marketing_signup_clicked (SUR-36
   // wouldn't survive — we swap in our recorder *after* the page has booted.
   // The BaseLayout click listener reads `window.posthog.capture` lazily at
   // click time, so this re-binding is honoured. We also short-circuit the
-  // anchor's default navigation; otherwise the page unloads to app.surfc.app
+  // anchor's default navigation; otherwise the page unloads to app.braird.app
   // before we can read the recorded captures back.
   //
   // Lock the rebind with `Object.defineProperty(..., configurable:false)` so
@@ -177,18 +177,18 @@ test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', as
   expect(signupEvent[1]).toEqual({ cta: 'pricing_start_free' })
 })
 
-test('single "Open braird" CTA deep-links to /signin (SUR-679, SUR-711)', async ({ page }) => {
+test('single "Get braird" CTA deep-links to /signin (SUR-679, SUR-711)', async ({ page }) => {
   await page.goto('/')
 
-  // SUR-679 collapsed the old Sign in / Sign up pair into one CTA, "Open
-  // braird". It deep-links past the PWA's catch-all unauth redirect straight
-  // onto /signin — itself the signup route. SUR-711 dropped the old
-  // ?intent=signup param (AuthScreen no longer renders separate signup
-  // framing). The build-time href carries no UTMs on a plain `/` load;
-  // preserveUtm.ts appends them on a real ad landing. data-cta stays in the
-  // SIGNUP_CTAS allowlist so the funnel is unbroken.
-  const cta = page.locator('a', { hasText: /Open braird/i }).first()
-  await expect(cta).toHaveAttribute('href', /https:\/\/app\.surfc\.app\/signin$/)
+  // SUR-679 collapsed the old Sign in / Sign up pair into one CTA — "Open
+  // braird", reworded to "Get braird" in SUR-779. It deep-links past the PWA's
+  // catch-all unauth redirect straight onto /signin — itself the signup route.
+  // SUR-711 dropped the old ?intent=signup param (AuthScreen no longer renders
+  // separate signup framing). The build-time href carries no UTMs on a plain
+  // `/` load; preserveUtm.ts appends them on a real ad landing. data-cta stays
+  // in the SIGNUP_CTAS allowlist so the funnel is unbroken.
+  const cta = page.locator('a', { hasText: /Get braird/i }).first()
+  await expect(cta).toHaveAttribute('href', /https:\/\/app\.braird\.app\/signin$/)
   await expect(cta).toHaveAttribute('data-cta', /signup$/)
 
   // The standalone "Sign in" link is gone from the front door.
