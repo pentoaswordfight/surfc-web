@@ -5,7 +5,8 @@
  * threads connecting it to notes, a stack of books, and a phone. Its own ground
  * is the forest, so the edges are feathered (mask) to dissolve into the page
  * rather than end in a hard frame. The four-verb taxonomy eyebrow now lives on
- * each section beat (Beats.astro), not here.
+ * each section beat (Beats.astro), not here — the hero instead opens with the
+ * SUR-779 kicker, the rail's destination stated once in the same grammar.
  */
 import { signupUrl } from '../../lib/appUrl'
 ---
@@ -14,6 +15,7 @@ import { signupUrl } from '../../lib/appUrl'
   <span class="bf-hero-glow" aria-hidden="true"></span>
   <div class="bf-wrap">
     <div class="bf-hero-copy">
+      <p class="bf-kicker">From information to <span class="bf-kicker-accent">wisdom</span>.</p>
       <h1 class="bf-hero-title">
         Turn scattered notes into <span class="bf-accent">connected thinking</span>.
       </h1>
@@ -21,7 +23,7 @@ import { signupUrl } from '../../lib/appUrl'
 
       <div class="bf-cta-row">
         <a href={signupUrl()} class="bf-cta" data-cta="hero_signup">
-          Open braird
+          Get braird
         </a>
       </div>
     </div>

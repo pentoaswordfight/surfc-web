@@ -99,7 +99,7 @@ test.describe('blog post page', () => {
     expect(ld.headline).toMatch(/Beginning/)
     expect(ld.author?.name).toBe('Deji Dipeolu')
     expect(ld.mainEntityOfPage?.['@id']).toBe(
-      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/`,
+      `https://braird.app/blog/${FIXTURE_POST_SLUG}/`,
     )
     expect(typeof ld.datePublished).toBe('string')
   })
@@ -120,11 +120,11 @@ test.describe('trailing-slash convention', () => {
 
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
-      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/`,
+      `https://braird.app/blog/${FIXTURE_POST_SLUG}/`,
     )
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
       'content',
-      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/`,
+      `https://braird.app/blog/${FIXTURE_POST_SLUG}/`,
     )
 
     const ldText = await page.locator('script[type="application/ld+json"]').textContent()
@@ -189,7 +189,7 @@ test.describe('feeds and sitemap', () => {
     const body = await response.text()
     expect(body.startsWith('<?xml')).toBe(true)
     expect(body).toContain('<title>Surfc — Founder notes</title>')
-    expect(body).toContain(`https://surfc.app/blog/${FIXTURE_POST_SLUG}/</link>`)
+    expect(body).toContain(`https://braird.app/blog/${FIXTURE_POST_SLUG}/</link>`)
     expect(body).toContain('<pubDate>')
   })
 
@@ -203,9 +203,9 @@ test.describe('feeds and sitemap', () => {
     const sitemapResponse = await request.get(new URL(sitemapMatch![1]).pathname)
     expect(sitemapResponse.status()).toBe(200)
     const sitemap = await sitemapResponse.text()
-    expect(sitemap).toContain('https://surfc.app/blog/</loc>')
+    expect(sitemap).toContain('https://braird.app/blog/</loc>')
     expect(sitemap).toContain(
-      `https://surfc.app/blog/${FIXTURE_POST_SLUG}/</loc>`,
+      `https://braird.app/blog/${FIXTURE_POST_SLUG}/</loc>`,
     )
   })
 })

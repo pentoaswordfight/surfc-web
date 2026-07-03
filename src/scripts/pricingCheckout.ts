@@ -9,7 +9,7 @@
  *      `pricing_checkout_canceled` event.
  *   2. SUR-86 — if the cross-domain `sb-surfc-access` cookie is present, swap
  *      the hero / Pro CTA copy to "Upgrade to Pro" and rebind the Pro CTA to
- *      run checkout in-repo (saving the round-trip through app.surfc.app).
+ *      run checkout in-repo (saving the round-trip through app.braird.app).
  *   3. SUR-466 — wrap that in-repo checkout in the loading + timeout overlay
  *      and the `stripe_transition_*` telemetry, at parity with the in-app
  *      `StripeTransition` (surfc, SUR-419).
@@ -34,7 +34,7 @@ import {
   failureCopyForCode,
 } from '../lib/stripeTransition.ts'
 
-const APP_URL = (import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app').replace(/\/$/, '')
+const APP_URL = (import.meta.env.PUBLIC_APP_URL ?? 'https://app.braird.app').replace(/\/$/, '')
 
 const OVERLAY_LOADING_LABEL = 'Opening secure billing'
 

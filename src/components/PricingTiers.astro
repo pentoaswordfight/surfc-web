@@ -13,7 +13,7 @@
  * file changes too. Source of truth: SUR-235.
  *
  * The Practitioner CTA on each cadence is a plain `<a>` to
- * `app.surfc.app/upgrade?…` so the no-JS path still works. When the
+ * `app.braird.app/upgrade?…` so the no-JS path still works. When the
  * marketing page detects a signed-in user (`pricing.astro` hydration), it
  * rebinds the click handler to call `startCheckout` directly via the
  * cross-domain access token.
@@ -21,7 +21,7 @@
 
 import { TIER_NAMES } from '../lib/tiers'
 
-const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+const appUrl = import.meta.env.PUBLIC_APP_URL ?? 'https://app.braird.app'
 
 interface FeatureBullet {
   text: string

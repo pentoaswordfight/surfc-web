@@ -35,7 +35,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
     env: {
-      PUBLIC_APP_URL: 'https://app.surfc.app',
+      PUBLIC_APP_URL: 'https://app.braird.app',
       // Suppress the PostHog snippet in test builds. Its init IIFE
       // overwrites any window.posthog stub we install via
       // page.addInitScript before the engagement script runs — without

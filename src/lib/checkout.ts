@@ -8,7 +8,7 @@
  * `surfc/supabase/functions/create-checkout-session/index.ts`.
  *
  * On 401 we throw `StaleTokenError` so the caller can clear the cookie and
- * fall back to the redirect path (`app.surfc.app/upgrade?interval=…`).
+ * fall back to the redirect path (`app.braird.app/upgrade?interval=…`).
  *
  * SUR-466: this function deliberately does NOT navigate. It returns the URL so
  * the caller can (a) record the `stripe_transition_end` 'success' event before
@@ -41,13 +41,13 @@ interface StartCheckoutOpts {
 export async function startCheckout({ interval, token, ref, signal }: StartCheckoutOpts): Promise<string> {
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? ''
   const anonKey     = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? ''
-  const appUrl      = import.meta.env.PUBLIC_APP_URL ?? 'https://app.surfc.app'
+  const appUrl      = import.meta.env.PUBLIC_APP_URL ?? 'https://app.braird.app'
   if (!supabaseUrl) throw new Error('PUBLIC_SUPABASE_URL is not configured')
 
   // Success lands on the React app's confirmation route (out of scope for
   // SUR-86 — see SUR-87/SUR-88). Cancel routes back to /pricing on the
   // current origin so preview deploys (e.g. *.pages.dev) bounce within the
-  // same surface rather than dumping the user on prod surfc.app.
+  // same surface rather than dumping the user on prod braird.app.
   const successUrl = `${appUrl.replace(/\/$/, '')}/upgrade/success`
   const cancelUrl  = `${window.location.origin}/pricing/?canceled=1&interval=${interval}`
 

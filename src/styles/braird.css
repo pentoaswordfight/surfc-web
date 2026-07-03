@@ -256,6 +256,21 @@ html:has(> body.braird-front-door) {
           mask-composite: intersect;
 }
 
+/* SUR-779 — aspirational kicker above the H1. Speaks the taxonomy rail's
+   typographic grammar (.bf-taxonomy) with only the destination word lit, so
+   the beats' Resurface → Create progression reads as leading here. Not the
+   .bf-taxonomy class itself: this is a single line, not a flex rail of verbs. */
+.bf-kicker {
+  margin: 0 0 20px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bf-muted);
+}
+.bf-kicker-accent { color: var(--bf-leaf); }
+
 .bf-hero-title {
   font-family: var(--font-display);
   font-weight: 500;
@@ -384,8 +399,10 @@ html:has(> body.braird-front-door) {
 /* ── Motion: a restrained hero settle, reduced-motion safe ── */
 @media (prefers-reduced-motion: no-preference) {
   /* A slower, more deliberate settle so the entrance reads (was 600ms — too
-     quick to notice): headline → sub → CTA. (SUR-727 moved the eyebrow off the
-     hero onto the section beats, so the headline now leads the cascade.) */
+     quick to notice): kicker → headline → sub → CTA. (SUR-727 moved the
+     eyebrow off the hero onto the section beats; SUR-779's kicker now leads
+     the cascade.) */
+  .bf-kicker,
   .bf-hero-title,
   .bf-hero-sub,
   .bf-hero .bf-cta-row {

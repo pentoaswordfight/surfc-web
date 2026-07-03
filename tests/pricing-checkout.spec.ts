@@ -166,7 +166,7 @@ test.describe('SUR-496 — pricing failure banner', () => {
     })
 
     // Guard the hydration race: a stray static-href nav would hang the test.
-    await page.route('**/app.surfc.app/**', (route) => route.abort())
+    await page.route('**/app.braird.app/**', (route) => route.abort())
 
     await page.goto('/pricing/?canceled=1&interval=annual&error=create_session_failed')
     await waitForSignedInHydration(page)
@@ -192,7 +192,7 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
   test('signed-in CTA tap shows the loading overlay with the shared copy', async ({ page }) => {
     await stubPosthog(page)
     await signIn(page)
-    await page.route('**/app.surfc.app/**', (route) => route.abort())
+    await page.route('**/app.braird.app/**', (route) => route.abort())
     await page.route(CHECKOUT_ENDPOINT, async () => {
       /* hold open so the loading state stays up */
     })
@@ -215,7 +215,7 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
   test('repeat taps cannot start a second checkout session', async ({ page }) => {
     await stubPosthog(page)
     await signIn(page)
-    await page.route('**/app.surfc.app/**', (route) => route.abort())
+    await page.route('**/app.braird.app/**', (route) => route.abort())
     await page.route(CHECKOUT_ENDPOINT, async () => {
       /* hold open so the first attempt stays in flight */
     })
@@ -236,7 +236,7 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
     test.setTimeout(30_000)
     await stubPosthog(page)
     await signIn(page)
-    await page.route('**/app.surfc.app/**', (route) => route.abort())
+    await page.route('**/app.braird.app/**', (route) => route.abort())
     // Never settle — let the client-side 8s AbortController fire.
     await page.route(CHECKOUT_ENDPOINT, async () => {
       /* hold open past the timeout */
@@ -292,7 +292,7 @@ test.describe('SUR-466 — checkout loading + timeout overlay', () => {
     // Abort the hand-off navigation — the aborted request still proves
     // `location.assign(url)` ran with the URL startCheckout returned.
     await page.route('https://stripe.example/**', (route) => route.abort())
-    await page.route('**/app.surfc.app/**', (route) => route.abort())
+    await page.route('**/app.braird.app/**', (route) => route.abort())
 
     await page.goto('/pricing/')
     await waitForSignedInHydration(page)

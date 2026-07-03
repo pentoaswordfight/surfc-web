@@ -9,7 +9,7 @@ import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs'
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://surfc.app',
+  site: 'https://braird.app',
   output: 'static',
   trailingSlash: 'always',
   // No adapter: every route is prerendered, so Astro's vanilla static

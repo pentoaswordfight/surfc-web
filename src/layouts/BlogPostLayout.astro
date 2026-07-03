@@ -47,10 +47,10 @@ const articleSchema = {
   datePublished: pubDate.toISOString(),
   dateModified: (updatedDate ?? pubDate).toISOString(),
   author: { '@type': 'Person', name: author },
-  image: ogImage ? new URL(ogImage, Astro.site ?? 'https://surfc.app').toString() : undefined,
+  image: ogImage ? new URL(ogImage, Astro.site ?? 'https://braird.app').toString() : undefined,
   mainEntityOfPage: {
     '@type': 'WebPage',
-    '@id': new URL(path, Astro.site ?? 'https://surfc.app').toString(),
+    '@id': new URL(path, Astro.site ?? 'https://braird.app').toString(),
   },
 }
 ---
