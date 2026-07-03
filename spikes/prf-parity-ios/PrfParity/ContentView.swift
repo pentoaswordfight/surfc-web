@@ -37,6 +37,14 @@ extension Data {
     }
 }
 
+extension SymmetricKey {
+    /// AuthenticationServices returns PRF outputs as CryptoKit SymmetricKeys.
+    /// Pull the raw bytes back out so we can hex-print and compare to the web PRF.
+    var rawData: Data {
+        withUnsafeBytes { Data($0) }
+    }
+}
+
 // MARK: - PRF assertion controller
 
 @MainActor
@@ -66,14 +74,13 @@ final class PrfController: NSObject, ObservableObject {
         let request = provider.createCredentialAssertionRequest(challenge: challenge)
 
         // iOS 18 PRF assertion input: evaluate "first" with our fixed salt.
+        // The input is built via the static `.inputValues(_:perCredentialInputValues:)`
+        // factory — ASAuthorizationPublicKeyCredentialPRFAssertionInput has no public init.
         let inputs = ASAuthorizationPublicKeyCredentialPRFAssertionInput.InputValues(
             saltInput1: PrfConstants.prfEvalSalt,
             saltInput2: nil
         )
-        request.prf = ASAuthorizationPublicKeyCredentialPRFAssertionInput(
-            inputValues: inputs,
-            perCredentialInputValues: nil
-        )
+        request.prf = .inputValues(inputs, perCredentialInputValues: nil)
 
         let controller = ASAuthorizationController(authorizationRequests: [request])
         controller.delegate = self
@@ -108,13 +115,13 @@ extension PrfController: ASAuthorizationControllerDelegate {
             return
         }
 
-        let first = prf.first
+        let first = prf.first.rawData
         let hex = first.lowercaseHex
         prfHex = hex
         status = "PRF read OK (\(first.count) bytes). Compare this hex to the web PRF hex."
         print("[prf-parity] NATIVE PRF first (hex) = \(hex)")
         if let second = prf.second {
-            print("[prf-parity] NATIVE PRF second (hex) = \(second.lowercaseHex)")
+            print("[prf-parity] NATIVE PRF second (hex) = \(second.rawData.lowercaseHex)")
         }
         print("[prf-parity] credentialID (hex) = \(assertion.credentialID.lowercaseHex)")
     }
