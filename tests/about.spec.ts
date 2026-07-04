@@ -18,11 +18,12 @@ function firstFamily(stack: string): string {
 }
 
 test.describe('/about page', () => {
-  test('aligns both reading surfaces under the Sometype Mono front-door face', async ({ page }) => {
+  test('aligns both reading surfaces under the Lora front-door face', async ({ page }) => {
     // The page adopts `front-door-surface` so the lede and the founder essay
-    // share one body face (SUR-520 design fix). If a sitewide revert of the
-    // SUR-508 front-door font lands, this fails loudly rather than silently
-    // dropping /about back to a generic monospace stack.
+    // share one body face (SUR-520 design fix). SUR-642's two-face system made
+    // the front-door face Lora (retiring the Sometype Mono front door). If a
+    // sitewide revert lands, this fails loudly rather than silently dropping
+    // /about back to a generic stack.
     await page.goto('/about/')
 
     const ledeFamily = await page
@@ -34,8 +35,8 @@ test.describe('/about page', () => {
       .first()
       .evaluate(el => getComputedStyle(el).fontFamily)
 
-    expect(firstFamily(ledeFamily)).toBe('Sometype Mono')
-    expect(firstFamily(essayFamily)).toBe('Sometype Mono')
+    expect(firstFamily(ledeFamily)).toBe('Lora')
+    expect(firstFamily(essayFamily)).toBe('Lora')
   })
 
   test('renders the three lede paragraphs verbatim', async ({ page }) => {

@@ -10,7 +10,7 @@
  * this file becomes the sole source.
  * ============================================================ */
 
-@import './tokens.css';
+@import '@braird/tokens/css';
 
 /* ── Legacy aliases + reset (styles.css L1-L45) ───────── */
 /* ── TOKENS ─────────────────────────────────────────────────────────────────── */
@@ -35,6 +35,11 @@
   --custom-dim:     var(--color-custom-text);
   --custom-bg:      var(--color-custom-bg);
   --custom-border:  var(--color-custom-text);
+
+  /* SUR-642 — the standalone braird-tokens source has no --font-ui (the two-face system
+     folds UI into --font-base = Hanken Grotesk). Keep this alias so braird.css's
+     var(--font-ui) usages keep resolving. */
+  --font-ui: var(--font-base);
 
   --header-h:  56px;
   --bottom-h:  60px;   /* mobile bottom nav */

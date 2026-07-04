@@ -14,7 +14,7 @@
  *   - SUR-218 plan — OG image + Twitter card requirements
  */
 
-import '../styles/tokens.css'
+import '@braird/tokens/css'
 import '../styles/fonts.css'
 import '../styles/marketing.css'
 // SUR-679 — Braird front door + chrome flip. Loaded LAST so its forest
@@ -65,7 +65,10 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
 ---
 
 <!doctype html>
-<html lang="en">
+<!-- data-theme pinned to "light": @braird/tokens ships a dark theme (system + manual),
+     but the marketing site isn't dark-audited yet, so OS dark is gated here (the emitted
+     @media block targets :root:not([data-theme="light"])). Remove to enable dark. SUR-642. -->
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />

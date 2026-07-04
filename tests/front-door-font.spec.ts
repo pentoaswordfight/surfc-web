@@ -1,14 +1,17 @@
 /**
- * SUR-508 — Front-door base face (Sometype Mono): cascade + scoping.
+ * SUR-642 — front-door face on the Braird two-face system: cascade + scoping.
+ *
+ * The two-face system (Hanken Grotesk UI + Lora serif) retired the Sometype
+ * Mono front door (SUR-508) and the Inter base — `--font-front-door` is now
+ * Lora and `--font-base` is Hanken Grotesk, sourced from @braird/tokens.
  *
  * Unlike the PWA jsdom tests (which can only assert the class hook), Playwright
  * runs the real production build, so getComputedStyle resolves the actual CSS
  * cascade. We assert:
- *   - Landing + Waitlist resolve their base/chrome font-family to the
- *     front-door token (Sometype Mono), while the EB Garamond hero is
- *     unaffected (it hardcodes its own family).
- *   - A non-front-door page (Privacy policy, default `lp-page-v2`) stays on
- *     Inter — proving the scoping is precise and did not leak across the site.
+ *   - A front-door surface (Waitlist) resolves its body face to the front-door
+ *     token (now Lora).
+ *   - A non-front-door page (Privacy policy, default `lp-page-v2`) stays on the
+ *     Hanken Grotesk base — proving the scoping is precise and did not leak.
  *
  * Note: getComputedStyle().fontFamily returns the resolved *declared* stack,
  * not the physically rendered glyphs, so these pass regardless of whether the
@@ -26,20 +29,21 @@ function bodyFontFamily(page: import('@playwright/test').Page) {
   return page.locator('body').evaluate(el => getComputedStyle(el).fontFamily)
 }
 
-test.describe('SUR-508 — front-door base face (Waitlist)', () => {
-  // SUR-679 moved the landing (`/`) off the Sometype Mono front door to the
-  // Braird forest treatment (Lora + Hanken Grotesk). The Waitlist sunset page
-  // still uses the SUR-508 mono front door, so it stays the scoping witness.
-  test('/waitlist/ applies the Sometype Mono front-door face', async ({ page }) => {
+test.describe('SUR-642 — front-door face (Waitlist) on the two-face system', () => {
+  // SUR-679 moved the landing (`/`) to the Braird forest treatment (Lora +
+  // Hanken Grotesk); SUR-642's two-face system then retired the Sometype Mono
+  // front door so `--font-front-door` is Lora. The Waitlist sunset page keeps
+  // the `front-door-surface` hook, so it stays the scoping witness — now Lora.
+  test('/waitlist/ applies the Lora front-door face', async ({ page }) => {
     await page.goto('/waitlist/')
     await expect(page.locator('body')).toHaveClass(/front-door-surface/)
-    expect(firstFamily(await bodyFontFamily(page))).toBe('Sometype Mono')
+    expect(firstFamily(await bodyFontFamily(page))).toBe('Lora')
   })
 
-  test('non-front-door page (privacy) stays on Inter — scoping is precise', async ({ page }) => {
+  test('non-front-door page (privacy) stays on the Hanken Grotesk base — scoping is precise', async ({ page }) => {
     await page.goto('/policies/privacy/')
     await expect(page.locator('body')).not.toHaveClass(/front-door-surface/)
-    expect(firstFamily(await bodyFontFamily(page))).toBe('Inter')
+    expect(firstFamily(await bodyFontFamily(page))).toBe('Hanken Grotesk')
   })
 })
 
