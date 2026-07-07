@@ -48,6 +48,45 @@ async function signIn(page: import('@playwright/test').Page) {
   }, FAKE_TOKEN)
 }
 
+/**
+ * Record every `document.cookie = …` write Node-side so a test can assert on
+ * the exact string `clearCrossDomainAccessToken()` emits (the `Domain=`
+ * attribute never round-trips through `document.cookie` reads, so intercepting
+ * the setter is the only way to observe it). Recorded via exposeFunction — not
+ * an in-page array — because the stale-token path ends in a fallback navigation
+ * to app.braird.app that would tear the page (and any window state) down before
+ * the assertion runs. Register before signIn() so the plant is captured too.
+ */
+async function captureCookieWrites(page: import('@playwright/test').Page): Promise<string[]> {
+  const writes: string[] = []
+  await page.exposeFunction('__recordCookieWrite', (value: string) => {
+    writes.push(value)
+  })
+  await page.addInitScript(() => {
+    // The `cookie` accessor may live on Document.prototype or HTMLDocument.prototype
+    // depending on the engine — walk the chain so this never throws.
+    let proto: object | null = document
+    let desc: PropertyDescriptor | undefined
+    while (proto && !desc) {
+      desc = Object.getOwnPropertyDescriptor(proto, 'cookie')
+      proto = Object.getPrototypeOf(proto)
+    }
+    if (!desc?.get || !desc?.set) return
+    const { get, set } = desc
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      get() {
+        return get.call(document)
+      },
+      set(value: string) {
+        ;(window as any).__recordCookieWrite?.(value)
+        set.call(document, value)
+      },
+    })
+  })
+  return writes
+}
+
 type Capture = { event: string; props: Record<string, unknown> }
 async function captures(page: import('@playwright/test').Page): Promise<Capture[]> {
   return page.evaluate(() => (window as any).__captures ?? [])
@@ -183,6 +222,37 @@ test.describe('SUR-496 — pricing failure banner', () => {
       interval: 'annual',
     })
     expect(events.find((c) => c.event === 'pricing_checkout_started')).toBeTruthy()
+  })
+})
+
+// ── SUR-696 — stale-token clear targets the braird.app cookie domain ─────────
+
+test.describe('SUR-696 — cross-domain cookie clear domain', () => {
+  test('a 401 clears sb-surfc-access on Domain=.braird.app', async ({ page }) => {
+    await stubPosthog(page)
+    const writes = await captureCookieWrites(page)
+    await signIn(page)
+
+    // A stale token: the Edge Function rejects it, checkout.ts clears the cookie.
+    await page.route(CHECKOUT_ENDPOINT, (route) =>
+      route.fulfill({ status: 401, contentType: 'application/json', body: '{}' }),
+    )
+    // Block the post-clear fallback hop to app.braird.app/upgrade.
+    await page.route('**/app.braird.app/**', (route) => route.abort())
+
+    await page.goto('/pricing/')
+    await waitForSignedInHydration(page)
+    await page.locator('[data-pro-cta]').click()
+
+    // Wait for the clear write (Max-Age=0) to land, then assert its domain.
+    await expect
+      .poll(() => writes.find((w) => w.includes('sb-surfc-access=;') && w.includes('Max-Age=0')))
+      .toBeTruthy()
+    const clearWrite = writes.find(
+      (w) => w.includes('sb-surfc-access=;') && w.includes('Max-Age=0'),
+    )!
+    expect(clearWrite).toContain('Domain=.braird.app')
+    expect(clearWrite).not.toContain('surfc.app')
   })
 })
 
