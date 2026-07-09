@@ -5,9 +5,9 @@ import { isPublished, sortByDateDesc } from '../utils/blog'
 export async function GET(context) {
   const posts = (await getCollection('blog', isPublished)).sort(sortByDateDesc)
   return rss({
-    title: 'Surfc — Founder notes',
+    title: 'Braird — Founder notes',
     description:
-      "Founder notes, demos, and product writing from the team building Surfc — a personal index of the great ideas you've read.",
+      "Founder notes, demos, and product writing from the team building Braird — a personal index of the great ideas you've read.",
     site: context.site ?? 'https://braird.app',
     items: posts.map((post) => {
       const slug = post.id.replace(/\.(md|mdx)$/, '')
