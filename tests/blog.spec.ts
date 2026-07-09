@@ -188,7 +188,7 @@ test.describe('feeds and sitemap', () => {
     expect(response.status()).toBe(200)
     const body = await response.text()
     expect(body.startsWith('<?xml')).toBe(true)
-    expect(body).toContain('<title>Surfc — Founder notes</title>')
+    expect(body).toContain('<title>Braird — Founder notes</title>')
     expect(body).toContain(`https://braird.app/blog/${FIXTURE_POST_SLUG}/</link>`)
     expect(body).toContain('<pubDate>')
   })

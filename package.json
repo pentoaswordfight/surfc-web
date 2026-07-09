@@ -1,9 +1,9 @@
 {
-  "name": "surfc-web",
+  "name": "braird-web",
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Surfc marketing site — standalone Astro project deployed at surfc.app (SUR-218)",
+  "description": "Braird marketing site — standalone Astro project deployed at surfc.app (SUR-218)",
   "engines": {
     "node": ">=22.12.0"
   },
