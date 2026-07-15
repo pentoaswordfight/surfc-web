@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last updated: _set on publication_**
+**Last updated: 11 July 2026**
 
 braird is run by **Dipeolu Innovations** ("braird", "we", "us", "our"). This policy explains what personal data we handle, why, and the choices you have. It covers our website at braird.app, the braird app, and anything else that links to this policy (together, the "Services").
 

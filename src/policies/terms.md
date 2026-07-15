@@ -1,6 +1,6 @@
 # Terms of Use
 
-**Last updated: _set on publication_**
+**Last updated: 11 July 2026**
 
 These Terms are an agreement between you and **Dipeolu Innovations** ("braird", "we", "us", "our"). They cover your use of the website at braird.app, the braird app, and anything that links to these Terms (together, the "Services").
 
