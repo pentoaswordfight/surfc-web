@@ -13,13 +13,7 @@
 /robots.txt
   Cache-Control: public, max-age=86400
 
-# ponytail: extensionless file — CF Pages infers Content-Type from the
-# extension, and there isn't one, so the ROR file would ship as text/plain.
-# Chrome's Related Origin Requests fetch rejects it unless application/json (SUR-686).
-/.well-known/webauthn
-  Content-Type: application/json
-
-# Extensionless like /webauthn above — CF Pages would otherwise ship it as
+# Extensionless file — CF Pages would otherwise ship it as
 # text/plain. iOS fetches the AASA over HTTPS and requires application/json.
 # SUR-697.
 /.well-known/apple-app-site-association
