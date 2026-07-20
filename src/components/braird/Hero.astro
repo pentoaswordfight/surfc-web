@@ -5,8 +5,10 @@
  * threads connecting it to notes, a stack of books, and a phone. Its own ground
  * is the forest, so the edges are feathered (mask) to dissolve into the page
  * rather than end in a hard frame. The four-verb taxonomy eyebrow now lives on
- * each section beat (Beats.astro), not here — the hero instead opens with the
- * SUR-779 kicker, the rail's destination stated once in the same grammar.
+ * each section beat (Beats.astro), not here — the hero instead carries the
+ * SUR-779 kicker under the headline, the rail's destination stated once in the
+ * same grammar. The sub sits under the illustration, not under the headline,
+ * so the left column reads as one uninterrupted headline → kicker → CTA run.
  */
 import { signupUrl } from '../../lib/appUrl'
 ---
@@ -15,11 +17,10 @@ import { signupUrl } from '../../lib/appUrl'
   <span class="bf-hero-glow" aria-hidden="true"></span>
   <div class="bf-wrap">
     <div class="bf-hero-copy">
-      <p class="bf-kicker">From information to <span class="bf-kicker-accent">wisdom</span>.</p>
       <h1 class="bf-hero-title">
-        Turn scattered notes into <span class="bf-accent">connected thinking</span>.
+        Turn scattered notes into connected thinking.
       </h1>
-      <p class="bf-hero-sub">Braird brings your highlights, scraps, and reflections together so related ideas can resurface when they matter.</p>
+      <p class="bf-kicker">Go from information to wisdom.</p>
 
       <div class="bf-cta-row">
         <a href={signupUrl()} class="bf-cta" data-cta="hero_signup">
@@ -28,15 +29,18 @@ import { signupUrl } from '../../lib/appUrl'
       </div>
     </div>
 
-    <figure class="bf-hero-art">
-      <img
-        src="/braird-hero.webp"
-        alt="An open book on a desk sprouting a seedling, glowing green threads linking it to a stack of books, handwritten notes, and a phone playing an audiobook."
-        width="1400"
-        height="788"
-        fetchpriority="high"
-        decoding="async"
-      />
-    </figure>
+    <div class="bf-hero-side">
+      <figure class="bf-hero-art">
+        <img
+          src="/braird-hero.webp"
+          alt="An open book on a desk sprouting a seedling, glowing green threads linking it to a stack of books, handwritten notes, and a phone playing an audiobook."
+          width="1400"
+          height="788"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </figure>
+      <p class="bf-hero-sub">Braird brings your highlights, scraps, and reflections together so related ideas can resurface when they matter.</p>
+    </div>
   </div>
 </header>
