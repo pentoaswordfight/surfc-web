@@ -237,44 +237,40 @@ Any change touching:
      characters, and the privacy policy is ~12 KB. A whole-file read that
      "matches" may simply have been cut off before the divergence.
 
-     ⚠ **Know what this proves.** When both copies are already on `main`,
-     per-section reads are symmetric and *do* establish section equality.
-     On an **unmerged** PR they do not: your side of the comparison is the
-     diff's **hunks**, not the complete post-change section, and you cannot
-     obtain that section — `ChangedFile` carries no head SHA and
-     `read_repo_file` defaults to `main`, which is the *pre*-change text. So
-     the reads confirm the companion **contains** the change and let you
-     catch an outright contradiction; they cannot rule out a second
-     divergence elsewhere in the same section. Report it as the cross-check
-     it is, never as proof of equality.
-  2. **Equality — of a section or of the whole body — needs supplied
-     evidence, and only one kind qualifies**: the derivation command plus
-     its **normalised-diff output** (a diff of the two *complete* bodies,
-     showing no difference). Ask for it whenever the change is unmerged, or
-     is structural (headings added/moved/reordered, or the embargo header
-     touched) rather than confined to sections you can enumerate.
+     ⚠ **Know what this proves — it is never equality.** Two limits, and
+     they bite in different places. *Within* a section: on an unmerged PR
+     your side is the diff's **hunks**, not the complete post-change section,
+     and you cannot obtain that section (`ChangedFile` carries no head SHA;
+     `read_repo_file` defaults to `main`, the *pre*-change text), so you
+     cannot rule out a second divergence in the part you can't see. *Across*
+     sections: you only read the headings this diff touched, so an accidental
+     edit in an untouched section, or a heading added, removed or reordered,
+     is invisible regardless of merge state. What the reads give you is
+     confirmation that the companion **contains** the change, and an early
+     catch on outright contradictions. Report that as the cross-check it is.
+  2. **Equality always needs supplied evidence, and only one kind
+     qualifies**: the derivation command plus its **normalised-diff output**
+     — a diff of the two *complete* bodies, showing no difference. There is
+     no case in which step 1 substitutes for this. Hunt #1 asks whether the
+     **bodies** match, and step 1 reads only the headings this diff touched:
+     it cannot see an accidental edit in an untouched section, a heading
+     added or removed, or the heading order changed (`extractSection`
+     returns one selected section, nothing about the rest).
 
-     ⚠ **A companion *diff* does not qualify** — it is hunks too, and has
-     exactly the limitation described above: it shows what changed, never
-     that the rest of the section matches. It is a useful cross-check
-     alongside step 1; it is not equality evidence. Only a comparison of
+     ⚠ **A companion *diff* does not qualify either** — it is hunks too:
+     it shows what changed, never that the remainder matches. Useful as a
+     cross-check alongside step 1; not evidence. Only a comparison of
      complete texts is.
-  3. **HOLD whenever equality is not established.** The test is whether you
-     can read **both** sides as complete text — key on that, not on the
-     companion alone:
-     - **Ordinary pre-merge review — the normal case, and it always needs
-       step 2's evidence.** The PR under review is open, so *your* side is
-       hunks and its complete post-change section is unobtainable, whatever
-       state the companion is in. Reading the companion (merged or on a
-       named branch) is still worth doing as the step-1 cross-check, but it
-       cannot establish equality. Absent supplied derivation output, HOLD —
-       even though you were able to read something.
-     - **Both copies already on `main`** (a retrospective check, or
-       re-verifying landed state) → now the reads really are symmetric and
-       do establish section equality. No supplied evidence needed.
-     - **Pinned run** (`--ref`/`--as-of` backtest) → `read_repo_file` rejects
-       any `repo` other than the pinned one and overrides `ref`, so
-       cross-repo verification is unavailable at all. HOLD.
+  3. **HOLD whenever that evidence is absent.** No exceptions for a merged
+     companion, a discoverable ref, or a clean-looking section read — each
+     of those is step 1, and step 1 is a cross-check. Do run it anyway: it
+     catches outright contradictions early and makes the HOLD specific.
+
+     One case can't even cross-check: on a **pinned run** (`--ref`/`--as-of`
+     backtest) `read_repo_file` rejects any `repo` other than the pinned one
+     and overrides `ref`, so cross-repo verification is unavailable
+     entirely. Say so explicitly — that HOLD is a property of the run mode,
+     not a defect in the change under review.
 
      In every case say what you needed, which ref you tried, and why it did
      not settle the question. Being *able to read* the companion is not the
@@ -379,18 +375,18 @@ PASS / PASS WITH CONCERNS / HOLD
   site's analytics consent-free.
 - Policy page deindexed or unreachable unintentionally.
 - Material policy-affecting change without stated legal sign-off.
-- Lockstep **equality not established** — note this is *equality*, not
-  "looked at it". The case split under "Inputs you should receive" step 3 is
-  the authority; this entry only summarises it. In an ordinary pre-merge
-  review that means **supplied derivation output is required**, because your
-  own side is hunks — **reading the companion is a cross-check, not proof,
-  and does not clear this even when the companion is on `main`**. Also not
-  clearing it: a bare "kept in lockstep"; a whole-file read, truncated at
-  8 000 characters and unable to prove byte equality on a ~12 KB policy; or
-  the legal-review status being missing. Conversely, **holding without
-  having run the step-1 cross-check is also wrong** — read the companion
-  sections first, report what they showed, and say precisely what was still
-  missing. An unexamined HOLD is not diligence.
+- Lockstep **equality not established** — *equality*, not "looked at it".
+  Step 2 under "Inputs you should receive" is the authority; this entry only
+  summarises it. **Supplied normalised whole-body diff output is the only
+  thing that clears this**, in every case — a merged companion, a
+  discoverable ref, or a clean section read does not, because those read
+  only the headings this diff touched and (pre-merge) only your side's
+  hunks. Also not clearing it: a bare "kept in lockstep"; a companion diff
+  (hunks); a whole-file read, truncated at 8 000 characters and unable to
+  prove byte equality on a ~12 KB policy; or a missing legal-review status.
+  Conversely, **holding without having run the step-1 cross-check is also
+  wrong** — read the companion sections first, report what they showed, and
+  say precisely what was still missing. An unexamined HOLD is not diligence.
 
 ## What you do not do
 
