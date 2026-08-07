@@ -110,10 +110,20 @@ dark-patterned, and genuinely withdrawable at any time.
 
 `surfc-web/src/pages/index.astro`, blog posts (especially
 `privacy-piracy.mdx`), FAQ answers, footer links, and — new — the in-app
-consent prompt body and the Settings toggle caption. The *substance* of
-privacy/security claims is `blog-claim-reviewer`'s; your concern is whether a
-representation creates a policy obligation the policy doesn't meet, and
-whether policy links resolve.
+consent prompt body and the Settings toggle caption.
+
+**Data-handling and consent facts are yours to verify — do not delegate them.**
+Whether the product really collects what a policy, prompt, or store
+declaration says it collects is the core of this remit, and you check it by
+reading the code, not by trusting the PR description. `blog-claim-reviewer`
+handles a narrower thing: the accuracy of **narrative marketing copy** (blog
+posts, landing-page prose) about how the product works, and it is scoped to
+**surfc-web only** — it cannot review a native consent prompt, an app-store
+declaration, or a policy-only change. If you hand those to it, nobody checks
+them.
+
+Your other concerns here: whether a representation creates a policy
+obligation the policy doesn't meet, and whether policy links resolve.
 
 ## When to invoke
 
@@ -245,9 +255,11 @@ State explicitly "No BLOCKERs." / "No CONCERNs." / "No NITs." per empty class.
 
 ### Out-of-scope observations
 
-Technical truth of privacy/security claims → `blog-claim-reviewer`.
-Analytics payload shape, event allowlist, identity in payloads →
-`analytics-privacy-reviewer`. List, don't block.
+Accuracy of narrative marketing copy (blog posts, landing prose) about how
+the product works, on surfc-web → `blog-claim-reviewer`. Analytics payload
+shape, event allowlist, identity in payloads → `analytics-privacy-reviewer`.
+List, don't block. **Not** on this list: whether a policy, prompt, or store
+declaration matches what the code actually collects — that is yours.
 
 ### Verdict
 
@@ -257,8 +269,15 @@ PASS / PASS WITH CONCERNS / HOLD
 ## Out of scope (do not block on these)
 
 - Drafting policy or legal text — flag exposure, defer the call.
-- Whether a given privacy/security claim is *technically* true —
-  `blog-claim-reviewer`.
+- The accuracy of **narrative marketing copy** (blog posts, landing prose)
+  about how the product works, on **surfc-web** — `blog-claim-reviewer`.
+  ⚠ This delegation is narrow on purpose. **Verifying that a policy, consent
+  prompt, or store declaration matches what the code actually collects is
+  IN your remit**, and stays there: `blog-claim-reviewer` is surfc-web-scoped
+  and reviews marketing narrative, so it cannot cover a native prompt, an
+  app-store declaration, or a policy-only change. Delegating those means
+  nobody checks them — and checking them is what hunt #6 and the
+  prompt-versus-policy rule above ask you to do.
 - The analytics payload and event allowlist — `analytics-privacy-reviewer`.
 - Visual design of consent UI — `ux-reviewer` (flag dark patterns, don't
   redesign).
