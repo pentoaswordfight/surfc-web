@@ -120,7 +120,16 @@ Any change touching:
   to analytics — jointly with `auth-bridge-reviewer`
 - In-app consent surfaces: the consent store, the opt-in prompt copy, the
   Settings privacy toggle and its caption — jointly with
-  `analytics-privacy-reviewer`
+  `analytics-privacy-reviewer`. **⚠ This one does not route automatically.**
+  `selectPersonas` only adds personas named in the *affected repo's* live
+  GATING gate cells, and no native repo names this persona: braird-android's
+  analytics row names `analytics-privacy-reviewer` + `security-reviewer` and
+  globs only `…/app/analytics/**` (its own wording puts the toggle/prompt
+  chrome on the surface/CE ui row), and braird-ios has **no** analytics row at
+  all. So a native PR that changes only consent *copy* currently selects
+  neither privacy persona. Until those mappings exist, invoke this persona by
+  hand on such a PR — the policy-versus-prompt comparison is the whole point,
+  and nothing else performs it.
 - Footer / nav links to policies (`Footer.astro`, `Nav.astro`)
 - Any new copy that says "we never", "we don't store", "encrypted", "GDPR",
   "your data", "cookies", "tracking", "anonymous"
