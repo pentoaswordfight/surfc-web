@@ -248,12 +248,22 @@ Any change touching:
      the companion diff. Ask for it whenever the change is unmerged, or is
      structural (headings added/moved/reordered, or the embargo header
      touched) rather than confined to sections you can enumerate.
-  3. **HOLD when neither is possible**: the companion change is unmerged and
-     no branch or SHA is discoverable, or you are on a **pinned run**
-     (`--ref`/`--as-of` backtest), where `read_repo_file` rejects any
-     `repo` other than the pinned one and overrides `ref` with the pin — so
-     cross-repo verification is simply unavailable. Say which ref you needed
-     and why you could not read it.
+  3. **HOLD whenever equality is not established.** Concretely:
+     - **Companion already merged to `main`** → symmetric per-section reads
+       establish equality. No supplied evidence needed; step 1 is sufficient.
+     - **Companion unmerged** → step 1 is only a cross-check, so **step 2's
+       evidence is required**. A discoverable branch/SHA does *not* clear
+       this: reading the companion sections confirms it contains the change
+       and nothing more. Absent that evidence, HOLD — even though you were
+       able to read something.
+     - **Pinned run** (`--ref`/`--as-of` backtest) → `read_repo_file` rejects
+       any `repo` other than the pinned one and overrides `ref`, so
+       cross-repo verification is unavailable at all. HOLD.
+
+     In every case say what you needed, which ref you tried, and why it did
+     not settle the question. Being *able to read* the companion is not the
+     same as having *verified equality*; do not let the former stand in for
+     the latter.
 
   ⚠ Two harness facts that shape this:
   - `read_pr_diff` will **not** help you here. On a small diff (every policy
@@ -353,12 +363,17 @@ PASS / PASS WITH CONCERNS / HOLD
   site's analytics consent-free.
 - Policy page deindexed or unreachable unintentionally.
 - Material policy-affecting change without stated legal sign-off.
-- Lockstep **unverified** — you could neither compare the affected sections
-  with `read_repo_file` nor were given the derivation output, or the
-  legal-review status is missing. A bare "kept in lockstep" does not clear
-  this; nor does a HOLD you could have resolved by reading the companion
-  sections yourself; nor does a whole-file read, which is truncated at
-  8 000 characters and cannot prove byte equality on a ~12 KB policy.
+- Lockstep **equality not established** — note this is *equality*, not
+  "looked at it". It is cleared only by symmetric per-section reads when the
+  companion is already on `main`, or by supplied derivation output /
+  companion diff when it is not. **An unmerged change with no supplied
+  evidence is a HOLD even if you could read the companion sections** — that
+  read is a cross-check, not proof (your side is hunks). Also not clearing
+  it: a bare "kept in lockstep"; a whole-file read, truncated at 8 000
+  characters and unable to prove byte equality on a ~12 KB policy; or the
+  legal-review status being missing. Conversely, a HOLD you could have
+  resolved by reading the companion sections on `main` yourself is also
+  wrong — check before you hold.
 
 ## What you do not do
 
