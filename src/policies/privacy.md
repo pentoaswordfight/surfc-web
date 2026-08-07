@@ -43,7 +43,7 @@ We tell you this plainly because your notes can contain personal or sensitive th
 
 **Information we collect automatically**
 
-- **Usage and device data:** basic technical information such as IP address, browser and device type, operating system, and how you use the Services (pages, features, timestamps, error reports). We use this to keep the Services secure and working, and — only with your consent — for analytics.
+- **Usage and device data:** basic technical information such as IP address, browser and device type, operating system, and how you use the Services (pages, features, timestamps, error reports). We use this to keep the Services secure and working, and — only with your consent — for analytics. **In our Android and iOS apps, analytics are narrower than this**: each one is a bare count of feature use or its outcome, with no device identifier and no advertising identifier. The count is sent over your signed-in connection so we know it came from a real account, but that identity is checked and then discarded — never recorded, never passed on.
 
 **What we do not collect**
 
@@ -152,6 +152,8 @@ We use a small number of cookies and similar technologies:
 - **Analytics** (PostHog) to understand how braird is used. These run **only if you consent**.
 
 You choose through our consent banner, and you can change your choice any time from the "Consent preferences" link in the footer. We default to off for anything non-essential.
+
+**In our Android and iOS apps** there are no cookies and no consent banner. Analytics there are off until you switch them on: we ask once, and you can change your answer any time in Settings → Privacy. What those apps send is deliberately thin — counts of feature use and outcomes, for example whether a search found anything — never your note content, never what you searched for, and no device or advertising identifier. They carry no third-party analytics software: each count goes to our own servers, which check that it came from a signed-in account, discard that identity without recording it, and pass on only the count to PostHog in the EU.
 
 ## 12. Children
 
