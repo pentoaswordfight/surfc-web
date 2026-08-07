@@ -252,14 +252,19 @@ Any change touching:
      the companion diff. Ask for it whenever the change is unmerged, or is
      structural (headings added/moved/reordered, or the embargo header
      touched) rather than confined to sections you can enumerate.
-  3. **HOLD whenever equality is not established.** Concretely:
-     - **Companion already merged to `main`** → symmetric per-section reads
-       establish equality. No supplied evidence needed; step 1 is sufficient.
-     - **Companion unmerged** → step 1 is only a cross-check, so **step 2's
-       evidence is required**. A discoverable branch/SHA does *not* clear
-       this: reading the companion sections confirms it contains the change
-       and nothing more. Absent that evidence, HOLD — even though you were
-       able to read something.
+  3. **HOLD whenever equality is not established.** The test is whether you
+     can read **both** sides as complete text — key on that, not on the
+     companion alone:
+     - **Ordinary pre-merge review — the normal case, and it always needs
+       step 2's evidence.** The PR under review is open, so *your* side is
+       hunks and its complete post-change section is unobtainable, whatever
+       state the companion is in. Reading the companion (merged or on a
+       named branch) is still worth doing as the step-1 cross-check, but it
+       cannot establish equality. Absent supplied derivation output, HOLD —
+       even though you were able to read something.
+     - **Both copies already on `main`** (a retrospective check, or
+       re-verifying landed state) → now the reads really are symmetric and
+       do establish section equality. No supplied evidence needed.
      - **Pinned run** (`--ref`/`--as-of` backtest) → `read_repo_file` rejects
        any `repo` other than the pinned one and overrides `ref`, so
        cross-repo verification is unavailable at all. HOLD.
@@ -369,17 +374,16 @@ PASS / PASS WITH CONCERNS / HOLD
 - Material policy-affecting change without stated legal sign-off.
 - Lockstep **equality not established** — note this is *equality*, not
   "looked at it". The case split under "Inputs you should receive" step 3 is
-  the authority; this entry summarises it. It is cleared only by symmetric
-  per-section reads when the
-  companion is already on `main`, or by supplied derivation output /
-  companion diff when it is not. **An unmerged change with no supplied
-  evidence is a HOLD even if you could read the companion sections** — that
-  read is a cross-check, not proof (your side is hunks). Also not clearing
-  it: a bare "kept in lockstep"; a whole-file read, truncated at 8 000
-  characters and unable to prove byte equality on a ~12 KB policy; or the
-  legal-review status being missing. Conversely, a HOLD you could have
-  resolved by reading the companion sections on `main` yourself is also
-  wrong — check before you hold.
+  the authority; this entry only summarises it. In an ordinary pre-merge
+  review that means **supplied derivation output is required**, because your
+  own side is hunks — **reading the companion is a cross-check, not proof,
+  and does not clear this even when the companion is on `main`**. Also not
+  clearing it: a bare "kept in lockstep"; a whole-file read, truncated at
+  8 000 characters and unable to prove byte equality on a ~12 KB policy; or
+  the legal-review status being missing. Conversely, **holding without
+  having run the step-1 cross-check is also wrong** — read the companion
+  sections first, report what they showed, and say precisely what was still
+  missing. An unexamined HOLD is not diligence.
 
 ## What you do not do
 
