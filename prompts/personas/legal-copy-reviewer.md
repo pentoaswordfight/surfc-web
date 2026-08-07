@@ -248,10 +248,17 @@ Any change touching:
      divergence elsewhere in the same section. Report it as the cross-check
      it is, never as proof of equality.
   2. **Equality — of a section or of the whole body — needs supplied
-     evidence**: the derivation command plus its normalised-diff output, or
-     the companion diff. Ask for it whenever the change is unmerged, or is
-     structural (headings added/moved/reordered, or the embargo header
+     evidence, and only one kind qualifies**: the derivation command plus
+     its **normalised-diff output** (a diff of the two *complete* bodies,
+     showing no difference). Ask for it whenever the change is unmerged, or
+     is structural (headings added/moved/reordered, or the embargo header
      touched) rather than confined to sections you can enumerate.
+
+     ⚠ **A companion *diff* does not qualify** — it is hunks too, and has
+     exactly the limitation described above: it shows what changed, never
+     that the rest of the section matches. It is a useful cross-check
+     alongside step 1; it is not equality evidence. Only a comparison of
+     complete texts is.
   3. **HOLD whenever equality is not established.** The test is whether you
      can read **both** sides as complete text — key on that, not on the
      companion alone:
