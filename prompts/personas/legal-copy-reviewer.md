@@ -48,12 +48,19 @@ published legal text:
 
 ### The embargo is live
 
-The policy must not publish until (1) `legal-copy-reviewer` + Zac Kuyinu +
-founder sign-off, and (2) the braird.app domain and hello@braird.app mailbox
-are live (SUR-692 — a published policy with a dead contact address is itself
-non-compliant). The **`Last updated` date is set at publish time, not per
-PR**. A PR that bumps that date, or strips the embargo comment, is asserting a
-sign-off that may not exist.
+**The embargo comment at the top of `surfc/src/policies/privacy.md` is the
+authoritative list of publication preconditions — read it in the diff, do not
+rely on any summary, including this one.** It has grown before (two
+preconditions became three during SUR-1036) and will again. As this is
+written it requires: `legal-copy-reviewer` + Zac Kuyinu + founder sign-off;
+**and** a live braird.app domain and hello@braird.app mailbox (SUR-692 — a
+published policy with a dead contact address is itself non-compliant);
+**and** SUR-1038 landed (§11 promises an iOS Settings → Privacy control that
+does not exist until then).
+
+**All** of them must be met, not any one. The **`Last updated` date is set at
+publish time, not per PR**. A PR that bumps that date, or strips the embargo
+comment, is asserting preconditions that may not hold — see hunt #3.
 
 ### How each repo renders and tests it
 
@@ -162,14 +169,11 @@ Any change touching:
    real change. The change cannot be reviewed, so it cannot be approved.
    BLOCKER.
 3. **Embargo stripped or `Last updated` bumped** without confirmation that
-   **every** precondition listed in the embargo comment is met — not just the
-   sign-off one. Read the comment in the diff and check them off
-   individually: at time of writing it requires legal + founder sign-off,
-   **and** a live `braird.app` domain and `hello@braird.app` mailbox
-   (SUR-692), **and** SUR-1038 landed. The list grows — it went from two
-   preconditions to three during SUR-1036 — so treat the comment as the
-   source of truth rather than this sentence. A PR that satisfies one and is
-   silent on the rest has not cleared the embargo. BLOCKER.
+   **every** precondition in the embargo comment is met — not just the
+   sign-off one. Read the comment **in the diff** (it is the authority; see
+   "The embargo is live" above) and check the conditions off individually. A
+   PR that satisfies one and is silent on the rest has not cleared the
+   embargo. BLOCKER.
 4. **Policy weakened to match broken code.** Softening a promise ("only if
    you consent", "we default to off") because the implementation doesn't
    honour it. The promise is the thing users relied on; fix the code.
@@ -289,13 +293,14 @@ Any change touching:
 - A statement of any new cookie / storage / third-party / sub-processor
   introduced.
 
-If a policy change arrives with no lockstep evidence, **try step 1 above
-first** — fetch the companion file and check it yourself. HOLD only when the
-comparison is genuinely unobtainable (companion unmerged, no ref
-discoverable) or the legal-review status is missing. Say which ref you
-needed. The point is never to reject for missing paperwork: it is that
-passing an *unverified* lockstep claim silently approves a divergence in a
-repo nobody looked at.
+If a policy change arrives with no lockstep evidence, **do not reach for a
+verdict here** — work step 3's case split above, which is the single
+authority on when this HOLDs, and HOLD also if the legal-review status is
+missing. Two things it is easy to get backwards, in both directions: passing
+an *unverified* lockstep claim silently approves a divergence in a repo
+nobody looked at, and holding on a change you could have verified by reading
+the companion on `main` is equally a failure. Neither "I couldn't check" nor
+"I looked at something" is a verdict.
 
 ## How to report
 
@@ -354,8 +359,7 @@ PASS / PASS WITH CONCERNS / HOLD
 - The two policy copies diverge in substance, or the diff is unreviewable
   (whole-file EOL churn).
 - Embargo comment removed or `Last updated` set without confirmation of
-  **every** precondition the comment lists (sign-off **and** live domain +
-  mailbox **and** SUR-1038, as it currently stands) — not just one of them.
+  **every** precondition the comment lists — not just one of them (hunt #3).
 - A policy promise weakened to match an implementation that doesn't honour it.
 - Consent made non-genuine (pre-accept, hidden decline, pre-consent
   analytics, a decline that doesn't stop collection).
@@ -364,7 +368,9 @@ PASS / PASS WITH CONCERNS / HOLD
 - Policy page deindexed or unreachable unintentionally.
 - Material policy-affecting change without stated legal sign-off.
 - Lockstep **equality not established** — note this is *equality*, not
-  "looked at it". It is cleared only by symmetric per-section reads when the
+  "looked at it". The case split under "Inputs you should receive" step 3 is
+  the authority; this entry summarises it. It is cleared only by symmetric
+  per-section reads when the
   companion is already on `main`, or by supplied derivation output /
   companion diff when it is not. **An unmerged change with no supplied
   evidence is a HOLD even if you could read the companion sections** — that
