@@ -218,15 +218,31 @@ Any change touching:
 - The diff — but only for **one** repo. When the policy text moves you need
   both copies, and getting the second one is on you. How to do it, in order:
 
-  1. **Fetch it yourself with `read_repo_file`.** It takes an arbitrary
-     `repo`, `path` and `ref`, and it is never removed from your tools. Read
-     the companion's `src/policies/<file>.md` at `main` (correct whenever the
-     companion change is already merged), or at the branch/SHA the ticket
-     names, and compare the bodies from each file's first H1 yourself. This
-     is the normal path and it usually works — do not skip to a HOLD.
-  2. **Only if that can't resolve** — the companion change is unmerged and no
-     branch or SHA is discoverable — is the comparison genuinely impossible.
-     Then HOLD, and say which ref you needed.
+  1. **Fetch it yourself with `read_repo_file`, section by section.** It
+     takes a `repo`, `path`, `ref` **and `section`**, and is never removed
+     from your tools. Read the companion's `src/policies/<file>.md` at `main`
+     (correct whenever the companion change is already merged) or at the
+     branch/SHA the ticket names, and compare **each heading the diff
+     touches** — pass `section` to scope to that heading. This is the normal
+     path; do not skip to a HOLD.
+
+     ⚠ **Always pass `section`.** A whole-file read is silently truncated:
+     `makeReadRepoFileTool` always applies `truncate`, whose cap is 8 000
+     characters, and the privacy policy is ~12 KB. An untruncated whole-body
+     comparison is therefore **impossible** through this tool — a whole-file
+     read that "matches" may simply have been cut off before the divergence.
+     Per-section reads fit under the cap and are exact.
+  2. **Whole-body byte equality needs supplied evidence** — the derivation
+     command plus its normalised-diff output, or the companion diff. Ask for
+     it when the change is structural (headings added/moved/reordered, or the
+     embargo header touched) rather than confined to sections you can
+     enumerate and compare individually.
+  3. **HOLD when neither is possible**: the companion change is unmerged and
+     no branch or SHA is discoverable, or you are on a **pinned run**
+     (`--ref`/`--as-of` backtest), where `read_repo_file` rejects any
+     `repo` other than the pinned one and overrides `ref` with the pin — so
+     cross-repo verification is simply unavailable. Say which ref you needed
+     and why you could not read it.
 
   ⚠ Two harness facts that shape this:
   - `read_pr_diff` will **not** help you here. On a small diff (every policy
@@ -245,9 +261,10 @@ Any change touching:
   policy-affecting changes, and the companion repo's branch or SHA when its
   change is unmerged.
 - **Evidence** — not an assertion — that the two copies match: either your
-  own `read_repo_file` comparison, or the derivation command plus its
-  normalised-diff output. "Kept in lockstep" is a claim, not a check; but
-  verify it yourself before demanding someone else restate it.
+  own per-section `read_repo_file` comparison, or the derivation command plus
+  its normalised-diff output (the only route to *whole-body* byte equality,
+  given the truncation cap). "Kept in lockstep" is a claim, not a check; but
+  verify what you can yourself before demanding someone else restate it.
 - A statement of any new cookie / storage / third-party / sub-processor
   introduced.
 
@@ -325,10 +342,12 @@ PASS / PASS WITH CONCERNS / HOLD
   site's analytics consent-free.
 - Policy page deindexed or unreachable unintentionally.
 - Material policy-affecting change without stated legal sign-off.
-- Lockstep **unverified** — you could neither fetch the companion copy with
-  `read_repo_file` nor were given the derivation output, or the legal-review
-  status is missing. A bare "kept in lockstep" does not clear this; nor does
-  a HOLD you could have resolved by reading the companion file yourself.
+- Lockstep **unverified** — you could neither compare the affected sections
+  with `read_repo_file` nor were given the derivation output, or the
+  legal-review status is missing. A bare "kept in lockstep" does not clear
+  this; nor does a HOLD you could have resolved by reading the companion
+  sections yourself; nor does a whole-file read, which is truncated at
+  8 000 characters and cannot prove byte equality on a ~12 KB policy.
 
 ## What you do not do
 
