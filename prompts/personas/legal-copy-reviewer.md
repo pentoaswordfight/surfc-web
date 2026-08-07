@@ -230,15 +230,24 @@ Any change touching:
 
      ⚠ **Always pass `section`.** A whole-file read is silently truncated:
      `makeReadRepoFileTool` always applies `truncate`, whose cap is 8 000
-     characters, and the privacy policy is ~12 KB. An untruncated whole-body
-     comparison is therefore **impossible** through this tool — a whole-file
-     read that "matches" may simply have been cut off before the divergence.
-     Per-section reads fit under the cap and are exact.
-  2. **Whole-body byte equality needs supplied evidence** — the derivation
-     command plus its normalised-diff output, or the companion diff. Ask for
-     it when the change is structural (headings added/moved/reordered, or the
-     embargo header touched) rather than confined to sections you can
-     enumerate and compare individually.
+     characters, and the privacy policy is ~12 KB. A whole-file read that
+     "matches" may simply have been cut off before the divergence.
+
+     ⚠ **Know what this proves.** When both copies are already on `main`,
+     per-section reads are symmetric and *do* establish section equality.
+     On an **unmerged** PR they do not: your side of the comparison is the
+     diff's **hunks**, not the complete post-change section, and you cannot
+     obtain that section — `ChangedFile` carries no head SHA and
+     `read_repo_file` defaults to `main`, which is the *pre*-change text. So
+     the reads confirm the companion **contains** the change and let you
+     catch an outright contradiction; they cannot rule out a second
+     divergence elsewhere in the same section. Report it as the cross-check
+     it is, never as proof of equality.
+  2. **Equality — of a section or of the whole body — needs supplied
+     evidence**: the derivation command plus its normalised-diff output, or
+     the companion diff. Ask for it whenever the change is unmerged, or is
+     structural (headings added/moved/reordered, or the embargo header
+     touched) rather than confined to sections you can enumerate.
   3. **HOLD when neither is possible**: the companion change is unmerged and
      no branch or SHA is discoverable, or you are on a **pinned run**
      (`--ref`/`--as-of` backtest), where `read_repo_file` rejects any
