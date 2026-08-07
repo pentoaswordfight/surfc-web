@@ -216,7 +216,9 @@ Any change touching:
 ## Inputs you should receive
 
 - The diff — but only for **one** repo. When the policy text moves you need
-  both copies, and getting the second one is on you. How to do it, in order:
+  both copies, and getting the second one is on you. The procedure below is
+  **compensation for a harness gap** tracked as **SUR-1041**; if that lands,
+  most of it can be deleted. Until then, in order:
 
   1. **Fetch it yourself with `read_repo_file`, section by section.** It
      takes a `repo`, `path`, `ref` **and `section`**, and is never removed
