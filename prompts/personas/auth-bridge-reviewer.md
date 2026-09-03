@@ -68,6 +68,11 @@ Any change touching:
 - Any new `fetch()` to a `surfc/`-side or third-party endpoint
 - Any new `PUBLIC_*` env var, or a change to how cookies are read
 - Any change to a CTA `href` that targets `app.surfc.app`
+- `public/.well-known/webauthn`, `public/.well-known/assetlinks.json`,
+  `public/.well-known/apple-app-site-association` — this apex is the passkey
+  Relying Party (SUR-1050 §1). These files are the other half of the handoff:
+  the cookie says who the user is, these say which origins may assert their
+  passkeys. Added SUR-1085.
 
 ## What you hunt for
 
@@ -109,6 +114,12 @@ Any change touching:
 11. **Cookie scope/name drift.** Changing the cookie name or domain
     without the matching `surfc/src/supabase.js` change — cross-repo
     lockstep, BLOCKER without the paired ticket.
+12. **Passkey origin trust drift.** BLOCKER: an origin dropped from
+    `public/.well-known/webauthn`, a `.well-known` file deleted as unused,
+    or a new app origin shipped without an entry. No entry in that file is
+    redundant — one build serves braird.app and surfc.app, so it is the ROR
+    allow-list for both relying parties. `tests/well-known.spec.ts` catches
+    a removal; only a real ceremony catches an omission. See GATING.md §3.1.
 
 ## Inputs you should receive
 
