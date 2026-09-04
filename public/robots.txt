@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://braird.app/sitemap-index.xml

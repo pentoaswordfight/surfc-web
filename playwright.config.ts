@@ -29,7 +29,7 @@ export default defineConfig({
     { name: 'chromium',      use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile-chrome', use: { ...devices['Pixel 7']        } },
   ],
-  webServer: {
+  webServer: [{
     command: 'npm run build && npm run preview',
     url:     'http://localhost:4321',
     reuseExistingServer: !process.env.CI,
@@ -49,5 +49,14 @@ export default defineConfig({
       PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
       PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
     },
-  },
+  }, {
+    // SUR-1062 — the braird.app umbrella build. A second server rather than a
+    // second project: the umbrella is a different site from a different config
+    // and outDir, not a different viewport on the same one. tests/umbrella.spec.ts
+    // pins its baseURL to this port.
+    command: 'npm run build:umbrella && npm run preview:umbrella',
+    url:     'http://localhost:4322',
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+  }],
 })

@@ -1,0 +1,164 @@
+---
+/**
+ * braird.app — the umbrella page (SUR-1062).
+ *
+ * After the cutover marginborn.com serves the product landing and this apex
+ * serves only this. It also keeps serving the passkey and app-association files
+ * out of the shared public/ dir, which is the real reason the origin persists
+ * (SUR-1050 §1) — the page is what a person sees if they visit the RP directly.
+ *
+ * Deliberately does not use BaseLayout: that layout carries PostHog, the Termly
+ * consent embed, checkout plumbing and OG/canonical machinery for a 15-page
+ * marketing site, none of which this page has any use for. It imports the two
+ * stylesheets it actually needs and declares its own head.
+ *
+ * COPY IS NOT RATIFIED. SUR-1050 §5 says braird appears only as provenance
+ * ("A braird product"), so there is no approved positioning language for braird
+ * as a brand in its own right — this page is the first surface that needs any.
+ * What is below is deliberately minimal and factual, and is for the founder to
+ * replace or approve. Nothing here makes a privacy, security or capability
+ * claim that would need its own gate.
+ */
+import '../../src/styles/fonts.css'
+import Wordmark from '../../src/components/braird/Wordmark.astro'
+
+const title = 'braird'
+const description = 'braird is the studio behind Marginborn.'
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL('/', Astro.site)} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <meta name="theme-color" content="#EFEEE7" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="braird" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={new URL('/', Astro.site)} />
+    <!-- No og:image: the existing braird-og-* cards carry landing artwork, and
+         no umbrella card exists yet. A missing image degrades to a text card;
+         a wrong one misrepresents the brand. -->
+  </head>
+  <body>
+    <main class="umb">
+      <h1 class="umb-wordmark"><Wordmark /></h1>
+
+      <p class="umb-lede">braird is the studio behind Marginborn.</p>
+
+      <a class="umb-product" href="https://marginborn.com/">
+        <span class="umb-product-name">Marginborn</span>
+        <span class="umb-product-desc">A commonplace book that connects what you read.</span>
+      </a>
+
+      <p class="umb-note">
+        <span aria-hidden="true">/brɛːrd/</span> — the first green shoots after sowing.
+      </p>
+    </main>
+
+    <style is:global>
+      /* braird.css is deliberately NOT imported: it carries the whole marketing
+         chrome, and its :root is tuned for the forest ground (its head token is
+         light text, #EAF2E6) — importing it here would invert this paper page.
+         So the lockup's own rules are restated below against paper-ground
+         values, under umbrella-scoped token names that cannot collide if
+         braird.css is ever pulled in.
+
+         These MUST stay in step with .braird-wm* in src/styles/braird.css.
+         tests/umbrella.spec.ts asserts the rendered result (Lora, green r's), so
+         drift here fails rather than silently shipping a plain-text wordmark. */
+      :root {
+        --font-display: 'Lora', Georgia, serif;
+        --font-base: 'Hanken Grotesk', system-ui, sans-serif;
+        --umb-ink: #1B241F;
+        --umb-leaf: #2F9E63;
+        --umb-paper: #EFEEE7;
+      }
+
+      /* Ported from src/styles/braird.css:39-56. */
+      .braird-wm {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        text-decoration: none;
+        line-height: 1;
+      }
+      .braird-wm-mark { flex-shrink: 0; display: block; }
+      .braird-wm-text {
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        color: var(--umb-ink);
+      }
+      .braird-wm .r { color: var(--umb-leaf); }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        background: var(--umb-paper);
+        color: var(--umb-ink);
+        font-family: var(--font-base);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .umb { max-width: 34rem; text-align: center; }
+
+      .umb-wordmark { margin: 0; font-size: 34px; font-weight: inherit; }
+      .umb-wordmark .braird-wm-mark { width: 1.1em; height: 1.1em; }
+
+      .umb-lede {
+        margin: 24px 0 32px;
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+      .umb-product {
+        display: block;
+        padding: 20px 24px;
+        border: 1px solid rgba(27, 36, 31, 0.14);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 120ms ease;
+      }
+      .umb-product:hover,
+      .umb-product:focus-visible { border-color: var(--umb-leaf); }
+
+      .umb-product-name {
+        display: block;
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: 22px;
+        color: var(--umb-leaf);
+      }
+      .umb-product-desc {
+        display: block;
+        margin-top: 6px;
+        font-size: 15px;
+        opacity: 0.75;
+      }
+
+      .umb-note {
+        margin: 32px 0 0;
+        font-size: 13px;
+        opacity: 0.55;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .umb-product { transition: none; }
+      }
+    </style>
+  </body>
+</html>

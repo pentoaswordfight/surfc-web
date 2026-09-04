@@ -40,6 +40,13 @@ jobs:
       - name: Build site
         run: npm run build
 
+      # SUR-1062 — the braird.app umbrella build is a second Cloudflare Pages
+      # project from this repo. Without this it ships with no link checking at
+      # all, and its only outbound link is the one that matters: the hand-off to
+      # marginborn.com.
+      - name: Build umbrella site
+        run: npm run build:umbrella
+
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
@@ -57,6 +64,19 @@ jobs:
             --max-redirects 5
             --root-dir ${{ github.workspace }}/dist
             './dist/**/*.html'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check umbrella links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --timeout 20
+            --max-redirects 5
+            --root-dir ${{ github.workspace }}/dist-umbrella
+            './dist-umbrella/**/*.html'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
