@@ -237,7 +237,7 @@ The marketing site's spine is different from the app's. Highlights (see
 - **`src/pages/policies/*` (Termly embeds)** — legal copy and consent
   gating. Persona: `legal-copy-reviewer`.
 - **Performance and SEO surfaces** — `lighthouserc.cjs`, `astro.config.mjs`
-  sitemap config, OG metadata in layouts, `public/robots.txt`,
+  sitemap config, OG metadata in layouts, `src/pages/robots.txt.ts`,
   `src/pages/rss.xml.js`, the `/waitlist` sunset page, font handling in
   `src/styles/fonts.css` (don't reintroduce Google Fonts per SUR-227).
   Personas: `perf-budget-reviewer`, `seo-reviewer`.

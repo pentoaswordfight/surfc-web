@@ -1,5 +1,7 @@
 # build output
 dist/
+# SUR-1062 — the braird.app umbrella build output (astro.config.umbrella.mjs)
+dist-umbrella/
 # generated types
 .astro/
 

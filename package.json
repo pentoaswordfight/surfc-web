@@ -12,6 +12,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "build:umbrella": "astro build --config astro.config.umbrella.mjs",
+    "preview:umbrella": "astro preview --config astro.config.umbrella.mjs --port 4322",
     "astro": "astro",
     "check": "astro check",
     "test": "playwright test",
