@@ -70,8 +70,7 @@
   border-bottom-color: var(--bf-hair);
 }
 /* Wordmark in the nav: tuned to the nav scale. */
-.hiw-wordmark.braird-wm .braird-wm-text { font-size: 24px; }
-.hiw-wordmark.braird-wm .braird-wm-mark { width: 24px; height: 24px; }
+.hiw-wordmark.mb-lockup { font-size: 24px; }
 
 .hiw-nav-link { color: rgba(220, 234, 214, 0.72); }
 .hiw-nav-link:hover { color: var(--bf-paper); }
@@ -130,8 +129,7 @@
   background: var(--bf-forest);
   border-top-color: var(--bf-hair);
 }
-.hiw-footer-mark.braird-wm .braird-wm-text { font-size: 20px; }
-.hiw-footer-mark.braird-wm .braird-wm-mark { width: 20px; height: 20px; }
+.hiw-footer-mark.mb-lockup { font-size: 20px; }
 .hiw-footer-links { color: rgba(220, 234, 214, 0.6); }
 .hiw-footer-links a { color: rgba(220, 234, 214, 0.6); }
 .hiw-footer-links a:hover { color: var(--bf-leaf); }
@@ -357,8 +355,7 @@ html:has(> body.braird-front-door) {
   gap: 12px;
   margin-bottom: 12px;
 }
-.bf-close-lockup .braird-wm-text { font-size: 34px; }
-.bf-close-lockup .braird-wm-mark { width: 34px; height: 34px; }
+.bf-close-lockup.mb-lockup { font-size: 34px; }
 
 /* Dictionary gloss beneath the wordmark — the name's meaning, verbatim from the
    brand identity sheet. Reads as a lexicon entry: headword (the wordmark above)
@@ -427,4 +424,84 @@ html:has(> body.braird-front-door) {
 @keyframes bfSurface {
   from { opacity: 0; transform: translateY(26px) scale(0.985); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── SUR-1062 — the Marginborn lockup ────────────────────────────────────────
+   Ported from the canonical component in the app repo (surfc/src/design/styles.css,
+   SUR-1061 post-SUR-1081). Proportions are em-relative to the container
+   font-size so the stacked specimen (mark 72 / wordmark 42 / eyebrow 10.5 /
+   gaps 14+9) holds at any scale — set font-size on the consumer, not these.
+
+   The palette is hard-coded to match the canonical component, which is itself a
+   deliberate brand island: brand/colors.braird.css is unwired, so tokenising
+   here would drift from the app. Ground-aware via four custom properties the
+   host surface overrides. */
+.mb-lockup {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  font-size: clamp(34px, 11vw, 42px);   /* 42px = the stacked specimen; the floor
+                                           keeps the longer word on a 320px screen */
+  --lockup-ink:     #1B241F;
+  --lockup-accent:  #2F9E63;            /* LARGE text — clears the 3:1 AA bar */
+  --lockup-mark:    #2F9E63;
+  --lockup-eyebrow: #54604F;
+}
+
+.mb-lockup--stacked {
+  flex-direction: column;
+  gap: 0.21em;                          /* specimen: 9px at a 42px wordmark */
+}
+
+/* The inline treatment from the Marginborn OG cards: mark and wordmark share a
+   baseline, wordmark steps to 600 because it sits smaller than the specimen. */
+.mb-lockup--horizontal {
+  flex-direction: row;
+  gap: 0.41em;
+}
+.mb-lockup--horizontal .mb-lockup-text { font-weight: 600; }
+.mb-lockup--horizontal .mb-lockup-mark { margin-bottom: 0; width: 1em; height: 1em; }
+/* An endorsed horizontal lockup stacks the eyebrow under the pair. */
+.mb-lockup--horizontal:has(.mb-lockup-eyebrow) { flex-wrap: wrap; justify-content: center; }
+.mb-lockup--horizontal .mb-lockup-eyebrow { flex-basis: 100%; margin-top: 0.12em; }
+
+.mb-lockup-mark {
+  width: 1.71em;                        /* specimen: mark 72 at a 42px wordmark */
+  height: 1.71em;
+  margin-bottom: 0.12em;                /* specimen: 14px mark gap vs 9px text gaps */
+  color: var(--lockup-mark);
+  flex-shrink: 0;
+}
+
+.mb-lockup-text {
+  font-family: var(--font-display);     /* Lora 500 */
+  font-weight: 500;
+  font-size: 1em;
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  color: var(--lockup-ink);
+}
+.mb-lockup-text .r { color: var(--lockup-accent); }
+
+/* "A braird product" — the endorsement. Tracked 0.18em, one step wider than the
+   horizontal lockup's 0.16em so the short line does not read as cramped. The
+   9px floor keeps it legible below the clamp floor (ux-reviewer, SUR-1061). */
+.mb-lockup-eyebrow {
+  font-family: var(--font-base);
+  font-size: max(9px, 0.25em);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lockup-eyebrow);
+}
+
+/* Forest ground — the footer chrome, mirroring the app's `.braird-auth`
+   override ("Reversed · on ink"): mark switches to leaf, r's step lighter. */
+.hiw-footer-v2 .mb-lockup,
+.bf-close .mb-lockup {
+  --lockup-ink:     #ECEFE7;
+  --lockup-accent:  #6FC089;
+  --lockup-mark:    #6FC089;
+  --lockup-eyebrow: #9DB8A4;
 }

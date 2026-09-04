@@ -88,7 +88,7 @@ test.describe('nav adapts to viewport', () => {
 
     await expect(page.locator('[data-nav-toggle]')).toBeHidden()
     await expect(page.locator('.hiw-nav-link').first()).toBeVisible()
-    // SUR-679 — the nav now carries a single "Get braird" CTA (.bf-cta) and
+    // SUR-679 — the nav now carries a single "Get Marginborn" CTA (.bf-cta) and
     // no standalone sign-in link.
     await expect(page.locator('.hiw-nav-links .bf-cta').first()).toBeVisible()
   })
@@ -114,12 +114,12 @@ test.describe('hamburger menu behaviour', () => {
     await toggle.click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'true')
 
-    // SUR-679 — destinations are How it works / Blog + the single "Get braird"
+    // SUR-679 — destinations are How it works / Blog + the single "Get Marginborn"
     // CTA (sign-in/up collapsed into one; About hidden until its copy is
     // rebranded).
     await expect(menu.locator('a', { hasText: 'How it works' })).toBeVisible()
     await expect(menu.locator('a', { hasText: 'Blog' })).toBeVisible()
-    await expect(menu.locator('a', { hasText: 'Get braird' })).toBeVisible()
+    await expect(menu.locator('a', { hasText: 'Get Marginborn' })).toBeVisible()
     await expect(menu.locator('a', { hasText: 'About' })).toHaveCount(0)
   })
 

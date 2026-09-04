@@ -29,11 +29,16 @@ test.use({ baseURL: 'http://localhost:4322' })
 const distUmbrella = (path: string) =>
   readFileSync(new URL(`../dist-umbrella/${path}`, import.meta.url), 'utf8')
 
-test('the umbrella page renders and points at the product', async ({ page }) => {
+test('the umbrella page renders, and carries no copy', async ({ page }) => {
   const response = await page.goto('/')
   expect(response?.status()).toBe(200)
   await expect(page).toHaveTitle(/braird/i)
-  await expect(page.locator('a[href="https://marginborn.com/"]')).toBeVisible()
+
+  // Deliberately blank (founder decision, SUR-1062): no positioning language
+  // exists for braird as a brand, so the page shows the lockup and nothing
+  // else. This fails if a placeholder lede creeps back in.
+  await expect(page.locator('main')).toHaveText(/^\s*braird\s*$/)
+  await expect(page.locator('meta[name="description"]')).toHaveCount(0)
 })
 
 test('the lockup renders as the lockup, not plain text', async ({ page }) => {

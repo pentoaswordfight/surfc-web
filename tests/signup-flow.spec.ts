@@ -41,7 +41,7 @@
 
 import { expect, test } from './fixtures'
 
-// SUR-711 — "Get braird" CTAs now deep-link to bare /signin (no intent param);
+// SUR-711 — "Get Marginborn" CTAs now deep-link to bare /signin (no intent param);
 // preserveUtm may append a UTM query, so allow an optional `?…` but never an
 // `intent=` param.
 const SIGNUP_HREF_RE = /^https:\/\/app\.braird\.app\/signin(?:\?(?!.*\bintent=)|$)/

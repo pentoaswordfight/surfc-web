@@ -1,0 +1,110 @@
+<!doctype html>
+<!--
+  SUR-1062 — source for the Marginborn OG cards in public/marginborn-og-*.png.
+
+  Ported from the Claude Design project "Marginborn OG Images.dc.html"
+  (04533482-faf2-4b4c-a212-763459dd756b), cards 01 Default / 02 Home / 03 Blog,
+  Paper theme. The NoteCard inside card 02 is ported from that design system's
+  components/reading/NoteCard.jsx + components/feedback/IdeaChip.jsx rather than
+  its compiled bundle, and the tokens it reads are copied verbatim from
+  tokens/{colors,radii,shadows}.css.
+
+  Two deliberate deviations, both recorded in the PR:
+   1. Each card drops the design's border / border-radius / box-shadow. Those
+      exist so cards read as separate objects on the design canvas; in a flat
+      1200x630 raster they become corner artifacts.
+   2. --font-base is Hanken Grotesk, not the IBM Plex Sans the design system's
+      typography.css names. That file is still the Surfc-era token set; the
+      current brand base is Hanken Grotesk, and IBM Plex Sans is not self-hosted.
+
+  Fonts resolve straight out of node_modules so no network is needed and the
+  raster cannot silently fall back to Georgia — render.mjs asserts each face
+  actually loaded. Regenerate with `npm run og:render`; the PNGs are committed
+  because the build does not produce them.
+-->
+<html><head><meta charset="utf-8"><style>
+
+@font-face { font-family:'Lora'; font-style:normal; font-weight:400; font-display:block;
+  src:url('../node_modules/@fontsource/lora/files/lora-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Lora'; font-style:normal; font-weight:500; font-display:block;
+  src:url('../node_modules/@fontsource/lora/files/lora-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family:'Lora'; font-style:normal; font-weight:600; font-display:block;
+  src:url('../node_modules/@fontsource/lora/files/lora-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family:'Lora'; font-style:italic; font-weight:700; font-display:block;
+  src:url('../node_modules/@fontsource/lora/files/lora-latin-700-italic.woff2') format('woff2'); }
+@font-face { font-family:'Lora'; font-style:italic; font-weight:600; font-display:block;
+  src:url('../node_modules/@fontsource/lora/files/lora-latin-600-italic.woff2') format('woff2'); }
+@font-face { font-family:'Fira Mono'; font-style:normal; font-weight:400; font-display:block;
+  src:url('../node_modules/@fontsource/fira-mono/files/fira-mono-latin-400-normal.woff2') format('woff2'); }
+
+@font-face { font-family:'EB Garamond'; font-style:normal; font-weight:400; font-display:block;
+  src:url('../node_modules/@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Hanken Grotesk'; font-style:normal; font-weight:400; font-display:block;
+  src:url('../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Hanken Grotesk'; font-style:italic; font-weight:400; font-display:block;
+  src:url('../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family:'Hanken Grotesk'; font-style:normal; font-weight:500; font-display:block;
+  src:url('../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-500-normal.woff2') format('woff2'); }
+:root { --font-display:'Lora',Georgia,serif; --font-mono:'Fira Mono',ui-monospace,monospace;
+  --font-serif:'EB Garamond',Georgia,serif; --font-base:'Hanken Grotesk',system-ui,sans-serif;
+  --color-bg-primary:#EFEEE7; --color-bg-card:#FFFFFF; --color-border:#DBDCD1;
+  --color-border-strong:#B6BAAB; --color-text-primary:#1B241F; --color-text-secondary:#586056;
+  --color-text-muted:#7B847A; --color-accent:#2F9E63; --color-accent-light:#DEEEDD;
+  --color-accent-text:#1E6B40; --color-custom:#B0552F; --color-custom-text:#8C4321;
+  --color-custom-bg:#F1E6DC; --radius-card:14px; --radius-chip:999px;
+  --shadow-card:0 2px 8px rgba(21,64,41,0.07);
+  --text-reading-size:15px; --text-reading-height:1.7; }
+body { margin:0; background:#DEDDD4; }
+</style></head><body>
+<div id="og-primary" style="width:1200px; height:630px; box-sizing:border-box; position:relative; overflow:hidden; background:#EFEEE7; display:flex; flex-direction:column; justify-content:center; padding:0 110px">
+  <div style="position:absolute; inset:0; background-image:radial-gradient(circle, rgba(47,158,99,.15) 1.4px, transparent 1.4px); background-size:22px 22px; pointer-events:none"></div>
+  <div style="position:absolute; top:0; left:0; width:10px; height:100%; background:#2F9E63"></div>
+  <div style="position:relative; display:flex; flex-direction:column; gap:34px">
+    <span style="font-family:var(--font-mono); font-size:19px; letter-spacing:.14em; text-transform:uppercase; color:#586056">An idea index for people who write</span>
+    <div style="display:flex; flex-direction:column; gap:18px">
+      <div style="display:flex; align-items:center; gap:34px"><svg width="104" height="104" viewBox="0 0 100 100" aria-hidden="true" style="display:block; flex-shrink:0"><path d="M50 89.6 V66.7" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M50 70.8 C45.8 56.3 37.5 47.9 29.2 39.6" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M50 68.8 C54.2 50 62.5 35.4 68.8 25" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M29.2 39.6 C16.7 39.6 10.4 29.2 12.5 18.8 C25 20.8 31.3 29.2 29.2 39.6 Z" fill="#2F9E63"></path><path d="M68.8 25 C81.3 25 87.5 14.6 85.4 4.2 C72.9 6.3 66.7 14.6 68.8 25 Z" fill="#2F9E63"></path></svg><span style="font-family:var(--font-display); font-weight:500; font-size:116px; line-height:1; color:#1B241F">ma<span style="color:#2F9E63">r</span>ginbo<span style="color:#2F9E63">r</span>n</span></div>
+      <span style="font-family:var(--font-display); font-style:italic; font-weight:700; font-size:46px; line-height:1.2; color:#1E6B40">go from information to wisdom</span>
+    </div>
+  </div>
+</div>
+<div id="og-blog" style="width:1200px; height:630px; box-sizing:border-box; position:relative; overflow:hidden; background:#FFFFFF; display:flex; flex-direction:column; justify-content:space-between; padding:76px 90px">
+  <div style="position:absolute; inset:0; background-image:radial-gradient(circle, rgba(47,158,99,.11) 1.3px, transparent 1.3px); background-size:20px 20px; pointer-events:none"></div>
+  <div style="position:relative; display:flex; flex-direction:column; gap:30px">
+    <span style="font-family:var(--font-mono); font-size:18px; letter-spacing:.14em; text-transform:uppercase; color:#1E6B40">In the margins &middot; Essay</span>
+    <span style="font-family:var(--font-display); font-style:italic; font-weight:700; font-size:78px; line-height:1.1; color:#1B241F; text-wrap:pretty">What a commonplace book knows that your notes app doesn't</span>
+  </div>
+  <div style="position:relative; display:flex; align-items:center; justify-content:space-between; border-top:1px solid #DBDCD1; padding-top:30px">
+    <div style="display:flex; align-items:center; gap:14px"><svg width="32" height="32" viewBox="0 0 100 100" aria-hidden="true" style="display:block; flex-shrink:0"><path d="M50 89.6 V66.7" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M50 70.8 C45.8 56.3 37.5 47.9 29.2 39.6" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M50 68.8 C54.2 50 62.5 35.4 68.8 25" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M29.2 39.6 C16.7 39.6 10.4 29.2 12.5 18.8 C25 20.8 31.3 29.2 29.2 39.6 Z" fill="#2F9E63"></path><path d="M68.8 25 C81.3 25 87.5 14.6 85.4 4.2 C72.9 6.3 66.7 14.6 68.8 25 Z" fill="#2F9E63"></path></svg><span style="font-family:var(--font-display); font-weight:600; font-size:32px; line-height:1; color:#1B241F">ma<span style="color:#2F9E63">r</span>ginbo<span style="color:#2F9E63">r</span>n</span></div>
+    <span style="font-family:var(--font-mono); font-size:17px; letter-spacing:.06em; color:#586056">9 min read</span>
+  </div>
+</div>
+<div id="og-home" style="width:1200px; height:630px; box-sizing:border-box; position:relative; overflow:hidden; background:#EFEEE7; display:grid; grid-template-columns:1fr 420px; align-items:center; gap:60px; padding:80px">
+  <div style="position:absolute; inset:0; background-image:radial-gradient(circle, rgba(47,158,99,.12) 1.4px, transparent 1.4px); background-size:22px 22px; pointer-events:none"></div>
+  <div style="position:relative; display:flex; flex-direction:column; gap:28px">
+    <div style="display:flex; align-items:center; gap:14px"><svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true" style="display:block; flex-shrink:0"><path d="M50 89.6 V66.7" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M50 70.8 C45.8 56.3 37.5 47.9 29.2 39.6" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M50 68.8 C54.2 50 62.5 35.4 68.8 25" stroke="#2F9E63" stroke-width="5.4" stroke-linecap="round" fill="none"></path><path d="M29.2 39.6 C16.7 39.6 10.4 29.2 12.5 18.8 C25 20.8 31.3 29.2 29.2 39.6 Z" fill="#2F9E63"></path><path d="M68.8 25 C81.3 25 87.5 14.6 85.4 4.2 C72.9 6.3 66.7 14.6 68.8 25 Z" fill="#2F9E63"></path></svg><span style="font-family:var(--font-display); font-weight:600; font-size:34px; line-height:1; color:#1B241F">ma<span style="color:#2F9E63">r</span>ginbo<span style="color:#2F9E63">r</span>n</span></div>
+    <span style="font-family:var(--font-display); font-style:italic; font-weight:700; font-size:56px; line-height:1.12; color:#1B241F; text-wrap:pretty">Every idea you&rsquo;ve ever met, filed where you&rsquo;ll find it again.</span>
+    <span style="font-family:var(--font-serif); font-size:26px; line-height:1.5; color:#586056; max-width:520px">Photograph a passage. Marginborn reads the ink, files it against the canon, and grows your Commonplace.</span>
+  </div>
+  <div style="position:relative; width:420px; height:340px">
+    <div style="position:absolute; top:0; left:0; width:210px; transform:scale(2); transform-origin:top left"><article style="position:relative; overflow:hidden;
+  background:radial-gradient(circle at 1px 1px, rgba(200,134,10,0.14) 1px, transparent 0) 10px 12px / 16px 16px, var(--color-bg-card);
+  border:1px solid var(--color-border); border-radius:var(--radius-card); padding:12px 14px; box-shadow:var(--shadow-card)">
+  <span aria-hidden="true" style="position:absolute; top:0; right:0; width:22px; height:22px;
+    background:linear-gradient(225deg, var(--color-bg-primary) 50%, rgba(200,134,10,0.12) 50%);
+    border-left:1px solid var(--color-border); border-bottom:1px solid var(--color-border);
+    border-bottom-left-radius:6px; pointer-events:none"></span>
+  <div style="display:flex; align-items:center; gap:5px; margin-bottom:6px; font-family:var(--font-base);
+    font-size:11px; font-style:italic; color:var(--color-accent-text)">
+    <span style="color:var(--color-border-strong); font-style:normal">&sect;</span>
+    <span>Ways of Reading &middot; Bartholomae</span>
+    <span style="color:var(--color-text-muted)">&middot; p.84</span>
+  </div>
+  <p style="font-family:var(--font-serif); font-style:normal; font-size:var(--text-reading-size);
+    line-height:var(--text-reading-height); color:var(--color-text-primary); margin:0">
+    &ldquo;The margin is where reading turns into thinking &mdash; a private argument with the page.&rdquo;</p>
+  <div style="display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-top:10px">
+    <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:var(--radius-chip); font-family:var(--font-base); font-size:12px; font-weight:500; line-height:1; background:var(--color-accent-light); color:var(--color-accent-text); border:1px solid transparent; white-space:nowrap"><span style="width:7px; height:7px; border-radius:50%; background:var(--color-accent); flex-shrink:0"></span>Attention</span><span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:var(--radius-chip); font-family:var(--font-base); font-size:12px; font-weight:500; line-height:1; background:var(--color-accent-light); color:var(--color-accent-text); border:1px solid transparent; white-space:nowrap"><span style="width:7px; height:7px; border-radius:50%; background:var(--color-accent); flex-shrink:0"></span>Craft</span><span style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:var(--radius-chip); font-family:var(--font-base); font-size:12px; font-weight:500; line-height:1; background:var(--color-custom-bg); color:var(--color-custom-text); border:1px solid transparent; white-space:nowrap"><span style="width:7px; height:7px; border-radius:50%; background:var(--color-custom); flex-shrink:0"></span>Marginalia</span>
+  </div>
+</article></div>
+  </div>
+</div></body></html>

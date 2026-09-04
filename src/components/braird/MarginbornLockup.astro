@@ -1,0 +1,60 @@
+---
+/**
+ * The Marginborn lockup — the "two shoots" mark, the `marginborn` wordmark
+ * (Lora 500, r's accented at letters 3 and 9), and the "A braird product"
+ * endorsement.
+ *
+ * Ported from the canonical component in the app repo,
+ * `surfc/src/components/BrairdLockup.jsx` + `src/design/styles.css` (SUR-1061,
+ * post-SUR-1081). Specimen proportions are em-relative to the container
+ * font-size, so mark 72 / wordmark 42 / eyebrow 10.5 / gaps 14+9 hold at any
+ * scale. Do not retune them here — change the canonical component and re-port,
+ * or the two surfaces drift.
+ *
+ * `endorsed` defaults to TRUE. That is the founder-ratified mechanism from
+ * SUR-1061, not an implementation detail: provenance is per-flow, and a shared
+ * component that is endorsed by default is provenance by construction. The home
+ * hero opts out explicitly because the page carries the endorsement in its
+ * footer instead.
+ *
+ * The mark is unchanged from braird — the umbrella brand keeps it (founder
+ * decision, SUR-1061 amendment). It tints through `currentColor`; "marginborn"
+ * stays real text for screen readers.
+ *
+ * Two orientations. `stacked` is the canonical specimen ("Stacked · endorsed").
+ * `horizontal` is the inline treatment the Marginborn OG cards use for their
+ * header lockup (mark and wordmark on one baseline, gap 0.41em, wordmark 600) —
+ * ported from the same design project rather than invented, because a nav bar
+ * cannot carry the stacked form.
+ */
+interface Props {
+  class?:       string
+  href?:        string
+  ariaLabel?:   string
+  endorsed?:    boolean
+  orientation?: 'stacked' | 'horizontal'
+}
+const {
+  class: cls = '',
+  href,
+  ariaLabel = 'Marginborn home',
+  endorsed = true,
+  orientation = 'stacked',
+} = Astro.props
+const Tag = href ? 'a' : 'div'
+---
+
+<Tag
+  class={`mb-lockup mb-lockup--${orientation} ${cls}`.trim()}
+  {...(href ? { href, 'aria-label': ariaLabel } : {})}
+>
+  <svg class="mb-lockup-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <path d="M50 89.6 V66.7" stroke="currentColor" stroke-width="5.4" stroke-linecap="round" fill="none"></path>
+    <path d="M50 70.8 C45.8 56.3 37.5 47.9 29.2 39.6" stroke="currentColor" stroke-width="5.4" stroke-linecap="round" fill="none"></path>
+    <path d="M50 68.8 C54.2 50 62.5 35.4 68.8 25" stroke="currentColor" stroke-width="5.4" stroke-linecap="round" fill="none"></path>
+    <path d="M29.2 39.6 C16.7 39.6 10.4 29.2 12.5 18.8 C25 20.8 31.3 29.2 29.2 39.6 Z" fill="currentColor"></path>
+    <path d="M68.8 25 C81.3 25 87.5 14.6 85.4 4.2 C72.9 6.3 66.7 14.6 68.8 25 Z" fill="currentColor"></path>
+  </svg>
+  <div class="mb-lockup-text">ma<span class="r">r</span>ginbo<span class="r">r</span>n</div>
+  {endorsed && <div class="mb-lockup-eyebrow">A braird product</div>}
+</Tag>

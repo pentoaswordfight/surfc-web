@@ -7,8 +7,9 @@
  *     the 8px threshold (mirrors the React LandingPage.jsx behaviour).
  *   - The FAQ <details> accordion enforces single-open: opening one
  *     closes any previously-open sibling.
- *   - "Sign in" CTAs resolve to bare `app.braird.app` (default landing).
- *   - The "Get braird" CTA resolves to `app.braird.app/signin` (SUR-711:
+ *   - "Sign in" CTAs resolve to bare `app.braird.app` (default landing) — the
+ *     APP origin is unchanged by SUR-1062; only the marketing origin moved.
+ *   - The "Get Marginborn" CTA resolves to `app.braird.app/signin` (SUR-711:
  *     the signup-intent param was dropped; /signin is the signup route).
  *
  * [SUR-218, SUR-365, SUR-370, SUR-711]
@@ -22,7 +23,7 @@ test.describe('public pages respond 200 and render correctly', () => {
   // loads. We assert on <title> instead — cheap, reliable, and proves the
   // Astro route resolved to the right page.
   const pages: Array<{ path: string; title: RegExp }> = [
-    { path: '/',                   title: /Braird/i },
+    { path: '/',                   title: /Marginborn/i },
     // /waitlist/ now serves a noindex sunset page after SUR-365.
     { path: '/waitlist/',          title: /open|sign up directly/i },
     { path: '/policies/privacy/',  title: /Privacy/i },
@@ -177,17 +178,18 @@ test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', as
   expect(signupEvent[1]).toEqual({ cta: 'pricing_start_free' })
 })
 
-test('single "Get braird" CTA deep-links to /signin (SUR-679, SUR-711)', async ({ page }) => {
+test('single "Get Marginborn" CTA deep-links to /signin (SUR-679, SUR-711)', async ({ page }) => {
   await page.goto('/')
 
   // SUR-679 collapsed the old Sign in / Sign up pair into one CTA — "Open
-  // braird", reworded to "Get braird" in SUR-779. It deep-links past the PWA's
+  // braird", reworded to "Get braird" in SUR-779 and to "Get Marginborn" in
+  // SUR-1062. It deep-links past the PWA's
   // catch-all unauth redirect straight onto /signin — itself the signup route.
   // SUR-711 dropped the old ?intent=signup param (AuthScreen no longer renders
   // separate signup framing). The build-time href carries no UTMs on a plain
   // `/` load; preserveUtm.ts appends them on a real ad landing. data-cta stays
   // in the SIGNUP_CTAS allowlist so the funnel is unbroken.
-  const cta = page.locator('a', { hasText: /Get braird/i }).first()
+  const cta = page.locator('a', { hasText: /Get Marginborn/i }).first()
   await expect(cta).toHaveAttribute('href', /https:\/\/app\.braird\.app\/signin$/)
   await expect(cta).toHaveAttribute('data-cta', /signup$/)
 

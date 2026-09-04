@@ -8,7 +8,7 @@ export async function GET(context) {
     title: 'Braird — Founder notes',
     description:
       "Founder notes, demos, and product writing from the team building Braird — a personal index of the great ideas you've read.",
-    site: context.site ?? 'https://braird.app',
+    site: context.site ?? 'https://marginborn.com',
     items: posts.map((post) => {
       const slug = post.id.replace(/\.(md|mdx)$/, '')
       return {

@@ -9,7 +9,7 @@ import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs'
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://braird.app',
+  site: 'https://marginborn.com',   // SUR-1062 — braird.app now serves the umbrella build
   output: 'static',
   trailingSlash: 'always',
   // No adapter: every route is prerendered, so Astro's vanilla static
@@ -18,13 +18,18 @@ export default defineConfig({
   // in SUR-256 to keep an SSR option open, but the dist/{client,server}
   // split it forces broke the Pages publish-dir convention (and Lychee).
   // Re-add when SSR is actually needed.
+  // SUR-1062 adds /about/: it has been noindex since SUR-679 because its copy
+  // still says Surfc, but it stayed in the sitemap — telling crawlers to fetch a
+  // page that then tells them not to index it. SUR-1087 owns the rewrite; until
+  // then the two signals agree. The exact-path match still holds: a post slug
+  // like /blog/what-im-about/ has no "/" before "about" so it does not match.
   // /waitlist/ serves a noindex friendly-redirect page for legacy bookmarks
   // (SUR-365), and /pricing/ is temporarily hidden from nav + search (kept
   // live only for the Stripe checkout cancel/failure flow) — neither should
   // appear in the sitemap. Match the exact path so a future blog post with
   // "waitlist"/"pricing" in its slug isn't silently excluded.
   integrations: [
-    sitemap({ filter: (page) => !/\/(waitlist|pricing)\/?$/.test(page) }),
+    sitemap({ filter: (page) => !/\/(waitlist|pricing|about)\/?$/.test(page) }),
     mdx(),
   ],
   // Astro 7 defaults the Markdown pipeline to the Sätteri (Rust) processor,

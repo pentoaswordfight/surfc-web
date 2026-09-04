@@ -12,18 +12,19 @@
  * marketing site, none of which this page has any use for. It imports the two
  * stylesheets it actually needs and declares its own head.
  *
- * COPY IS NOT RATIFIED. SUR-1050 §5 says braird appears only as provenance
- * ("A braird product"), so there is no approved positioning language for braird
- * as a brand in its own right — this page is the first surface that needs any.
- * What is below is deliberately minimal and factual, and is for the founder to
- * replace or approve. Nothing here makes a privacy, security or capability
- * claim that would need its own gate.
+ * DELIBERATELY BLANK of copy (founder decision, SUR-1062). SUR-1050 §5 says
+ * braird appears only as provenance ("A braird product"), so no approved
+ * positioning language exists for braird as a brand in its own right, and this
+ * page is the first surface that would need any. Rather than ship a placeholder
+ * that reads as ratified, it shows the lockup and nothing else — no lede, no
+ * description meta, no outbound link. It therefore makes no claim of any kind.
+ * Add copy when it is decided; the styles for a lede and a product card were
+ * removed with it rather than left as dead rules.
  */
 import '../../src/styles/fonts.css'
 import Wordmark from '../../src/components/braird/Wordmark.astro'
 
 const title = 'braird'
-const description = 'braird is the studio behind Marginborn.'
 ---
 
 <!doctype html>
@@ -32,7 +33,6 @@ const description = 'braird is the studio behind Marginborn.'
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={description} />
     <link rel="canonical" href={new URL('/', Astro.site)} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -41,7 +41,6 @@ const description = 'braird is the studio behind Marginborn.'
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="braird" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
     <meta property="og:url" content={new URL('/', Astro.site)} />
     <!-- No og:image: the existing braird-og-* cards carry landing artwork, and
          no umbrella card exists yet. A missing image degrades to a text card;
@@ -50,17 +49,6 @@ const description = 'braird is the studio behind Marginborn.'
   <body>
     <main class="umb">
       <h1 class="umb-wordmark"><Wordmark /></h1>
-
-      <p class="umb-lede">braird is the studio behind Marginborn.</p>
-
-      <a class="umb-product" href="https://marginborn.com/">
-        <span class="umb-product-name">Marginborn</span>
-        <span class="umb-product-desc">A commonplace book that connects what you read.</span>
-      </a>
-
-      <p class="umb-note">
-        <span aria-hidden="true">/brɛːrd/</span> — the first green shoots after sowing.
-      </p>
     </main>
 
     <style is:global>
@@ -113,52 +101,10 @@ const description = 'braird is the studio behind Marginborn.'
         -webkit-font-smoothing: antialiased;
       }
 
-      .umb { max-width: 34rem; text-align: center; }
+      .umb { text-align: center; }
 
       .umb-wordmark { margin: 0; font-size: 34px; font-weight: inherit; }
       .umb-wordmark .braird-wm-mark { width: 1.1em; height: 1.1em; }
-
-      .umb-lede {
-        margin: 24px 0 32px;
-        font-size: 18px;
-        line-height: 1.5;
-      }
-
-      .umb-product {
-        display: block;
-        padding: 20px 24px;
-        border: 1px solid rgba(27, 36, 31, 0.14);
-        border-radius: 12px;
-        text-decoration: none;
-        color: inherit;
-        transition: border-color 120ms ease;
-      }
-      .umb-product:hover,
-      .umb-product:focus-visible { border-color: var(--umb-leaf); }
-
-      .umb-product-name {
-        display: block;
-        font-family: var(--font-display);
-        font-weight: 500;
-        font-size: 22px;
-        color: var(--umb-leaf);
-      }
-      .umb-product-desc {
-        display: block;
-        margin-top: 6px;
-        font-size: 15px;
-        opacity: 0.75;
-      }
-
-      .umb-note {
-        margin: 32px 0 0;
-        font-size: 13px;
-        opacity: 0.55;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .umb-product { transition: none; }
-      }
     </style>
   </body>
 </html>

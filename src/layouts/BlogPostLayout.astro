@@ -47,16 +47,16 @@ const articleSchema = {
   datePublished: pubDate.toISOString(),
   dateModified: (updatedDate ?? pubDate).toISOString(),
   author: { '@type': 'Person', name: author },
-  image: ogImage ? new URL(ogImage, Astro.site ?? 'https://braird.app').toString() : undefined,
+  image: ogImage ? new URL(ogImage, Astro.site ?? 'https://marginborn.com').toString() : undefined,
   mainEntityOfPage: {
     '@type': 'WebPage',
-    '@id': new URL(path, Astro.site ?? 'https://braird.app').toString(),
+    '@id': new URL(path, Astro.site ?? 'https://marginborn.com').toString(),
   },
 }
 ---
 
 <BaseLayout
-  title={`${title} — Braird`}
+  title={`${title} — Marginborn`}
   description={description}
   ogImage={ogImage}
   path={path}

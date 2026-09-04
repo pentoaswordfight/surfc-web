@@ -85,7 +85,7 @@ test.describe('Commonplace carousel (SUR-531)', () => {
 
   test('carries the payoff lede and the closing existential line', async ({ page }) => {
     await page.goto('/how-it-works/')
-    await expect(page.locator('#commonplace')).toContainText('braird gets smarter the longer you use it')
+    await expect(page.locator('#commonplace')).toContainText('Marginborn gets smarter the longer you use it')
     await expect(page.locator('.hiw-closing-v2')).toContainText("you're not starting from a blank page")
   })
 
