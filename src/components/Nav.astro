@@ -8,17 +8,17 @@
  * scrolls past the 8px threshold — unchanged from the original port.
  *
  * Port source: surfc/src/components/LandingPage.jsx lines 137-150.
- * SUR-679 — Braird wordmark + forest chrome; single "Get braird" CTA (copy
- * "Open braird" → "Get braird" in SUR-779).
+ * SUR-679 — Braird wordmark + forest chrome; single "Get Marginborn" CTA (copy
+ * "Open braird" → "Get Marginborn" in SUR-779).
  */
 
 import { signupUrl } from '../lib/appUrl'
-import Wordmark from './braird/Wordmark.astro'
+import MarginbornLockup from './braird/MarginbornLockup.astro'
 ---
 
 <nav class="hiw-nav" aria-label="Primary" data-nav>
   <div class="hiw-nav-inner">
-    <Wordmark class="hiw-wordmark" href="/" ariaLabel="braird home" />
+    <MarginbornLockup class="hiw-wordmark" href="/" ariaLabel="Marginborn home" orientation="horizontal" endorsed={false} />
 
     <button
       type="button"
@@ -51,7 +51,7 @@ import Wordmark from './braird/Wordmark.astro'
       {/* Pricing temporarily hidden from nav (route kept live for the Stripe
           checkout cancel/failure flow). Re-add this link to restore. */}
       <a href={signupUrl()} class="bf-cta" data-cta="nav_signup">
-        Get braird
+        Get Marginborn
       </a>
     </div>
   </div>

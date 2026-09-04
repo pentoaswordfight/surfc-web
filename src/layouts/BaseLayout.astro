@@ -39,9 +39,9 @@ interface Props {
 }
 
 const {
-  title       = 'braird — a personal index of great ideas',
-  description = "braird turns a lifetime of reading into something you can actually think with. Capture printed passages and handwritten notes; tag them to 97 canonical ideas or your own.",
-  ogImage     = '/braird-og-primary.png',
+  title       = 'Marginborn — a personal index of great ideas',
+  description = "Marginborn turns a lifetime of reading into something you can actually think with. Capture printed passages and handwritten notes; tag them to 97 canonical ideas or your own.",
+  ogImage     = '/marginborn-og-primary.png',
   path        = Astro.url.pathname,
   noindex     = false,
   nofollow    = false,
@@ -54,8 +54,8 @@ if (noindex)  robotsParts.push('noindex')
 if (nofollow) robotsParts.push('nofollow')
 const robotsContent = robotsParts.join(', ')
 
-const canonical = new URL(path, Astro.site ?? 'https://braird.app').toString()
-const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://braird.app').toString()
+const canonical = new URL(path, Astro.site ?? 'https://marginborn.com').toString()
+const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://marginborn.com').toString()
 
 // PostHog — same project as the React app so we get the landing → app sign-up
 // funnel in one stream. Token may be empty locally; the init guard below
@@ -86,7 +86,7 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="braird" />
+    <meta property="og:site_name" content="Marginborn" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -96,6 +96,9 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- SUR-1062: kept as @brairdapp. No Marginborn handle exists, and the
+         umbrella account is legitimate provenance ("A braird product") — a
+         live handle beats none. Flip when a Marginborn account exists. -->
     <meta name="twitter:site" content="@brairdapp" />
     <meta name="twitter:creator" content="@brairdapp" />
     <meta name="twitter:title" content={title} />
