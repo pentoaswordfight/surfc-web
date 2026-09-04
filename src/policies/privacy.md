@@ -1,10 +1,10 @@
 # Privacy Policy
 
-**Last updated: 11 July 2026**
+**Last updated: 4 September 2026**
 
-braird is run by **Dipeolu Innovations** ("braird", "we", "us", "our"). This policy explains what personal data we handle, why, and the choices you have. It covers our website at braird.app, the braird app, and anything else that links to this policy (together, the "Services").
+Marginborn is run by **Dipeolu Innovations** ("Marginborn", "we", "us", "our"). This policy explains what personal data we handle, why, and the choices you have. It covers our website at marginborn.com, the Marginborn app, and anything else that links to this policy (together, the "Services").
 
-We are the data controller for the personal data described here. If you disagree with this policy, please don't use the Services. Questions: **hello@braird.app**.
+We are the data controller for the personal data described here. If you disagree with this policy, please don't use the Services. Questions: **hello@marginborn.com**.
 
 ---
 
@@ -20,9 +20,9 @@ This summary is a guide, not the full picture. The sections below govern.
 
 ---
 
-## 1. What braird does with your data, in plain terms
+## 1. What Marginborn does with your data, in plain terms
 
-You photograph annotated book pages and handwritten notes. braird reads the text, tags it to ideas, and builds you a private, searchable index of your reading.
+You photograph annotated book pages and handwritten notes. Marginborn reads the text, tags it to ideas, and builds you a private, searchable index of your reading.
 
 Two things matter for your privacy:
 
@@ -47,7 +47,7 @@ We tell you this plainly because your notes can contain personal or sensitive th
 
 **What we do not collect**
 
-- We do **not** collect your location. braird has no location features.
+- We do **not** collect your location. Marginborn has no location features.
 - We do **not** access your microphone. Capture uses your camera only.
 - We do **not** buy or enrich your data from third-party data brokers.
 
@@ -55,7 +55,7 @@ Push notifications are not used today. If we add them, we'll update this policy 
 
 ## 3. Sensitive information
 
-Your notes can contain sensitive personal information — for example religious or philosophical beliefs, political opinions, health, or details about your life. braird is built for reflective reading, so this is expected.
+Your notes can contain sensitive personal information — for example religious or philosophical beliefs, political opinions, health, or details about your life. Marginborn is built for reflective reading, so this is expected.
 
 We handle it this way: your note content is **end-to-end encrypted**, so we cannot read it. To provide the reading and tagging features, that content is processed in readable form by our AI providers (see below). We do not use your content to build profiles about you, and we do not sell or share it for advertising.
 
@@ -71,14 +71,14 @@ Under the EU/UK GDPR and the Swiss Federal Act on Data Protection (FADP), we rel
 | Process payments and manage subscriptions | To bill you and meet tax/accounting duties | Contract; legal obligation |
 | Keep the Services secure, prevent abuse, fix errors | To protect you and us | Legitimate interests |
 | Respond to your messages and support requests | To help you | Contract; legitimate interests |
-| Analytics to understand and improve the Services | To make braird better | **Consent** (you can decline; see "Cookies and analytics") |
+| Analytics to understand and improve the Services | To make Marginborn better | **Consent** (you can decline; see "Cookies and analytics") |
 | Comply with the law | To meet legal obligations | Legal obligation |
 
 We don't use your data for advertising, and we don't sell it.
 
 ## 5. AI processing
 
-To read your photos and suggest ideas, braird uses AI providers. Here's exactly what happens:
+To read your photos and suggest ideas, Marginborn uses AI providers. Here's exactly what happens:
 
 - **Anthropic (US)** transcribes your captures and helps tag them to ideas. Your image and its text are sent to Anthropic in readable form for this processing.
 - **Microsoft Azure AI Content Safety (EU — Germany West Central)** screens content to keep the Services safe. It also sees the text in readable form.
@@ -92,7 +92,7 @@ What you should know:
 
 ## 6. Who we share your data with
 
-We don't sell your data. We share it only with the service providers (sub-processors) that help us run braird, each under a contract that limits what they can do with it:
+We don't sell your data. We share it only with the service providers (sub-processors) that help us run Marginborn, each under a contract that limits what they can do with it:
 
 | Provider | What they do | Where |
 |---|---|---|
@@ -136,7 +136,7 @@ Depending on where you live (the EEA, UK, Switzerland, and elsewhere), you have 
 - **Restriction and objection** — limit or object to certain processing.
 - **Withdraw consent** — for anything based on consent (like analytics), at any time.
 
-To exercise any of these, email **hello@braird.app**. We'll respond within the time the law allows. Using your rights is free, and we won't treat you differently for it.
+To exercise any of these, email **hello@marginborn.com**. We'll respond within the time the law allows. Using your rights is free, and we won't treat you differently for it.
 
 You can also complain to a regulator:
 
@@ -149,7 +149,7 @@ You can also complain to a regulator:
 We use a small number of cookies and similar technologies:
 
 - **Essential** ones to sign you in and keep the Services working. These are always on.
-- **Analytics** (PostHog) to understand how braird is used. These run **only if you consent**.
+- **Analytics** (PostHog) to understand how Marginborn is used. These run **only if you consent**.
 
 You choose through our consent banner, and you can change your choice any time from the "Consent preferences" link in the footer. We default to off for anything non-essential.
 
@@ -157,7 +157,7 @@ You choose through our consent banner, and you can change your choice any time f
 
 ## 12. Children
 
-braird isn't intended for children. You must be at least **16** to use braird; if you are under 16, please don't use the Services without a parent or guardian's consent, and only where your local law allows it at your age. If we learn we've collected a child's data without the right consent, we'll delete it.
+Marginborn isn't intended for children. You must be at least **16** to use Marginborn; if you are under 16, please don't use the Services without a parent or guardian's consent, and only where your local law allows it at your age. If we learn we've collected a child's data without the right consent, we'll delete it.
 
 ## 13. Changes to this policy
 
@@ -167,5 +167,5 @@ We may update this policy. We'll change the "Last updated" date, and for signifi
 
 **Dipeolu Innovations**
 14 Edikerstrasse, Dürnten, Zürich 8635, Switzerland
-Email: hello@braird.app
+Email: hello@marginborn.com
 Phone: +41 76 525 21 03
