@@ -496,8 +496,18 @@ html:has(> body.braird-front-door) {
   color: var(--lockup-eyebrow);
 }
 
-/* Forest ground — the footer chrome, mirroring the app's `.braird-auth`
-   override ("Reversed · on ink"): mark switches to leaf, r's step lighter. */
+/* Forest ground, mirroring the app's `.braird-auth` override ("Reversed · on
+   ink"): mark switches to leaf, r's step lighter.
+   EVERY lockup on this site sits on forest — the nav is rgba(21,40,28,.82), the
+   footer is --bf-forest, the close section is the forest front door. The paper
+   defaults above are inherited from the canonical component (which needs them
+   for the app's home hero) and are unused here; they are kept so the port stays
+   diffable against surfc/src/design/styles.css rather than silently diverging.
+   The nav was missed on the first pass and shipped #1B241F on #15281C — the
+   wordmark was invisible, and only the mark and the green r's survived.
+   tests/smoke.spec.ts now asserts real contrast on every lockup, so a consumer
+   added on an unwired ground fails instead of shipping dark-on-dark. */
+.hiw-nav .mb-lockup,
 .hiw-footer-v2 .mb-lockup,
 .bf-close .mb-lockup {
   --lockup-ink:     #ECEFE7;

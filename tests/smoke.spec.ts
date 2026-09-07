@@ -55,6 +55,59 @@ test('kill-switch service worker is served as JS at /sw.js', async ({ request })
   expect(body).toContain('skipWaiting()')
 })
 
+// SUR-1062 — the lockup is ground-aware via four custom properties the host
+// surface overrides. That only works if every surface that renders it actually
+// sets them: the nav shipped with the PAPER defaults (#1B241F) on its forest
+// ground (rgba(21,40,28,.82)), so the wordmark was invisible and only the mark
+// and the green r's showed. Nothing failed — the markup and the tokens were
+// both fine, the pairing was not.
+//
+// Asserting real WCAG contrast rather than "colour != background" is the point:
+// a near-miss pairing would pass an inequality check and still be unreadable.
+// 4.5 is the AA bar for body text; the wordmark is large, but it is a brand
+// surface and there is no reason for it to sit near the floor.
+test('every lockup contrasts with the ground it sits on', async ({ page }) => {
+  for (const path of ['/', '/blog/', '/how-it-works/']) {
+    await page.goto(path)
+
+    const results = await page.evaluate(() => {
+      const lum = (c: string) => {
+        const [r, g, b] = c.match(/[\d.]+/g)!.slice(0, 3).map(Number)
+        const f = (v: number) => {
+          const x = v / 255
+          return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+      }
+      // Walk up for the nearest painted background — the lockup's own box is
+      // transparent, so comparing against it would always "pass".
+      const groundOf = (el: Element) => {
+        for (let n: Element | null = el; n; n = n.parentElement) {
+          const bg = getComputedStyle(n).backgroundColor
+          if (bg && !/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) return bg
+        }
+        return 'rgb(255, 255, 255)'
+      }
+      return [...document.querySelectorAll('.mb-lockup')].map((lockup) => {
+        const text = lockup.querySelector('.mb-lockup-text')!
+        const ground = groundOf(lockup)
+        const a = lum(getComputedStyle(text).color)
+        const b = lum(ground)
+        const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+        return { cls: lockup.className, colour: getComputedStyle(text).color, ground, ratio }
+      })
+    })
+
+    expect(results.length, `${path} should render at least one lockup`).toBeGreaterThan(0)
+    for (const r of results) {
+      expect(
+        r.ratio,
+        `${path} — "${r.cls}" wordmark ${r.colour} on ${r.ground} is ${r.ratio.toFixed(2)}:1`,
+      ).toBeGreaterThan(4.5)
+    }
+  }
+})
+
 test('nav adds scrolled class after 8px scroll', async ({ page }) => {
   await page.goto('/')
   const nav = page.locator('[data-nav]')
