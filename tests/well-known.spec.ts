@@ -58,10 +58,24 @@ const APP_ORIGINS = ['https://app.braird.app', 'https://app.marginborn.com']
 //
 // Both Android statements carry the SAME debug fingerprint on purpose. The release
 // cert does not exist until SUR-702 enrols Play App Signing, and SUR-1059 blocks
-// SUR-702 — taking the release cert here would make the dependency circular. Prune
-// order at SUR-702: package name first, fingerprint second. Dropping the debug
-// fingerprint early kills the SUR-848 manual PRF gate, which ADR 0004 makes the only
-// proof that GPM still returns PRF for braird.app.
+// SUR-702 — taking the release cert here would make the dependency circular.
+//
+// PRUNING, at SUR-702. Two INDEPENDENT conditions; do not collapse them into an
+// order. Each removal is gated by its own evidence:
+//
+//   the debug FINGERPRINT   goes only after the release fingerprint is published
+//                           alongside it AND the SUR-848 manual PRF gate has passed
+//                           on an internal-track build. ADR 0004 makes that gate the
+//                           only proof GPM still returns PRF for braird.app, and the
+//                           gate runs a debug build — dropping the fingerprint first
+//                           leaves the ceremony with no way to be tested at all.
+//
+//   the com.braird.app      goes only when no device still runs the old build.
+//   STATEMENT               An applicationId change makes a NEW app: installs of
+//                           com.braird.app never auto-update to com.braird.marginborn.
+//                           Remove this statement while one is still out there and
+//                           that device is locked out of its E2EE vault, reported
+//                           only as "PRF unavailable" (GATING.md §3.1).
 const ANDROID_PACKAGES = ['com.braird.app', 'com.braird.marginborn']
 const APPLE_APP_IDS = ['7732348SM7.com.braird.app', '7732348SM7.com.braird.marginborn']
 
