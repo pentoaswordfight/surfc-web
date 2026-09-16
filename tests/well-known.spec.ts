@@ -23,7 +23,7 @@
  * green a broken source: `reuseExistingServer` skips the rebuild whenever a
  * dev or preview server is already up on 4321.
  *
- * [SUR-686, SUR-697, SUR-1050, SUR-1085]
+ * [SUR-686, SUR-697, SUR-1050, SUR-1085, SUR-1059, SUR-1060]
  */
 
 import { readFileSync } from 'node:fs'
@@ -46,6 +46,31 @@ import { expect, test } from './fixtures'
 //                         served on braird.app (SUR-1085).
 const APP_ORIGINS = ['https://app.braird.app', 'https://app.marginborn.com']
 
+// The native app identities braird.app vouches for. BOTH are load-bearing for the
+// length of the Marginborn cutover (SUR-1059, SUR-1060):
+//
+//   com.braird.app         the identity every already-installed build carries.
+//                          Dropping it locks those devices out of their vault.
+//   com.braird.marginborn  the permanent identity, immutable after the first store
+//                          upload. Published BEFORE the apps change so SUR-1059 is
+//                          device-verifiable the day it merges, instead of breaking
+//                          passkey sign-in on both platforms until this file catches up.
+//
+// Both Android statements carry the SAME debug fingerprint on purpose. The release
+// cert does not exist until SUR-702 enrols Play App Signing, and SUR-1059 blocks
+// SUR-702 — taking the release cert here would make the dependency circular. Prune
+// order at SUR-702: package name first, fingerprint second. Dropping the debug
+// fingerprint early kills the SUR-848 manual PRF gate, which ADR 0004 makes the only
+// proof that GPM still returns PRF for braird.app.
+const ANDROID_PACKAGES = ['com.braird.app', 'com.braird.marginborn']
+const APPLE_APP_IDS = ['7732348SM7.com.braird.app', '7732348SM7.com.braird.marginborn']
+
+// get_login_creds is the relation that makes passkeys resolve. handle_all_urls is App
+// Links, inert on both packages today because neither app declares an autoVerify
+// intent-filter — so only com.braird.app carries it, as history. SUR-1096 owns
+// app-links and adds them deliberately, on the app origin, with the entitlements.
+const PASSKEY_RELATION = 'delegate_permission/common.get_login_creds'
+
 const WELL_KNOWN = [
   '.well-known/webauthn',
   '.well-known/apple-app-site-association',
@@ -65,6 +90,35 @@ test('well-known files are valid JSON and the ROR list covers every app origin',
   expect(Array.isArray(ror.origins)).toBe(true)
   for (const origin of APP_ORIGINS) {
     expect(ror.origins, `${origin} must stay in the ROR allow-list`).toContain(origin)
+  }
+})
+
+// The test above proves these files PARSE; nothing proved what they SAY. A bundle ID
+// is immutable after the first store upload, so a misspelling here is permanent, and
+// its only symptom is "PRF unavailable" on a reader's phone. Same caveat as the ROR
+// guard: this catches REMOVAL and MISSPELLING, not omission — the expected lists are
+// local copies, so an identity nobody adds is one this file cannot miss. ADDING an
+// identity is gated by a real passkey ceremony (GATING.md §3.1), never by a test.
+test('the association files vouch for every native app identity', () => {
+  const aasa = JSON.parse(read('public/.well-known/apple-app-site-association'))
+  const assetlinks = JSON.parse(read('public/.well-known/assetlinks.json'))
+
+  for (const appID of APPLE_APP_IDS) {
+    expect(aasa.webcredentials?.apps, `${appID} must stay in AASA webcredentials`).toContain(appID)
+  }
+
+  for (const pkg of ANDROID_PACKAGES) {
+    const statement = assetlinks.find(entry => entry.target?.package_name === pkg)
+    expect(statement, `${pkg} must have an assetlinks statement`).toBeDefined()
+
+    // A statement missing the passkey relation, or carrying an empty fingerprint list,
+    // is silently inert: Credential Manager matches package AND fingerprint, and
+    // reports neither failure — it simply offers no credential.
+    expect(statement.relation, `${pkg} needs ${PASSKEY_RELATION}`).toContain(PASSKEY_RELATION)
+    expect(
+      statement.target.sha256_cert_fingerprints?.length,
+      `${pkg} needs at least one signing fingerprint`,
+    ).toBeGreaterThan(0)
   }
 })
 

@@ -92,6 +92,24 @@ test('the umbrella ROR file still lists every app origin', () => {
   }
 })
 
+test('the umbrella build vouches for every native app identity', () => {
+  // Same reason as the ROR test above: the shared publicDir is a claim, so prove it
+  // per output rather than assume it. It matters most here — braird.app IS the
+  // relying party, and braird.app is this build. A file that is correct in the
+  // marketing output and wrong in this one breaks passkeys exactly where they run.
+  const aasa = JSON.parse(distUmbrella('.well-known/apple-app-site-association'))
+  const assetlinks = JSON.parse(distUmbrella('.well-known/assetlinks.json'))
+
+  // com.braird.app is every installed build; com.braird.marginborn is the permanent
+  // identity, published ahead of the app change so SUR-1059 lands verifiable.
+  expect(aasa.webcredentials?.apps).toEqual(
+    expect.arrayContaining(['7732348SM7.com.braird.app', '7732348SM7.com.braird.marginborn']),
+  )
+  expect(assetlinks.map(entry => entry.target?.package_name)).toEqual(
+    expect.arrayContaining(['com.braird.app', 'com.braird.marginborn']),
+  )
+})
+
 test('_headers reaches the umbrella build with the Content-Type overrides', () => {
   const lines = distUmbrella('_headers').split(/\r?\n/).map(line => line.trim())
   for (const path of ['/.well-known/webauthn', '/.well-known/apple-app-site-association']) {
