@@ -20,6 +20,17 @@ const POLICY_PAGES = [
     heading: 'Terms of Use',
     phrase:  'personal reading index',
   },
+  // SUR-782 — the Play Console "Delete account URL" and the data-request form.
+  {
+    path:    '/policies/delete-account/',
+    heading: 'Delete your Marginborn account',
+    phrase:  'What we delete, and what we keep',
+  },
+  {
+    path:    '/policies/data-request/',
+    heading: 'Make a data request',
+    phrase:  'Nothing is filed until you open it',
+  },
 ] as const
 
 for (const { path, heading, phrase } of POLICY_PAGES) {

@@ -47,3 +47,85 @@
   vertical-align: top;
 }
 .policy-content th { background: var(--color-bg-subtle); font-weight: 600; }
+
+/* ── Data request + delete-account pages (SUR-782) ─────────────────────────
+   Same measure and type scale as the policies they sit beside. The one
+   structural device is the deleted/kept ledger on /policies/delete-account/;
+   everything else is a plain form on the policy ground. */
+.policy-ledger {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 16px;
+}
+@media (min-width: 560px) {
+  .policy-ledger { grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+.policy-ledger-col {
+  border-top: 2px solid var(--color-border-strong);
+  padding-top: 12px;
+}
+.policy-ledger-col > * + * { margin-top: 10px; }
+.policy-ledger-col h3 { margin-top: 0; }
+.policy-ledger-col ul { padding-left: 18px; }
+
+.policy-form > * + * { margin-top: 22px; }
+.policy-field > * + * { margin-top: 6px; }
+.policy-field label,
+.policy-fieldset legend {
+  display: block;
+  font-weight: 600;
+}
+.policy-fieldset {
+  border: none;
+  padding: 0;
+  min-width: 0;
+}
+.policy-fieldset > * + * { margin-top: 8px; }
+.policy-optional { font-weight: 400; color: var(--color-text-muted); }
+.policy-hint {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.policy-count { text-align: right; font-variant-numeric: tabular-nums; }
+
+.policy-choices { display: grid; gap: 10px; }
+.policy-choices label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  font-weight: 400;
+  cursor: pointer;
+}
+.policy-choices input { margin-top: 4px; accent-color: var(--color-accent-text); }
+.policy-certs { padding-top: 6px; border-top: 1px solid var(--color-border); }
+
+.policy-form textarea.inp { min-height: 0; }
+.policy-content .btn:focus-visible {
+  outline: 2px solid var(--color-accent-text);
+  outline-offset: 2px;
+}
+
+/* Honeypot: off-canvas, not display:none, so naive bots still fill it. */
+.policy-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.policy-status,
+.policy-alert,
+.policy-note {
+  padding: 12px 14px;
+  border-left: 3px solid var(--color-accent-text);
+  background: var(--color-bg-subtle);
+}
+.policy-alert { border-left-color: var(--color-destructive); }
+.policy-status:focus, .policy-alert:focus { outline: none; }
+
+/* `.btn` sets display:inline-flex, which outranks the UA [hidden] rule. */
+.policy-content [hidden] { display: none !important; }

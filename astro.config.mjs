@@ -28,8 +28,11 @@ export default defineConfig({
   // live only for the Stripe checkout cancel/failure flow) — neither should
   // appear in the sitemap. Match the exact path so a future blog post with
   // "waitlist"/"pricing" in its slug isn't silently excluded.
+  // SUR-782: /policies/data-request/confirm/ is the one-time confirmation landing
+  // for the data-request form — noindex, and out of the sitemap for the same
+  // reason as /about/.
   integrations: [
-    sitemap({ filter: (page) => !/\/(waitlist|pricing|about)\/?$/.test(page) }),
+    sitemap({ filter: (page) => !/\/(waitlist|pricing|about|data-request\/confirm)\/?$/.test(page) }),
     mdx(),
   ],
   // Astro 7 defaults the Markdown pipeline to the Sätteri (Rust) processor,
