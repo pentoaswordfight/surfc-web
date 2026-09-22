@@ -1,0 +1,95 @@
+---
+/**
+ * Delete your Marginborn account (SUR-782) — the page registered in Google
+ * Play Console as the app's "Delete account URL". Play requires it to name
+ * the app/developer as shown on the store listing, show the deletion steps
+ * prominently, and state which data is deleted or kept and for how long.
+ *
+ * Static, indexable, no script: a Play reviewer (or a person with no account)
+ * must be able to read it with nothing but a URL. The slug is part of the
+ * store listing — renaming it breaks the listing until Play Console is
+ * repointed.
+ *
+ * Every retention claim below repeats `src/policies/privacy.md` §8 or the
+ * founder-ratified 12-month request-record retention; no new claim is made
+ * here. Keep in lockstep with §8 (legal-copy-reviewer gate).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { appUrl } from '../../lib/appUrl.ts'
+import '../../styles/policy.css'
+---
+
+<BaseLayout
+  title="Delete your account — Marginborn"
+  description="How to delete your Marginborn account, what we delete, what we keep, and for how long."
+  path="/policies/delete-account/"
+>
+  <div class="policy-page" data-policy="delete-account">
+    <header class="policy-header">
+      <a class="policy-back-link" href="/">← Back to Marginborn</a>
+    </header>
+    <main class="policy-content">
+      <h1>Delete your Marginborn account</h1>
+
+      <p>
+        Marginborn is a braird product, published on Google Play and the App Store by
+        <strong>braird</strong>. This page explains how to delete your account, what that
+        removes, and what we keep afterwards.
+      </p>
+
+      <h2>If you can sign in</h2>
+      <p>Deletion is built into the app.</p>
+      <ol class="policy-steps">
+        <li>Open Marginborn and sign in — the app, or <a href={appUrl}>the web app</a>.</li>
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Choose <strong>Delete account</strong> at the bottom of the screen.</li>
+        <li>Confirm. Your account closes at once and every signed-in device loses access.</li>
+      </ol>
+      <p>
+        This cannot be undone. Your notes, sources and ideas are removed from our active systems
+        within 30 days, and there is no copy we can restore from — the encryption keys were yours.
+      </p>
+
+      <h2>If you cannot sign in</h2>
+      <p>
+        You can still ask us to delete your account — for example if you have lost access, no
+        longer have the app, or are acting for someone else.
+      </p>
+      <ol class="policy-steps">
+        <li>Open our <a href="/policies/data-request/">data request form</a> and choose <strong>Deletion</strong>.</li>
+        <li>Open the confirmation link we email you. Nothing is filed until you do.</li>
+        <li>We verify the request by hand and reply within 30 days.</li>
+      </ol>
+
+      <h2>What we delete, and what we keep</h2>
+      <div class="policy-ledger">
+        <section class="policy-ledger-col" aria-labelledby="ledger-deleted">
+          <h3 id="ledger-deleted">Deleted</h3>
+          <ul>
+            <li>Your account and sign-in record, including passkeys.</li>
+            <li>Your notes, highlights and captured images.</li>
+            <li>Your books, ideas, lenses and collections.</li>
+            <li>The encryption key wrappers that let your devices read your notes.</li>
+            <li>Your AI usage counters.</li>
+          </ul>
+          <p>Removed from our active systems within <strong>30 days</strong> of your request.</p>
+        </section>
+        <section class="policy-ledger-col" aria-labelledby="ledger-kept">
+          <h3 id="ledger-kept">Kept</h3>
+          <ul>
+            <li><strong>Payment and tax records</strong> — for as long as the law requires, for example accounting rules.</li>
+            <li><strong>Logs and analytics</strong> — for a limited period, then deleted or anonymised.</li>
+            <li><strong>Encrypted backup copies</strong> — may persist in routine backups for a short additional period before they are overwritten. We cannot read your notes in them; the keys were yours.</li>
+            <li><strong>Your data request itself</strong> — if you used the form, we keep the record of it for 12 months after we close it, so we can show we answered in time.</li>
+          </ul>
+        </section>
+      </div>
+
+      <p>
+        The full picture is in our <a href="/policies/privacy/">Privacy Policy</a> — section 8
+        covers how long we keep data, and section 10 covers your rights. Questions go to
+        <a href="mailto:hello@marginborn.com">hello@marginborn.com</a>.
+      </p>
+    </main>
+  </div>
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+/**
+ * Data request — confirmation landing (SUR-782). The link in the confirmation
+ * email points here with `?token=`. The token is only sent to the Edge
+ * Function when the visitor presses the button: mail scanners and link
+ * previews fetch every URL they see, and a confirm-on-load would burn the
+ * single-use token before a human ever arrived.
+ *
+ * `noindex` and excluded from the sitemap (astro.config.mjs): a page whose
+ * only content is a one-time action has no business in search results.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import '../../../styles/policy.css'
+---
+
+<BaseLayout
+  title="Confirm your data request — Marginborn"
+  description="Confirm the data request you submitted to Marginborn."
+  path="/policies/data-request/confirm/"
+  noindex={true}
+>
+  <div class="policy-page" data-policy="data-request-confirm">
+    <header class="policy-header">
+      <a class="policy-back-link" href="/">← Back to Marginborn</a>
+    </header>
+    <main class="policy-content">
+      <h1>Confirm your data request</h1>
+      <p id="dsar-confirm-intro">
+        Press the button to confirm that you made this request. Once you do, it goes to our
+        team and you will get an email with your reference number.
+      </p>
+
+      <noscript>
+        <p class="policy-note">
+          This page needs JavaScript to confirm your request. You can confirm by email
+          instead: reply to the message that brought you here, or write to
+          <a href="mailto:hello@marginborn.com">hello@marginborn.com</a> quoting the reference in it.
+        </p>
+      </noscript>
+
+      <p id="dsar-status" class="policy-status" role="status" tabindex="-1" hidden></p>
+      <p id="dsar-alert" class="policy-alert" role="alert" tabindex="-1" hidden></p>
+
+      <button id="dsar-confirm" type="button" class="btn btn-gold">Confirm my request</button>
+
+      <p class="policy-hint">Did not make a request? Close this page — nothing is filed unless you confirm.</p>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initDsarConfirm } from '../../../scripts/dsarForm.ts'
+  initDsarConfirm()
+</script>

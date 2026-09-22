@@ -1,0 +1,127 @@
+---
+/**
+ * Data request form (SUR-782) — replaces the Termly-hosted DSAR form. Every
+ * right in Privacy Policy §10 is a request type here. Public and
+ * unauthenticated: the requester need not hold an account.
+ *
+ * The form POSTs to the `dsar-request` Edge Function in surfc/ via
+ * `src/lib/dsar.ts`; the field names, the honeypot and the certification
+ * rules are a cross-repo contract with that function. Nothing is filed until
+ * the requester opens the confirmation link we email them.
+ *
+ * Without JavaScript the form cannot reach the function (the gateway needs a
+ * header a plain form cannot send), so the `<noscript>` block routes to the
+ * inbox instead.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import '../../styles/policy.css'
+---
+
+<BaseLayout
+  title="Data request — Marginborn"
+  description="Ask Marginborn for a copy of your data, a correction, deletion, portability, restriction, or to withdraw consent."
+  path="/policies/data-request/"
+>
+  <div class="policy-page" data-policy="data-request">
+    <header class="policy-header">
+      <a class="policy-back-link" href="/">← Back to Marginborn</a>
+    </header>
+    <main class="policy-content">
+      <h1>Make a data request</h1>
+      <p>
+        Use this form to exercise any of the rights in section 10 of our
+        <a href="/policies/privacy/">Privacy Policy</a>. It is free, you do not need an
+        account, and we will not treat you differently for using it.
+      </p>
+      <p>
+        If you can sign in and want to delete your account, the fastest way is inside the
+        app — see <a href="/policies/delete-account/">Delete your account</a>.
+      </p>
+
+      <noscript>
+        <p class="policy-note">
+          This form needs JavaScript. You can email the same request to
+          <a href="mailto:hello@marginborn.com">hello@marginborn.com</a> — tell us your name,
+          what you are asking for, and whether you are the person concerned or acting for
+          them. We will confirm by reply.
+        </p>
+      </noscript>
+
+      <p id="dsar-status" class="policy-status" role="status" tabindex="-1" hidden></p>
+      <p id="dsar-alert" class="policy-alert" role="alert" tabindex="-1" hidden></p>
+
+      <form id="dsar-form" class="policy-form" novalidate>
+        <div class="policy-field">
+          <label for="dsar-name">Your name</label>
+          <input id="dsar-name" name="name" type="text" class="inp" required maxlength="120" autocomplete="name" />
+        </div>
+
+        <div class="policy-field">
+          <label for="dsar-email">Your email address</label>
+          <input id="dsar-email" name="email" type="email" class="inp" required maxlength="254" autocomplete="email" aria-describedby="dsar-email-hint" />
+          <p id="dsar-email-hint" class="policy-hint">We send the confirmation link here. If you had a Marginborn account, use the address you signed in with.</p>
+        </div>
+
+        <fieldset class="policy-fieldset">
+          <legend>What are you asking for?</legend>
+          <p class="policy-hint">Choose everything that applies.</p>
+          <div class="policy-choices">
+            <label><input type="checkbox" name="request_types" value="access" /> <span><strong>Access</strong> — a copy of the personal data you hold about me.</span></label>
+            <label><input type="checkbox" name="request_types" value="correction" /> <span><strong>Correction</strong> — fix data that is wrong.</span></label>
+            <label><input type="checkbox" name="request_types" value="deletion" /> <span><strong>Deletion</strong> — delete my account and personal data.</span></label>
+            <label><input type="checkbox" name="request_types" value="portability" /> <span><strong>Portability</strong> — my data in a usable format.</span></label>
+            <label><input type="checkbox" name="request_types" value="restriction" /> <span><strong>Restriction or objection</strong> — limit or object to certain processing.</span></label>
+            <label><input type="checkbox" name="request_types" value="withdraw_consent" /> <span><strong>Withdraw consent</strong> — for anything based on consent, such as analytics.</span></label>
+            <label><input type="checkbox" name="request_types" value="other" /> <span><strong>Something else</strong> — describe it below.</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="policy-fieldset">
+          <legend>Who is making this request?</legend>
+          <div class="policy-choices">
+            <label><input type="radio" name="submitter" value="subject" checked /> <span>I am the person the data is about, or their parent or guardian.</span></label>
+            <label><input type="radio" name="submitter" value="agent" /> <span>I am an agent authorised by that person to act for them.</span></label>
+          </div>
+          <div id="dsar-authority-field" class="policy-field" hidden>
+            <label for="dsar-authority">Your authority to act</label>
+            <textarea id="dsar-authority" name="authority" class="inp" rows="3" maxlength="1000" aria-describedby="dsar-authority-hint"></textarea>
+            <p id="dsar-authority-hint" class="policy-hint">Tell us who you are acting for and on what basis. We may ask for documents by email before we act.</p>
+          </div>
+        </fieldset>
+
+        <div class="policy-field">
+          <label for="dsar-country">Country of residence <span class="policy-optional">(optional)</span></label>
+          <input id="dsar-country" name="country" type="text" class="inp" maxlength="80" autocomplete="country-name" aria-describedby="dsar-country-hint" />
+          <p id="dsar-country-hint" class="policy-hint">Helps us apply the right law and timeline.</p>
+        </div>
+
+        <div class="policy-field">
+          <label for="dsar-details">Details <span class="policy-optional">(optional)</span></label>
+          <textarea id="dsar-details" name="details" class="inp" rows="5" maxlength="2000" aria-describedby="dsar-details-count"></textarea>
+          <p id="dsar-details-count" class="policy-hint policy-count">0 / 2000</p>
+        </div>
+
+        <div class="policy-choices policy-certs">
+          <label><input id="dsar-cert-accuracy" type="checkbox" name="cert_accuracy" required /> <span>I confirm that the information above is accurate and that I am entitled to make this request.</span></label>
+          <div id="dsar-cert-deletion-field" hidden>
+            <label><input id="dsar-cert-deletion" type="checkbox" name="cert_deletion" /> <span>I understand that deleting my data cannot be undone and ends my use of Marginborn.</span></label>
+          </div>
+        </div>
+
+        <!-- Honeypot: humans never see it; a filled value is dropped silently server-side. -->
+        <div class="policy-trap" aria-hidden="true">
+          <label for="dsar-hp">Leave this field empty</label>
+          <input id="dsar-hp" name="hp_trap" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <p class="policy-hint">We will email you a confirmation link. Nothing is filed until you open it.</p>
+        <button type="submit" class="btn btn-gold">Send confirmation email</button>
+      </form>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initDsarForm } from '../../scripts/dsarForm.ts'
+  initDsarForm()
+</script>

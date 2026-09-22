@@ -136,7 +136,7 @@ Depending on where you live (the EEA, UK, Switzerland, and elsewhere), you have 
 - **Restriction and objection** — limit or object to certain processing.
 - **Withdraw consent** — for anything based on consent (like analytics), at any time.
 
-To exercise any of these, email **hello@marginborn.com**. We'll respond within the time the law allows. Using your rights is free, and we won't treat you differently for it.
+To exercise any of these, use our [data request form](https://marginborn.com/policies/data-request/) or email **hello@marginborn.com**. We'll respond within the time the law allows. Using your rights is free, and we won't treat you differently for it.
 
 You can also complain to a regulator:
 
