@@ -108,6 +108,16 @@ test('the umbrella build vouches for every native app identity', () => {
   expect(assetlinks.map(entry => entry.target?.package_name)).toEqual(
     expect.arrayContaining(['com.braird.app', 'com.braird.marginborn']),
   )
+  // Both relations, on what braird.app actually serves — see well-known.spec.ts for
+  // why handle_all_urls is a passkey requirement and not App Links only (SUR-1099).
+  for (const entry of assetlinks) {
+    expect(entry.relation, `${entry.target?.package_name} needs both passkey relations`).toEqual(
+      expect.arrayContaining([
+        'delegate_permission/common.handle_all_urls',
+        'delegate_permission/common.get_login_creds',
+      ]),
+    )
+  }
 })
 
 test('_headers reaches the umbrella build with the Content-Type overrides', () => {
