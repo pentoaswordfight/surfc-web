@@ -79,11 +79,17 @@ const APP_ORIGINS = ['https://app.braird.app', 'https://app.marginborn.com']
 const ANDROID_PACKAGES = ['com.braird.app', 'com.braird.marginborn']
 const APPLE_APP_IDS = ['7732348SM7.com.braird.app', '7732348SM7.com.braird.marginborn']
 
-// get_login_creds is the relation that makes passkeys resolve. handle_all_urls is App
-// Links, inert on both packages today because neither app declares an autoVerify
-// intent-filter — so only com.braird.app carries it, as history. SUR-1096 owns
-// app-links and adds them deliberately, on the app origin, with the entitlements.
-const PASSKEY_RELATION = 'delegate_permission/common.get_login_creds'
+// A passkey assertion needs BOTH relations. handle_all_urls reads like App Links only,
+// and SUR-1060 dropped it from com.braird.marginborn on that reading — GMS then listed
+// the braird.app passkey and refused to use it: "[50152] RP ID cannot be validated"
+// (SUR-1099, S25U logcat). Google's codelab: handle_all_urls "is also the strict
+// requirement to allow passkeys created on one platform to be used on the other".
+// It stays inert as App Links while no app declares an autoVerify intent-filter;
+// SUR-1096 owns App Links.
+const PASSKEY_RELATIONS = [
+  'delegate_permission/common.handle_all_urls',
+  'delegate_permission/common.get_login_creds',
+]
 
 const WELL_KNOWN = [
   '.well-known/webauthn',
@@ -125,10 +131,12 @@ test('the association files vouch for every native app identity', () => {
     const statement = assetlinks.find(entry => entry.target?.package_name === pkg)
     expect(statement, `${pkg} must have an assetlinks statement`).toBeDefined()
 
-    // A statement missing the passkey relation, or carrying an empty fingerprint list,
-    // is silently inert: Credential Manager matches package AND fingerprint, and
-    // reports neither failure — it simply offers no credential.
-    expect(statement.relation, `${pkg} needs ${PASSKEY_RELATION}`).toContain(PASSKEY_RELATION)
+    // Neither gap reports itself to the app. A missing handle_all_urls LISTS the
+    // credential, then fails RP validation (GMS 50152) — observed, SUR-1099. A missing
+    // get_login_creds or a wrong fingerprint most likely offers no credential at all.
+    for (const relation of PASSKEY_RELATIONS) {
+      expect(statement.relation, `${pkg} needs ${relation}`).toContain(relation)
+    }
     expect(
       statement.target.sha256_cert_fingerprints?.length,
       `${pkg} needs at least one signing fingerprint`,
