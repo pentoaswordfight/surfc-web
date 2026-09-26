@@ -56,12 +56,12 @@ const APP_ORIGINS = ['https://app.braird.app', 'https://app.marginborn.com']
 //                          device-verifiable the day it merges, instead of breaking
 //                          passkey sign-in on both platforms until this file catches up.
 //
-// Both Android statements carry the SAME debug fingerprint on purpose. The release
-// cert does not exist until SUR-702 enrols Play App Signing, and SUR-1059 blocks
-// SUR-702 — taking the release cert here would make the dependency circular.
+// Both Android statements carry the SAME debug fingerprint on purpose (sideloaded
+// builds, and the SUR-848 PRF gate). com.braird.marginborn ALSO carries the Play App
+// Signing certs (SUR-702) — see PLAY_SIGNING_CERTS below.
 //
-// PRUNING, at SUR-702. Two INDEPENDENT conditions; do not collapse them into an
-// order. Each removal is gated by its own evidence:
+// PRUNING. Two INDEPENDENT conditions; do not collapse them into an order. Each
+// removal is gated by its own evidence:
 //
 //   the debug FINGERPRINT   goes only after the release fingerprint is published
 //                           alongside it AND the SUR-848 manual PRF gate has passed
@@ -77,6 +77,35 @@ const APP_ORIGINS = ['https://app.braird.app', 'https://app.marginborn.com']
 //                           that device is locked out of its E2EE vault, reported
 //                           only as "PRF unavailable" (GATING.md §3.1).
 const ANDROID_PACKAGES = ['com.braird.app', 'com.braird.marginborn']
+
+// The certs Google signs Play installs of com.braird.marginborn with (SUR-702). Read
+// from Play's own signed universal APK with `apksigner verify --print-certs`, NOT
+// from the Console: Play's quantum-ready signing gives the APK THREE signers, and the
+// Console's "Classical key" copy button shows only the Android 17+ classical one.
+//
+//   45:A3…3D:D7  v3 signer, API 28–36 — every device in use today.
+//   1E:DB…FD:74  v3.2 hybrid classical signer, API 37+ (the Console's value).
+//   8C:F4…A2:7A  v3.2 hybrid ML-DSA (PQC) signer, API 37+.
+//
+// Play Console Help ("Use Play App Signing"): with quantum-ready hybrid signing "you
+// must copy the fingerprints for three keys and register each of them with your API
+// providers", and update assetlinks.json with them. Which API 37+ cert GMS matches is
+// undocumented, hence both. Publishing only the Console value leaves every Android ≤16
+// Play install with no passkey offer. The UPLOAD key must never appear here: Google
+// re-signs every install, so it authorises a cert no installed APK carries (ADR 0004).
+const PLAY_SIGNING_CERTS = [
+  '45:A3:A0:B8:4A:96:6D:7D:34:09:E4:71:4F:61:EA:8B:98:B0:21:76:2C:21:A5:3B:A9:D4:84:A3:14:A9:3D:D7',
+  '1E:DB:F5:B0:C0:F6:20:A8:C5:A0:EB:5A:6E:80:AC:DD:32:FE:D3:54:F6:1A:00:C9:37:10:F0:47:A2:37:FD:74',
+  '8C:F4:C4:1A:24:A2:FC:48:75:DF:2F:20:B7:CA:41:E6:80:0A:C2:C2:CF:60:47:E8:E4:77:C6:82:5C:B0:A2:7A',
+]
+const UPLOAD_CERT = 'B8:27:AB:4A:D0:00:73:D0:5A:18:8C:17:30:1D:0A:93:8A:33:B0:AB:88:5D:7B:E9:E4:52:A8:0C:F1:84:88:BC'
+// The committed braird-android debug keystore. The SUR-848 PRF gate runs a debug build,
+// so this cert stays on BOTH statements until ADR 0004 step 3 — delete this guard in the
+// PR that does that pruning, not before.
+const DEBUG_CERT = '9A:1E:97:70:68:CF:88:54:92:E7:8D:30:E4:70:C1:EB:05:3B:F9:42:06:B3:78:0A:7B:D9:3D:B8:C2:65:7C:0A'
+// Fingerprints compare format-blind: some Digital Asset Links consumers normalise case
+// and colons, so a lowercase or colon-less copy is the same cert.
+const norm = (fingerprint: string) => fingerprint.toUpperCase().replace(/:/g, '')
 const APPLE_APP_IDS = ['7732348SM7.com.braird.app', '7732348SM7.com.braird.marginborn']
 
 // A passkey assertion needs BOTH relations. handle_all_urls reads like App Links only,
@@ -141,6 +170,25 @@ test('the association files vouch for every native app identity', () => {
       statement.target.sha256_cert_fingerprints?.length,
       `${pkg} needs at least one signing fingerprint`,
     ).toBeGreaterThan(0)
+  }
+
+  const certsOf = (pkg: string) =>
+    (assetlinks.find(entry => entry.target?.package_name === pkg)?.target.sha256_cert_fingerprints ?? [])
+      .map(norm)
+  for (const cert of PLAY_SIGNING_CERTS) {
+    expect(
+      certsOf('com.braird.marginborn'),
+      `Play installs are signed with ${cert}; dropping it breaks their passkeys`,
+    ).toContain(norm(cert))
+  }
+  for (const pkg of ANDROID_PACKAGES) {
+    expect(certsOf(pkg), `${pkg} keeps the debug cert until ADR 0004 step 3`).toContain(norm(DEBUG_CERT))
+  }
+  for (const entry of assetlinks) {
+    expect(
+      (entry.target?.sha256_cert_fingerprints ?? []).map(norm),
+      'the Play UPLOAD cert signs no installed APK and must never be published',
+    ).not.toContain(norm(UPLOAD_CERT))
   }
 })
 
