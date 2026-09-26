@@ -12,6 +12,9 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.braird.marginborn",
-    "sha256_cert_fingerprints": ["9A:1E:97:70:68:CF:88:54:92:E7:8D:30:E4:70:C1:EB:05:3B:F9:42:06:B3:78:0A:7B:D9:3D:B8:C2:65:7C:0A"]
+    "sha256_cert_fingerprints": ["9A:1E:97:70:68:CF:88:54:92:E7:8D:30:E4:70:C1:EB:05:3B:F9:42:06:B3:78:0A:7B:D9:3D:B8:C2:65:7C:0A",
+      "45:A3:A0:B8:4A:96:6D:7D:34:09:E4:71:4F:61:EA:8B:98:B0:21:76:2C:21:A5:3B:A9:D4:84:A3:14:A9:3D:D7",
+      "1E:DB:F5:B0:C0:F6:20:A8:C5:A0:EB:5A:6E:80:AC:DD:32:FE:D3:54:F6:1A:00:C9:37:10:F0:47:A2:37:FD:74",
+      "8C:F4:C4:1A:24:A2:FC:48:75:DF:2F:20:B7:CA:41:E6:80:0A:C2:C2:CF:60:47:E8:E4:77:C6:82:5C:B0:A2:7A"]
   }
 }]
