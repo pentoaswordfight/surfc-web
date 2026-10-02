@@ -5,12 +5,12 @@
  * Responsibilities:
  *   - Meta tags (SEO, viewport, theme, OG, Twitter)
  *   - Font preconnect + Google Fonts (matches the app's current load)
- *   - Termly resource-blocker (GDPR consent banner, same resource ID as
- *     the legacy index.html so returning visitors keep their choice)
+ *   - Klaro consent banner (SUR-620, src/scripts/consent.ts) — PostHog
+ *     loads only after an explicit "allow"
  *   - Canonical URL derived from the requested path
  *
  * Port sources:
- *   - surfc/index.html — meta tags, fonts, Termly blocker
+ *   - surfc/index.html — meta tags, fonts
  *   - SUR-218 plan — OG image + Twitter card requirements
  */
 
@@ -57,11 +57,6 @@ const robotsContent = robotsParts.join(', ')
 const canonical = new URL(path, Astro.site ?? 'https://marginborn.com').toString()
 const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://marginborn.com').toString()
 
-// PostHog — same project as the React app so we get the landing → app sign-up
-// funnel in one stream. Token may be empty locally; the init guard below
-// no-ops in that case.
-const posthogToken = import.meta.env.PUBLIC_POSTHOG_PROJECT_TOKEN ?? ''
-const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu.i.posthog.com'
 ---
 
 <!doctype html>
@@ -105,33 +100,19 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
     <!-- Fonts: self-hosted via @fontsource/* (see src/styles/fonts.css).
          font-display:optional suppresses CLS — no swap shift on load. -->
 
-    <!-- Termly resource blocker (GDPR consent) — same resource ID as the app -->
-    <script src="https://app.termly.io/resource-blocker/135b750f-a45d-4fbb-91c6-0f8e1c0b6b8d?autoBlock=on" is:inline></script>
-
-    <!-- PostHog — shares the React app's project so the landing → app sign-up
-         funnel lives in a single stream. Termly auto-blocks until consent. -->
-    <script is:inline define:vars={{ posthogToken, posthogHost }}>
-      if (posthogToken) {
-        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init(posthogToken, {
-          api_host: posthogHost,
-          capture_pageview: true,
-          session_recording: { maskAllInputs: true },
-        });
-      }
+    <!-- PostHog itself loads from src/scripts/consent.ts, and only after the
+         visitor allows analytics (SUR-620). Before that window.posthog is
+         undefined and this listener no-ops. -->
+    <script is:inline>
       // Global CTA-click attribution. Fires on capture phase so the event is
       // queued before the browser navigates away. SUR-367 adds an additive
       // `marketing_signup_clicked` capture for every signup-intent CTA so
       // the new conversion funnel anchors on a single step-1 event without
       // disturbing existing dashboards built on `app_cta_clicked`.
       //
-      // The listener registers regardless of whether posthogToken is set —
-      // the body guards on `window.posthog` so a missing SDK is a no-op,
-      // and this lets Playwright install a recorder onto window.posthog and
-      // exercise the contract without PUBLIC_POSTHOG_PROJECT_TOKEN being
-      // configured in CI. Production paths are unchanged: with the token
-      // set, the SDK stub above provides `window.posthog.capture` and the
-      // capture queues normally.
+      // The listener always registers — the body guards on `window.posthog`,
+      // so it no-ops until consent loads PostHog, and Playwright can install a
+      // recorder onto window.posthog to exercise the contract.
       //
       // Pricing-page CTAs are included: `pricing_start_free` and
       // `pricing_hero_start_free` are direct signup intents, and
@@ -168,6 +149,15 @@ const posthogHost  = import.meta.env.PUBLIC_POSTHOG_HOST          ?? 'https://eu
          `auth_landing_viewed` event carries campaign attribution. -->
     <script>
       import '../scripts/preserveUtm'
+    </script>
+
+    <!-- SUR-620 — consent banner; [data-consent-open] (footer link) re-opens it. -->
+    <script>
+      import { startConsent, showConsentPreferences } from '../scripts/consent'
+      startConsent()
+      document.querySelector('[data-consent-open]')?.addEventListener('click', (event) => {
+        showConsentPreferences(event.currentTarget as HTMLElement)
+      })
     </script>
   </body>
 </html>

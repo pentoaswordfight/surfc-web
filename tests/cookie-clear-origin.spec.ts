@@ -1,7 +1,7 @@
 /**
  * SUR-1089 — the stale-token clear derives its cookie Domain from the origin.
  *
- * The app-side writer (surfc/src/supabase.js `crossDomainCookieDomain`) picks the
+ * The app-side writer (surfc/src/supabase.js, via src/lib/crossDomainCookieDomain.js) picks the
  * Domain from the current host, so app.marginborn.com writes a `.marginborn.com`
  * cookie. `clearCrossDomainAccessToken` used to hardcode `.braird.app`, which
  * could not remove that cookie: a stale token on marginborn.com would survive

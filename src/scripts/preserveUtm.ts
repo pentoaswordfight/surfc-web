@@ -27,7 +27,7 @@
  * shared `closest('[data-cta]')` matcher.
  *
  * Loaded from BaseLayout.astro so every marketing page picks it up
- * without per-component plumbing. Termly's consent banner is unrelated
+ * without per-component plumbing. The consent banner (Klaro) is unrelated
  * to this script: UTM passthrough is a routing concern, not analytics.
  */
 

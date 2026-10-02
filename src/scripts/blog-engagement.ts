@@ -9,8 +9,8 @@
  *   blog_scroll_depth  { slug, percent }   — once per threshold per pageview
  *   blog_read_complete { slug, dwellMs }   — once per pageview after dwell + scrolled to end
  *
- * Consent (Termly): PostHog only initialises after the user grants analytics
- * consent through Termly. Until then `window.posthog` is undefined and the
+ * Consent (Klaro, SUR-620): PostHog only initialises after the user allows
+ * analytics in the consent banner. Until then `window.posthog` is undefined and the
  * `posthog?.capture` calls below are silent no-ops. By design we DROP any
  * threshold/completion events that fire before consent — we don't queue and
  * replay them. The trade-off: the first read of a session that grants
