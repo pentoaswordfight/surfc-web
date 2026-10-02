@@ -179,17 +179,22 @@ function manageModalFocus(root) {
   }).observe(root, { childList: true, subtree: true })
 }
 
-// The stored choice, read straight from the cookie with Klaro's own rule: it counts
-// only when every configured service is in it (otherwise Klaro re-prompts).
-export function storedAnalyticsConsent() {
+// The stored choice as Klaro wrote it, or null when the cookie is absent or unreadable.
+function storedChoice() {
   const pair = document.cookie.split('; ').find(c => c.startsWith(`${CONSENT_COOKIE}=`))
-  if (!pair) return false
+  if (!pair) return null
   try {
-    const stored = JSON.parse(decodeURIComponent(pair.slice(CONSENT_COOKIE.length + 1)))
-    return SERVICE_NAMES.every(name => name in stored) && stored.posthog === true
+    return JSON.parse(decodeURIComponent(pair.slice(CONSENT_COOKIE.length + 1)))
   } catch {
-    return false
+    return null
   }
+}
+
+// "Allow", by Klaro's own rule: it counts only when every configured service is in
+// the cookie (otherwise Klaro re-prompts).
+export function storedAnalyticsConsent() {
+  const stored = storedChoice()
+  return !!stored && SERVICE_NAMES.every(name => name in stored) && stored.posthog === true
 }
 
 export function startConsent(config) {
@@ -208,6 +213,13 @@ export function startConsent(config) {
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') return
         const manager = klaro.getManager(config)
+        // The cookie is the record of consent. If it expired or was cleared, Klaro's
+        // loadConsents() would keep its in-memory "allow" — so reset to "no consent"
+        // (gate called with false; the banner asks again on the next page load) instead.
+        if (!storedChoice()) {
+          manager.resetConsents()
+          return
+        }
         manager.loadConsents()
         manager.applyConsents()
       })
