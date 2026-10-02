@@ -7,12 +7,15 @@ interface Props {
 
 const { author } = Astro.props
 const profile = AUTHORS[author]
+// The card links out only when the author has a URL; otherwise it is plain text.
+const Body = profile?.url ? 'a' : 'div'
+const linkAttrs = profile?.url ? { href: profile.url, target: '_blank', rel: 'noopener author' } : {}
 ---
 
 {
   profile ? (
     <aside class="author-card" aria-label={`About ${profile.name}`}>
-      <a class="author-card-link" href={profile.url} target="_blank" rel="noopener author">
+      <Body class:list={['author-card-body', { 'author-card-link': profile.url }]} {...linkAttrs}>
         <img
           class="author-card-avatar"
           src={profile.avatar}
@@ -26,7 +29,7 @@ const profile = AUTHORS[author]
           <p class="author-card-name">{profile.name}</p>
           <p class="author-card-bio">{profile.bio}</p>
         </div>
-      </a>
+      </Body>
     </aside>
   ) : (
     <p class="author-card-fallback">By {author}</p>
@@ -43,7 +46,7 @@ const profile = AUTHORS[author]
     box-shadow: var(--shadow-card);
   }
 
-  .author-card-link {
+  .author-card-body {
     display: flex;
     align-items: center;
     gap: var(--space-2);
