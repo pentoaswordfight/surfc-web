@@ -15,6 +15,5 @@ export const AUTHORS: Record<string, Author> = {
     bio: 'Learner, Reader, Writer, Founder and Idea Compounder.',
     avatar: '/authors/deji.png',
     twitter: '@brairdapp',
-    url: 'https://dejidipe.com',
   },
 }

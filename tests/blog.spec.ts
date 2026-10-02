@@ -82,12 +82,10 @@ test.describe('blog post page', () => {
     await expect(page.locator('.blog-post-body')).toBeVisible()
     await expect(page.locator('[data-blog-end]')).toHaveCount(1)
 
-    // Author card
+    // Author card: name and bio as plain text — the author has no URL, so no link.
     await expect(page.locator('.author-card')).toBeVisible()
-    await expect(page.locator('.author-card-link')).toHaveAttribute(
-      'href',
-      'https://dejidipe.com',
-    )
+    await expect(page.locator('.author-card-name')).toHaveText('Deji Dipeolu')
+    await expect(page.locator('.author-card a')).toHaveCount(0)
   })
 
   test('emits Article JSON-LD with the right fields', async ({ page }) => {

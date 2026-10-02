@@ -5,3 +5,8 @@
 # from a CI runner (e.g. future app-store placeholders, auth-gated pages).
 #
 # Format: https://lychee.cli.rs/docs/usage/configuration/#exclude
+
+# LinkedIn (999) and Reddit (403) refuse automated clients, so their links fail
+# from a CI runner whether or not they work for readers.
+^https?://([a-z]+\.)?linkedin\.com/
+^https?://([a-z]+\.)?reddit\.com/
