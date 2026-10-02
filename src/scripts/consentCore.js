@@ -86,6 +86,11 @@ export const POSTHOG_CONSENT_OPTIONS = {
   loaded: posthog => posthog.opt_in_capturing(SILENT),
 }
 
+function expireCookie(name, cookieDomain) {
+  document.cookie = `${name}=; Max-Age=0; path=/`
+  if (cookieDomain) document.cookie = `${name}=; Max-Age=0; path=/; domain=${cookieDomain}`
+}
+
 export function clearPosthogStorage(cookieDomain) {
   try {
     for (const store of [localStorage, sessionStorage]) {
@@ -96,9 +101,7 @@ export function clearPosthogStorage(cookieDomain) {
   }
   for (const pair of document.cookie.split(';')) {
     const name = pair.split('=')[0].trim()
-    if (!POSTHOG_STORAGE.test(name)) continue
-    document.cookie = `${name}=; Max-Age=0; path=/`
-    if (cookieDomain) document.cookie = `${name}=; Max-Age=0; path=/; domain=${cookieDomain}`
+    if (POSTHOG_STORAGE.test(name)) expireCookie(name, cookieDomain)
   }
 }
 
@@ -179,21 +182,27 @@ function manageModalFocus(root) {
   }).observe(root, { childList: true, subtree: true })
 }
 
-// The stored choice as Klaro wrote it, or null when the cookie is absent or unreadable.
-function storedChoice() {
+// The stored choice as Klaro wrote it (a plain object), or null. A cookie that is
+// present but unreadable — bad JSON, or JSON that isn't an object — is expired on
+// the host AND the shared domain (Klaro's own delete misses the domain), so Klaro
+// starts clean and asks again instead of tripping over it on every load.
+function readStoredChoice(cookieDomain) {
   const pair = document.cookie.split('; ').find(c => c.startsWith(`${CONSENT_COOKIE}=`))
   if (!pair) return null
   try {
-    return JSON.parse(decodeURIComponent(pair.slice(CONSENT_COOKIE.length + 1)))
+    const stored = JSON.parse(decodeURIComponent(pair.slice(CONSENT_COOKIE.length + 1)))
+    if (stored && typeof stored === 'object' && !Array.isArray(stored)) return stored
   } catch {
-    return null
+    // fall through: unreadable
   }
+  expireCookie(CONSENT_COOKIE, cookieDomain)
+  return null
 }
 
 // "Allow", by Klaro's own rule: it counts only when every configured service is in
 // the cookie (otherwise Klaro re-prompts).
-export function storedAnalyticsConsent() {
-  const stored = storedChoice()
+export function storedAnalyticsConsent(cookieDomain) {
+  const stored = readStoredChoice(cookieDomain)
   return !!stored && SERVICE_NAMES.every(name => name in stored) && stored.posthog === true
 }
 
@@ -203,7 +212,8 @@ export function startConsent(config) {
   // Klaro chunk loads. Klaro then reports the same choice, which the gate ignores.
   // First-time visitors get nothing until they choose: pre-consent events are
   // dropped, never buffered.
-  if (storedAnalyticsConsent()) config.services.find(s => s.name === 'posthog').callback(true)
+  // (Also repairs an unreadable cookie before Klaro reads it.)
+  if (storedAnalyticsConsent(config.cookieDomain)) config.services.find(s => s.name === 'posthog').callback(true)
   return loadKlaro()
     .then(klaro => {
       klaro.setup(config)
@@ -216,7 +226,7 @@ export function startConsent(config) {
         // The cookie is the record of consent. If it expired or was cleared, Klaro's
         // loadConsents() would keep its in-memory "allow" — so reset to "no consent"
         // (gate called with false; the banner asks again on the next page load) instead.
-        if (!storedChoice()) {
+        if (!readStoredChoice(config.cookieDomain)) {
           manager.resetConsents()
           return
         }
