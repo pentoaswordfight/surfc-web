@@ -42,7 +42,7 @@ export function readCrossDomainAccessToken(): string | null {
 }
 
 // SUR-1089: the Domain was hardcoded `.braird.app`. The app-side writer
-// (surfc/src/supabase.js `crossDomainCookieDomain`) derives it from the origin,
+// (surfc/src/lib/crossDomainCookieDomain.js) derives it from the origin,
 // so once app.marginborn.com started writing a `.marginborn.com` cookie, this
 // clear could not remove it: a stale token on marginborn.com would survive every
 // clear attempt and keep the page on the optimistic signed-in path, 401-ing
@@ -66,10 +66,18 @@ const SHARED_COOKIE_DOMAINS = ['marginborn.com', PRIMARY_COOKIE_DOMAIN, 'surfc.a
 // remove. This whole ticket exists because a list went un-updated, so the clear
 // path degrades to attempting something, never to silence.
 function sharedCookieDomain(): string {
-  if (typeof window === 'undefined') return `.${PRIMARY_COOKIE_DOMAIN}`
+  return crossDomainCookieDomain() ?? `.${PRIMARY_COOKIE_DOMAIN}`
+}
+
+// SUR-620: the Klaro consent cookie needs the match WITHOUT the fallback — a
+// `.braird.app` Domain on localhost or a preview host is rejected by the browser,
+// so the choice would never stick. Same name and null contract as the app's
+// helper (surfc/src/lib/crossDomainCookieDomain.js).
+export function crossDomainCookieDomain(): string | null {
+  if (typeof window === 'undefined') return null
   const host = window.location.hostname
   const match = SHARED_COOKIE_DOMAINS.find(d => host === d || host.endsWith(`.${d}`))
-  return `.${match ?? PRIMARY_COOKIE_DOMAIN}`
+  return match ? `.${match}` : null
 }
 
 export function clearCrossDomainAccessToken(): void {

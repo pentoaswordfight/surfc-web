@@ -9,8 +9,7 @@
  *
  * These tests assert:
  *   - No horizontal document overflow at 360px and 414px on `/`, `/waitlist`,
- *     and `/policies/privacy` (Termly iframe is a separate document so it
- *     doesn't contribute to the outer scrollWidth).
+ *     and `/policies/privacy`.
  *   - The hamburger toggle is visible only on mobile, and the desktop
  *     inline links are visible only on tablet+.
  *   - Toggle opens the panel (aria-expanded + all 4 links visible), Escape
@@ -29,8 +28,7 @@ const DESKTOP_VIEWPORT = { width: 1280, height: 800 }
 
 /**
  * Asserts the top-level document doesn't scroll horizontally. Allows 1px of
- * slack for subpixel rounding. The Termly iframe on policy pages has its own
- * document, so this check only covers the outer page.
+ * slack for subpixel rounding.
  */
 async function expectNoHorizontalOverflow(page: import('@playwright/test').Page, label: string) {
   const { scrollWidth, innerWidth } = await page.evaluate(() => ({

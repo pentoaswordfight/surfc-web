@@ -36,12 +36,14 @@ export default defineConfig({
     timeout: 180_000,
     env: {
       PUBLIC_APP_URL: 'https://app.braird.app',
-      // Suppress the PostHog snippet in test builds. Its init IIFE
-      // overwrites any window.posthog stub we install via
-      // page.addInitScript before the engagement script runs — without
-      // this override the SUR-256 blog_scroll_depth / blog_read_complete
-      // assertions can't see captured events.
-      PUBLIC_POSTHOG_PROJECT_TOKEN: '',
+      // SUR-620: PostHog loads only after a consent "allow", and the shared
+      // fixture stores a "decline", so the window.posthog stubs that specs
+      // install via page.addInitScript survive as before. The token is set
+      // (not '') so consent.spec.ts can prove that "allow" really loads
+      // PostHog; the host is an inert .test domain the fixture also aborts,
+      // so no test can reach a real PostHog project.
+      PUBLIC_POSTHOG_PROJECT_TOKEN: 'phc_test_token',
+      PUBLIC_POSTHOG_HOST: 'https://posthog.test',
       // Checkout (SUR-466/496) reads PUBLIC_SUPABASE_URL at build time and
       // throws "not configured" if it's empty. CI has no .env file, so pin a
       // dummy here — the create-checkout-session fetch is always intercepted

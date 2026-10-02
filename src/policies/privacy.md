@@ -149,9 +149,9 @@ You can also complain to a regulator:
 We use a small number of cookies and similar technologies:
 
 - **Essential** ones to sign you in and keep the Services working. These are always on.
-- **Analytics** (PostHog) to understand how Marginborn is used. These run **only if you consent**.
+- **Analytics** (PostHog) to understand how Marginborn is used, including session replays of how pages are used, with all text hidden. These run **only if you consent**.
 
-You choose through our consent banner, and you can change your choice any time from the "Consent preferences" link in the footer. We default to off for anything non-essential.
+You choose through our consent banner, and you can change your choice any time from the "Consent preferences" link in the footer of our website, or from Settings → Privacy in the web app. One choice covers both. We default to off for anything non-essential.
 
 **In our Android and iOS apps** there are no cookies and no consent banner. Analytics there are off until you switch them on: we ask once, and you can change your answer any time in Settings → Privacy. What those apps send is deliberately thin — counts of feature use and outcomes, for example whether a search found anything — never your note content, never what you searched for, and no device or advertising identifier. They carry no third-party analytics software: each count goes to our own servers, which check that it came from a signed-in account, discard that identity without recording it, and pass on only the count to PostHog in the EU.
 

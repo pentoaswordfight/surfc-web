@@ -1,0 +1,141 @@
+/* SUR-620 — Klaro consent UI on Braird tokens.
+ * Byte-identical in surfc (src/design/consent.css) and surfc-web (src/styles/consent.css).
+ *
+ * The notice is a margin note: serif text, a narrow measure, parked in the
+ * bottom-left gutter on desktop so it never sits over a centred CTA. Light and
+ * dark come free from @braird/tokens — nothing here names a colour.
+ *
+ * Klaro injects its stylesheet after ours at runtime, so every rule here is
+ * anchored on #klaro (our config's elementID): one id out-ranks Klaro's class
+ * chains without !important. Klaro reads its palette from CSS variables, scoped
+ * here so they cannot collide with page tokens. Roles: dark1 = surface,
+ * light1 = text, dark2 = rules, green1 = links + switch on. */
+#klaro .klaro {
+  --font-family: var(--font-serif);
+  --title-font-family: var(--font-serif);
+  --font-size: 15px;
+  --button-text-color: var(--color-bg-card);
+  --dark1: var(--color-bg-card);
+  --dark2: var(--color-border-strong);
+  --dark3: var(--color-text-secondary);
+  --light1: var(--color-text-primary);
+  --light2: var(--color-border);
+  --light3: var(--color-text-secondary);
+  --white1: var(--color-bg-card);
+  --white2: var(--color-bg-subtle);
+  --white3: var(--color-bg-subtle);
+  --green1: var(--color-accent-text);
+  --green2: var(--color-accent-text);
+  --green3: var(--color-accent);
+  --blue1: var(--color-text-primary);
+  --blue2: var(--color-accent-text);
+  --red1: var(--color-text-primary);
+  --border-radius: var(--radius-card);
+  --notice-left: 24px;
+  --notice-right: auto;
+  --notice-bottom: 24px;
+  --notice-max-width: 360px;
+}
+
+#klaro .klaro .cookie-notice:not(.cookie-modal-notice) {
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-card);
+}
+
+#klaro .klaro .cookie-notice .cn-body p {
+  line-height: 1.55;
+}
+
+/* Accept and Decline carry equal weight: same fill, size and type. Klaro's own
+ * rules give each button its own colour; this overrides all of them. */
+#klaro .klaro .cm-btn {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-card);
+  font-family: var(--font-base);
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-input);
+}
+
+#klaro .klaro .cm-btn:focus-visible,
+#klaro .klaro a:focus-visible,
+#klaro .klaro .cm-list-input:focus-visible + .cm-list-label .slider {
+  outline: 2px solid var(--color-accent-text);
+  outline-offset: 2px;
+}
+
+/* Klaro focuses the notice itself on load so screen readers announce it. The
+ * box is not a control, so it gets no ring; its buttons and links do. */
+#klaro .klaro .cookie-notice:focus {
+  outline: none;
+}
+
+#klaro .klaro .cookie-notice .cn-learn-more,
+#klaro .klaro .cookie-modal .cm-footer a {
+  font-family: var(--font-base);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 44px tap targets for the small text controls, inside their own line box so
+ * they never reach into the text above. */
+#klaro .klaro .cookie-notice .cn-learn-more,
+#klaro .klaro .cookie-modal .cm-caret a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em; /* flex drops the space between Klaro's arrow and its label */
+  min-height: 44px;
+}
+
+/* Klaro draws "(always on)" in the rule colour, which fails contrast. (So does
+ * --color-text-muted on white at this size: secondary is the lightest that passes.) */
+#klaro .klaro .cookie-modal span.cm-required {
+  color: var(--color-text-secondary);
+}
+
+#klaro .klaro .cookie-modal .cm-modal.cm-klaro {
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-modal);
+}
+
+/* Opt-in for screens whose primary actions sit at the bottom (the app's sign-in
+ * and upgrade screens set it while mounted): <html data-consent-bar="top"> moves
+ * the notice to the top edge — top-left on desktop here, a top bar on phones below. */
+[data-consent-bar="top"] #klaro .klaro {
+  --notice-top: 24px;
+  --notice-bottom: auto;
+}
+
+/* Below Klaro's 1024px breakpoint the notice is a full-width bar: keep it
+ * compact, clear the home indicator, and give both choices half the row. */
+@media (max-width: 1023px) {
+  #klaro .klaro .cookie-notice:not(.cookie-modal-notice) {
+    border-width: 1px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  #klaro .klaro .cookie-notice .cn-body .cn-buttons {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  #klaro .klaro .cookie-notice .cn-body .cn-buttons .cm-btn {
+    flex: 1;
+    margin-right: 0;
+  }
+  [data-consent-bar="top"] #klaro .klaro .cookie-notice:not(.cookie-modal-notice) {
+    top: 0;
+    bottom: auto;
+    border-width: 0 0 1px;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #klaro .klaro * {
+    transition: none !important;
+  }
+}

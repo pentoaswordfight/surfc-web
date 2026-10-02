@@ -131,8 +131,10 @@
 }
 .hiw-footer-mark.mb-lockup { font-size: 20px; }
 .hiw-footer-links { color: rgba(220, 234, 214, 0.6); }
-.hiw-footer-links a { color: rgba(220, 234, 214, 0.6); }
-.hiw-footer-links a:hover { color: var(--bf-leaf); }
+.hiw-footer-links a,
+.hiw-footer-links .hiw-footer-consent { color: rgba(220, 234, 214, 0.6); }
+.hiw-footer-links a:hover,
+.hiw-footer-links .hiw-footer-consent:hover { color: var(--bf-leaf); }
 .hiw-footer-links span[aria-hidden] { color: rgba(220, 234, 214, 0.3); }
 .bf-foot-note {
   width: 100%;

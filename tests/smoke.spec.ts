@@ -18,10 +18,9 @@
 import { expect, test } from './fixtures'
 
 test.describe('public pages respond 200 and render correctly', () => {
-  // Policy pages delegate their visible content to Termly's async iframe,
-  // so the rendered <body> has almost no text until the third-party embed
-  // loads. We assert on <title> instead — cheap, reliable, and proves the
-  // Astro route resolved to the right page.
+  // We assert on <title> — cheap, reliable, and proves the Astro route
+  // resolved to the right page. (Policy text has its own checks in
+  // policies.spec.ts.)
   const pages: Array<{ path: string; title: RegExp }> = [
     { path: '/',                   title: /Marginborn/i },
     // /waitlist/ now serves a noindex sunset page after SUR-365.
@@ -140,19 +139,18 @@ test('FAQ enforces single-open behaviour', async ({ page }) => {
 test('signup CTAs emit both app_cta_clicked and marketing_signup_clicked (SUR-367)', async ({ page }) => {
   await page.goto('/')
 
-  // BaseLayout's inline PostHog snippet replaces `window.posthog` with the
-  // SDK's own queue stub at load time, so a pre-navigation addInitScript
-  // wouldn't survive — we swap in our recorder *after* the page has booted.
+  // We swap in our recorder *after* the page has booted. (Since SUR-620 the
+  // PostHog snippet only runs after a consent "allow", and the fixture
+  // declines, so nothing replaces it — but the rebind keeps this test
+  // independent of consent state.)
   // The BaseLayout click listener reads `window.posthog.capture` lazily at
   // click time, so this re-binding is honoured. We also short-circuit the
   // anchor's default navigation; otherwise the page unloads to app.braird.app
   // before we can read the recorded captures back.
   //
   // Lock the rebind with `Object.defineProperty(..., configurable:false)` so
-  // that if a future test env injects PUBLIC_POSTHOG_TOKEN, the async load
-  // of `array.js` can't reassign window.posthog and silently nuke the
-  // recorder — the test would otherwise pass under no-token configs and
-  // fail mysteriously when a real token is wired in.
+  // that if PostHog ever loaded here, its async `array.js` couldn't reassign
+  // window.posthog and silently nuke the recorder.
   await page.evaluate(() => {
     const captures: Array<[string, Record<string, unknown>]> = []
     ;(window as any).__captures = captures

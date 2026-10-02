@@ -75,6 +75,7 @@ These are the places `surfc-web` does not stand alone. Changing them here
 
 | Contract | Here | There | Notes |
 |---|---|---|---|
+| Consent cookie (SUR-620) | `src/scripts/consent.ts` (Klaro) reads/writes `braird_consent` on the registrable domain via `crossDomainCookieDomain()` | `surfc/src/lib/consent.js` reads/writes the same cookie | One choice covers marginborn.com and app.marginborn.com. Service names, copy and `consent.css` must stay identical in both repos: Klaro re-prompts when a configured service is missing from the cookie, so drift means two prompts. Pinned by `tests/consent.spec.ts` here and `src/test/consent.test.js` there. |
 | Cross-domain access token | `src/lib/auth.ts` reads cookie `sb-surfc-access` on `.braird.app` | `surfc/src/supabase.js` `onAuthStateChange` writes it | Marketing treats cookie *presence* = "signed in"; stale tokens 401 on checkout and fall back to the redirect path. SUR-696 moved the cookie Domain to `.braird.app` (paired with the SUR-692 writer); the *name* is unchanged (`sb-surfc-access`) — rename is deferred to SUR-680. See `surfc/CLAUDE.md` → "Cross-repo contracts". |
 | Stripe checkout | `src/lib/checkout.ts` POSTs to `${PUBLIC_SUPABASE_URL}/functions/v1/create-checkout-session` | Edge Function source: `surfc/supabase/functions/create-checkout-session/index.ts` | Sends Bearer JWT + `apikey` header. Restricted set of `successUrl`/`cancelUrl` prefixes. `successUrl` lands on `${PUBLIC_APP_URL}/upgrade/success`; `cancelUrl` stays on the current origin so preview deploys (`*.pages.dev`) bounce within themselves. The `error` codes on the failure-bounce URL (`?canceled=1&error=<code>`, read by `src/lib/stripeTransition.ts`) come from surfc's `UpgradeRoute` `buildFailureUrl` — keep the code set aligned (SUR-496 / SUR-498). |
 | Stripe transition telemetry (SUR-466) | `src/lib/stripeTransition.ts` — mirrors the timeout (8s), trust copy, `stripe_transition_start`/`stripe_transition_end` names + `{ surface, duration_ms, outcome }` shape | `surfc/src/lib/stripeTransition.js` (SUR-419) | **No shared build artifact — edit in lockstep.** surfc-web adds the `web_pricing` `surface` value (in-app uses `upgrade_route` / `settings_manage`) so one funnel groups all three. |
@@ -116,9 +117,13 @@ no-op. This is the mechanism by which Playwright stubs `window.posthog`
 in tests and asserts on captures without `PUBLIC_POSTHOG_PROJECT_TOKEN`
 being set in CI.
 
-Consent: **Termly** auto-blocks PostHog until the user accepts. Events
+Consent (SUR-620): the **Klaro** banner (`src/scripts/consent.ts`, vendored
+Klaro in `src/vendor/klaro/`, styles in `src/styles/consent.css`) loads the
+PostHog snippet only from its consent callback — before an explicit "allow",
+`window.posthog` is undefined and no PostHog request or cookie exists. Events
 fired before consent are *dropped*, not queued (see comment in
-`src/scripts/blog-engagement.ts`).
+`src/scripts/blog-engagement.ts`). The footer's `[data-consent-open]` link
+re-opens the preferences.
 
 ### Fonts (don't break this)
 
@@ -150,15 +155,16 @@ Two GitHub Actions workflows in `.github/workflows/`:
 
 ## Test details worth knowing
 
-- `tests/fixtures.ts` re-exports `test` with `**/app.termly.io/**` aborted
-  via `page.route`. Termly's consent banner lands over CTAs on mobile and
-  blocks clicks. Import from `./fixtures`, not `@playwright/test`
-  directly, unless you specifically need Termly to load.
-- `playwright.config.ts` sets `PUBLIC_POSTHOG_PROJECT_TOKEN: ''` in the
-  webServer env. **Don't change this** — when the token is set, the
-  PostHog init IIFE overwrites `window.posthog` after our
-  `page.addInitScript` stub runs, breaking SUR-256 blog-engagement event
-  assertions.
+- `tests/fixtures.ts` re-exports `test` with a declined consent choice
+  stored (the `braird_consent` cookie) and the PostHog test host aborted.
+  The banner would otherwise land over CTAs on mobile. Import from
+  `./fixtures`, not `@playwright/test` directly; `tests/consent.spec.ts`
+  clears the cookie to test the banner itself.
+- `playwright.config.ts` sets a dummy `PUBLIC_POSTHOG_PROJECT_TOKEN` and
+  the inert host `https://posthog.test`. Because the fixture declines,
+  PostHog never loads and `page.addInitScript` stubs of `window.posthog`
+  survive (SUR-256 blog-engagement assertions). **Never point the host at
+  a real PostHog instance** — `consent.spec.ts` clicks "allow".
 - Tests run against `astro preview` (the production static build), not
   `astro dev`. Behaviour-affecting differences between the two should be
   treated as bugs.

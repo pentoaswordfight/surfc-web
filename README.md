@@ -24,7 +24,7 @@ npm run preview                      # serve dist/ locally
 
 ```
 src/
-├── layouts/BaseLayout.astro   — <head> + self-hosted fonts + Termly blocker + OG tags
+├── layouts/BaseLayout.astro   — <head> + self-hosted fonts + Klaro consent + OG tags
 ├── components/
 │   ├── Nav.astro              — top nav; collapses to slide-down hamburger on mobile [SUR-228]
 │   └── …                     — Hero, ClosingCta, Faq, etc.
@@ -70,7 +70,7 @@ PRs run automated checks via GitHub Actions:
 | Check | Tool | What it catches |
 |---|---|---|
 | Lighthouse | `@lhci/cli` | Performance, a11y, best-practices regressions — **disabled**, pending CF Pages preview waiter (see `.github/workflows/quality.yml`) |
-| Playwright | `@playwright/test` | Smoke + responsive + blog specs (Termly blocked in fixture) |
+| Playwright | `@playwright/test` | Smoke + responsive + blog + consent specs (fixture stores a declined consent choice) |
 | Link check | `lychee` | Broken internal and external links |
 
 Lighthouse is disabled pending a Cloudflare Pages preview waiter. The prior Netlify

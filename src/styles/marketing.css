@@ -1852,6 +1852,10 @@ select.inp { cursor: pointer; }
 .hiw-footer-mark { font-family: 'EB Garamond', serif; font-size: 20px; color: var(--color-accent-text); font-weight: 600; }
 .hiw-footer-links { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--color-text-secondary); }
 .hiw-footer-links a { color: var(--color-text-secondary); text-decoration: none; }
+/* SUR-620 — "Consent preferences" opens a dialog, so it is a button dressed as
+   its neighbouring links. */
+.hiw-footer-links .hiw-footer-consent { background: none; border: 0; padding: 0; font: inherit; color: var(--color-text-secondary); cursor: pointer; }
+.hiw-footer-links .hiw-footer-consent:hover { color: var(--color-accent-dark); text-decoration: underline; }
 .hiw-footer-links a:hover { color: var(--color-accent-dark); text-decoration: underline; }
 
 /* ─────────────────────────────────────────────────────────────

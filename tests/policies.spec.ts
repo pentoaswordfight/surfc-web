@@ -41,12 +41,9 @@ for (const { path, heading, phrase } of POLICY_PAGES) {
     await expect(page.locator('.policy-content h1')).toHaveText(heading)
     await expect(page.locator('.policy-content')).toContainText(phrase)
 
-    // Termly is gone from the policy text surface (the consent banner in
-    // BaseLayout is separate and migrates under SUR-620).
+    // Termly is gone: no policy embed, and (SUR-620) no consent blocker.
     await expect(page.locator('div[name="termly-embed"]')).toHaveCount(0)
-    await expect(
-      page.locator('script[src="https://app.termly.io/embed-policy.min.js"]')
-    ).toHaveCount(0)
+    await expect(page.locator('script[src*="app.termly.io"]')).toHaveCount(0)
 
     await expect(page.locator('.policy-back-link')).toHaveAttribute('href', '/')
   })
