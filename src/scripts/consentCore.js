@@ -179,7 +179,26 @@ function manageModalFocus(root) {
   }).observe(root, { childList: true, subtree: true })
 }
 
+// The stored choice, read straight from the cookie with Klaro's own rule: it counts
+// only when every configured service is in it (otherwise Klaro re-prompts).
+export function storedAnalyticsConsent() {
+  const pair = document.cookie.split('; ').find(c => c.startsWith(`${CONSENT_COOKIE}=`))
+  if (!pair) return false
+  try {
+    const stored = JSON.parse(decodeURIComponent(pair.slice(CONSENT_COOKIE.length + 1)))
+    return SERVICE_NAMES.every(name => name in stored) && stored.posthog === true
+  } catch {
+    return false
+  }
+}
+
 export function startConsent(config) {
+  // A visitor who already allowed analytics gets PostHog now, synchronously, so the
+  // page's first events (e.g. a landing view fired on mount) are not lost while the
+  // Klaro chunk loads. Klaro then reports the same choice, which the gate ignores.
+  // First-time visitors get nothing until they choose: pre-consent events are
+  // dropped, never buffered.
+  if (storedAnalyticsConsent()) config.services.find(s => s.name === 'posthog').callback(true)
   return loadKlaro()
     .then(klaro => {
       klaro.setup(config)
