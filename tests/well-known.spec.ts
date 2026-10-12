@@ -155,6 +155,11 @@ test('the association files vouch for every native app identity', () => {
   for (const appID of APPLE_APP_IDS) {
     expect(aasa.webcredentials?.apps, `${appID} must stay in AASA webcredentials`).toContain(appID)
   }
+  // App links live on app.marginborn.com (surfc, SUR-1096). An applinks block here
+  // claims the marketing site the day any app declares applinks: for one of these
+  // three hosts; the old one claimed every path ("*"). handle_all_urls in
+  // assetlinks.json is NOT the same thing and must stay: passkeys need it (SUR-1099).
+  expect(aasa.applinks, 'the apex hosts serve no app links').toBeUndefined()
 
   for (const pkg of ANDROID_PACKAGES) {
     const statement = assetlinks.find(entry => entry.target?.package_name === pkg)
