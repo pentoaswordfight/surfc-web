@@ -1,54 +1,384 @@
 ---
 /**
- * How Braird works (SUR-679). The explanatory sections + FAQ that used to live
- * on the landing page were extracted here when the front door was stripped down
- * to its forest hero. Renders on the cool-paper inner-page ground (recoloured
- * tokens) under the shared forest chrome.
+ * How Marginborn works (SUR-1204): the Marginborn guide for new readers (SUR-1202), then the FAQ
+ * and the closing sign-up section. Every sentence in the guide carries a `data-claim` id from the
+ * guide's ledger (marginborn-guide/ledger/claims.md), where each one is checked against the iOS
+ * app's code: change the wording there first. The pictures show the iPhone app over a
+ * public-domain sample library; marginborn-guide/sample-library/README.md says how to retake them.
  */
-import BaseLayout         from '../layouts/BaseLayout.astro'
-import Nav                from '../components/Nav.astro'
-import CapturePassages    from '../components/CapturePassages.astro'
-import TagIdeas           from '../components/TagIdeas.astro'
-import CommonplaceCarousel from '../components/CommonplaceCarousel.astro'
-import SupportingCards    from '../components/SupportingCards.astro'
-import Faq                from '../components/Faq.astro'
-import ClosingCta         from '../components/ClosingCta.astro'
-import Footer             from '../components/Footer.astro'
----
+import type { ImageMetadata } from 'astro'
+import { Image }  from 'astro:assets'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav        from '../components/Nav.astro'
+import Faq        from '../components/Faq.astro'
+import ClosingCta from '../components/ClosingCta.astro'
+import Footer     from '../components/Footer.astro'
+import '../styles/guide.css'
 
+const pictures = import.meta.glob<{ default: ImageMetadata }>('../assets/how-it-works/*.jpg', { eager: true })
+
+function pic(name: string): ImageMetadata {
+  const picture = pictures[`../assets/how-it-works/${name}.jpg`]
+  if (!picture) throw new Error(`how-it-works: no picture named ${name}`)
+  return picture.default
+}
+---
 <BaseLayout
-  title="How Marginborn works — capture, tag, resurface"
-  description="How Marginborn turns marked books and handwritten notes into a searchable index of ideas: capture passages, tag them to canonical ideas, and resurface them when you write."
+  title="How Marginborn works — a guide for new readers"
+  description="How Marginborn captures passages, files them under ideas and brings them back, the things it does that you might not guess, and what stays private."
   bodyClass="lp-page-v2 braird-howto"
 >
   <Nav />
   <main>
-    <header class="hiw-section-v2 hiw-howto-intro">
-      <p class="hiw-step-label hiw-step-hero">How it works</p>
-      <h1 class="hiw-h2 hiw-h2-hero hiw-h2-center">Keep inspiration alive</h1>
-      <p class="hiw-lede-small hiw-center">
-        From your book highlights to your margin notes to your inspired
-        scribbles, Marginborn captures and tags them to ideas, so the right
-        passage resurfaces when you need it.
-      </p>
-    </header>
+    <div class="guide" data-guide>
+        <header class="intro">
+          <p class="eyebrow" data-nonclaim>A guide for new readers</p>
+          <h1 class="ruled">How Marginborn works</h1>
+          <p class="prose" data-claim="i-p1">Marginborn keeps the passages you read and the thoughts they start, files them under ideas, and brings them back on Home. This guide walks through how it works, and the things it does that you might not guess.</p>
+          <nav aria-label="Chapters" id="chapters">
+            <ol class="toc">
+              <li><a href="#map">The app in one picture</a></li>
+              <li><a href="#getting-in">Getting in</a></li>
+              <li><a href="#capturing">Capturing</a></li>
+              <li><a href="#commonplace">Your Commonplace</a></li>
+              <li><a href="#following">Following a thought</a></li>
+              <li><a href="#finding">Finding things</a></li>
+              <li><a href="#looking-after">Looking after it</a></li>
+              <li><a href="#private">What is private</a></li>
+            </ol>
+          </nav>
+        </header>
 
-    <CapturePassages />
-    <TagIdeas />
-    <CommonplaceCarousel />
-    <SupportingCards />
+        <section class="chapter" id="map">
+        <div class="chapter-head"><h2 class="ruled">The app in one picture</h2></div>
+        <div class="prose"><p data-claim="m-p1">Five places sit on the bottom bar. Everything else opens from one of them.</p></div>
+        <p class="map-hint" data-nonclaim>Scroll sideways to see all five places.</p>
+      <div class="map-frame" role="region" tabindex="0" aria-label="The app in one picture: the bottom bar and what opens from each place">
+          <div class="map">
+            <div class="bar"><span>Home</span><span>Commonplace</span><span><span class="disc">Capture</span></span><span>Search</span><span>Profile</span></div>
+            <div class="col"><span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('home')} alt="" /></span><b>Home</b></div>
+            </div>
+            <div class="col"><span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('commonplace-cloud')} alt="" /></span><b>Cloud and list</b></div>
+              <span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('note-page')} alt="" /></span><b>A note's page</b></div>
+              <span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('stem')} alt="" /></span><b>The Stem</b></div>
+            </div>
+            <div class="col"><span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('capture-form-transcription')} alt="" /></span><b>Capture form</b></div>
+            </div>
+            <div class="col"><span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('search-word')} alt="" /></span><b>Search</b></div>
+            </div>
+            <div class="col"><span class="link"></span>
+              <div class="node"><span class="shot"><Image src={pic('profile')} alt="" /></span><b>Profile</b></div>
+              <span class="link"></span><span class="fork"></span>
+              <div class="twin">
+                <div class="col"><div class="node"><span class="shot"><Image src={pic('lexicon')} alt="" /></span><b>Lexicon</b></div></div>
+                <div class="col">
+                  <div class="node"><span class="shot"><Image src={pic('settings-top')} alt="" /></span><b>Settings</b></div>
+                  <span class="link"></span>
+                  <div class="node"><span class="shot"><Image src={pic('library')} alt="" /></span><b>Library</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+        <section class="chapter" id="getting-in">
+        <div class="chapter-head"><p class="eyebrow" data-nonclaim>Chapter 1</p><h2 class="ruled">Getting in</h2></div>
+        <div class="prose">
+          <p data-claim="c1-p1">Marginborn opens with a sign-in: Continue with Apple, Continue with Google, or an email code.</p>
+          <p data-claim="c1-p2">A new account sets up encryption next. Marginborn encrypts your notes before they leave the phone, and a passkey keeps the key.</p>
+          <p data-claim="c1-p3">To add a second device, sign in there with the same account and enter a code made on the first, under Profile → Settings → Linked devices.</p>
+        </div>
+
+        <div class="spread">
+          <h3>Signing in and setting up</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('sign-in')} alt="The sign-in screen" /><span class="dot" aria-hidden="true" style="left:87%;top:83.4%">a</span></span><figcaption>Sign-in</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('set-up-encryption')} alt="Set up encryption" /><span class="dot" aria-hidden="true" style="left:88%;top:54.8%">b</span></span><figcaption>Set up encryption</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c1-02"><span class="dot inline" aria-hidden="true">a</span><span>Email sign-in sits under "Use a different account".</span></li>
+            <li data-claim="c1-01"><span>After Marginborn has been fully closed, by you or by the phone, it asks you to sign in again. Notes already on the phone are kept.</span></li>
+            <li data-claim="c1-03"><span class="dot inline" aria-hidden="true">b</span><span>Setting up encryption cannot be skipped. It needs iCloud Keychain and a passcode.</span></li>
+          </ol>
+          <div style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:8px">
+            <ol class="steps" aria-label="Setting up encryption, drawn">
+              <li data-claim="s1-1">Tap Set up encryption.</li>
+              <li data-claim="s1-2">iOS offers to save a passkey.</li>
+              <li data-claim="s1-3">Your notes are encrypted on this phone from now on.</li>
+            </ol>
+            <ul class="margins"><li data-claim="c1-04"><span>The passkey sheet names braird.app. That is Marginborn.</span></li></ul>
+            <p class="steps-note" data-nonclaim>Drawn, because the simulator cannot show the system's passkey sheet.</p>
+          </div>
+        </div>
+
+        <div class="spread">
+          <h3>Coming back, and a second device</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('lock')} alt="Marginborn locked" /><span class="dot" aria-hidden="true" style="left:70%;top:44%">c</span></span><figcaption>Locked</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('passkey-unlock')} alt="Unlock with passkey" /><span class="dot" aria-hidden="true" style="left:89%;top:41.9%">d</span></span><figcaption>Unlocking</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('settings-devices')} alt="Linked devices in Settings" /><span class="dot" aria-hidden="true" style="left:89%;top:37.7%">e</span></span><figcaption>Linked devices</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c1-05"><span class="dot inline" aria-hidden="true">c</span><span>It locks every time you leave it, and unlocking starts by itself.</span></li>
+            <li data-claim="c1-06"><span class="dot inline" aria-hidden="true">d</span><span>After unlocking you are back where you were, unfinished note included.</span></li>
+            <li data-claim="c1-07"><span class="dot inline" aria-hidden="true">e</span><span>A code to link a device lasts 60 seconds and works once. Choose "Use transfer code" on the other device first.</span></li>
+            <li data-claim="c1-08"><span class="dot inline" aria-hidden="true">e</span><span>Link a second device early. The app warns you while only one is linked.</span></li>
+          </ol>
+        </div>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+        <section class="chapter" id="capturing">
+        <div class="chapter-head"><p class="eyebrow" data-nonclaim>Chapter 2</p><h2 class="ruled">Capturing</h2></div>
+        <div class="prose">
+          <p data-claim="c2-p1">The raised button in the middle of the bottom bar opens Capture. Photograph a passage, choose a photo, or write a note.</p>
+          <p data-claim="c2-p2">Marginborn reads the passages you have marked, or your handwriting, and opens a form with the text, its source, a page and ideas. Check it and tap Add to Commonplace.</p>
+          <p data-claim="c2-p3">From another app, send Marginborn a passage, a link or a picture with the share button.</p>
+        </div>
+
+        <div class="spread">
+          <h3>From a photo to a note</h3>
+          <div style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:8px">
+            <ol class="steps" aria-label="Taking a photo, drawn">
+              <li data-claim="s2-1">Open Capture and frame the passage.</li>
+              <li data-claim="s2-2">Tap the shutter.</li>
+              <li data-claim="s2-3">Marginborn reads the ink, not the page.</li>
+            </ol>
+            <p class="steps-note" data-nonclaim>Drawn, because the simulator has no camera.</p>
+          </div>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('capture-form-source')} alt="The form offering the source it spotted" /><span class="dot" aria-hidden="true" style="left:72%;top:67.6%">a</span></span><figcaption>Source spotted</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('capture-form-transcription')} alt="The form with the text read from the photo" /><span class="dot" aria-hidden="true" style="left:88%;top:79%">b</span><span class="dot" aria-hidden="true" style="left:66%;top:14.5%">c</span></span><figcaption>The text arrives</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c2-01"><span>Reading a photo needs a connection. Offline, write the note instead.</span></li>
+            <li data-claim="c2-02"><span class="dot inline" aria-hidden="true">a</span><span>If Marginborn spots the book, the text stays hidden until you add or dismiss the source.</span></li>
+            <li data-claim="c2-03"><span class="dot inline" aria-hidden="true">b</span><span>The text arrives word by word, and you can edit it once it finishes.</span></li>
+            <li data-claim="c2-04"><span class="dot inline" aria-hidden="true">b</span><span>Ideas are suggested by themselves after a photo, and on request after a written note.</span></li>
+            <li data-claim="c2-07"><span class="dot inline" aria-hidden="true">c</span><span>Saving or closing Capture always lands on Commonplace.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>Ideas, and a check before saving</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('add-idea')} alt="Adding an idea, with nothing listed before you type" /><span class="dot" aria-hidden="true" style="left:70%;top:21%">d</span></span><figcaption>Add idea</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('privacy-review')} alt="Review before saving, which has found an email address" /><span class="dot" aria-hidden="true" style="left:91.5%;top:16.8%">e</span></span><figcaption>Review before saving</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c2-05"><span class="dot inline" aria-hidden="true">d</span><span>"Add idea" lists nothing until you type.</span></li>
+            <li data-claim="c2-06"><span class="dot inline" aria-hidden="true">e</span><span>When a photo's text comes back, and before any text is sent for ideas, Marginborn checks it for card numbers, IBANs, phone numbers, email addresses, US Social Security and UK National Insurance numbers. It does not catch names or addresses, and a note you type and save without asking for ideas is not checked.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>Sharing in from another app</h3>
+          <div style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:8px">
+            <ol class="steps" aria-label="Sharing from another app, drawn">
+              <li data-claim="s3-1">In another app, tap the share button and choose Marginborn.</li>
+              <li data-claim="s3-2">The sheet says "Saved. Open Marginborn to finish."</li>
+              <li data-claim="s3-3">Open Marginborn to review the shared note.</li>
+            </ol>
+            <p class="steps-note" data-nonclaim>Drawn, because the share sheet belongs to the other app.</p>
+          </div>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('share-form')} alt="A shared passage opened as a form to review" /><span class="dot" aria-hidden="true" style="left:60%;top:20.4%">f</span></span><figcaption>A shared passage</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c2-08"><span class="dot inline" aria-hidden="true">f</span><span>Sharing from another app does not open Marginborn. The share waits for you, for up to 7 days.</span></li>
+            <li data-claim="c2-09"><span class="dot inline" aria-hidden="true">f</span><span>Shared text or a link opens as a form. A shared picture is saved straight away.</span></li>
+            <li data-claim="c2-10"><span class="dot inline" aria-hidden="true">f</span><span>There is one unfinished note at a time.</span></li>
+          </ol>
+        </div>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+        <section class="chapter" id="commonplace">
+        <div class="chapter-head"><p class="eyebrow" data-nonclaim>Chapter 3</p><h2 class="ruled">Your Commonplace</h2></div>
+        <div class="prose">
+          <p data-claim="c3-p1">Everything you keep lands in the Commonplace. It has two views of the same notes: a cloud of the ideas they are filed under, and a list of the notes themselves.</p>
+          <p data-claim="c3-p2">Tap a note to open its page, with its source, its ideas and anything written in its margins.</p>
+        </div>
+
+        <div class="spread">
+          <h3>The cloud and the list</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('commonplace-cloud')} alt="The Commonplace as a cloud of ideas" /><span class="dot" aria-hidden="true" style="left:79%;top:9.7%">a</span><span class="dot" aria-hidden="true" style="left:61%;top:52.6%">b</span><span class="dot" aria-hidden="true" style="left:1.5%;top:62.8%">c</span></span><figcaption>The cloud</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('commonplace-list')} alt="The Commonplace as a list of notes" /><span class="dot" aria-hidden="true" style="left:98%;top:36.2%">d</span></span><figcaption>The list</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c3-01"><span class="dot inline" aria-hidden="true">a</span><span>The switch icon shows the view you will go to.</span></li>
+            <li data-claim="c3-02"><span class="dot inline" aria-hidden="true">b</span><span>Tap an idea in the cloud for the list narrowed to it.</span></li>
+            <li data-claim="c3-03"><span class="dot inline" aria-hidden="true">c</span><span>A faint idea has no notes yet. An asterisk marks an idea that sits on more than one branch.</span></li>
+            <li data-claim="c3-05"><span class="dot inline" aria-hidden="true">d</span><span>Notes show an age, never a date. A note with no source is signed "— You".</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>A note's page and its menu</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('note-page')} alt="A note's page with its photo, ideas and margins" /><span class="dot" aria-hidden="true" style="left:64%;top:64.1%">e</span></span><figcaption>A note's page</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('note-menu')} alt="A note card held, showing its menu" /><span class="dot" aria-hidden="true" style="left:77%;top:42.9%">f</span></span><figcaption>Hold a card</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c3-07"><span class="dot inline" aria-hidden="true">e</span><span>"(Re)discover ideas" replaces the note's Canon ideas with a fresh set and keeps the ones you made.</span></li>
+            <li data-claim="c3-04"><span class="dot inline" aria-hidden="true">f</span><span>Editing, filing, sharing and deleting a note are on its card (hold it), not on its page.</span></li>
+            <li data-claim="c3-06"><span class="dot inline" aria-hidden="true">f</span><span>Deleting a note has no undo and reaches every device.</span></li>
+            <li data-claim="c3-09"><span class="dot inline" aria-hidden="true">f</span><span>"Share as image" leaves the photo out.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>Adding the margins</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('margins-review')} alt="Reviewing handwriting found on a photo" /><span class="dot" aria-hidden="true" style="left:91%;top:22.8%">g</span></span><figcaption>Add the Margins</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c3-08"><span class="dot inline" aria-hidden="true">g</span><span>"Add the Margins" is for notes with a photo. It reads handwriting only and needs a connection.</span></li>
+          </ol>
+        </div>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+        <section class="chapter" id="following">
+        <div class="chapter-head"><p class="eyebrow" data-nonclaim>Chapter 4</p><h2 class="ruled">Following a thought</h2></div>
+        <div class="prose">
+          <p data-claim="c4-p1">Notes are filed under ideas. Marginborn has a built-in set of them, the Canon, and you can add your own.</p>
+          <p data-claim="c4-p2">From a note's menu, See Related Notes opens The Stem: the notes that share its ideas, grouped by idea.</p>
+          <p data-claim="c4-p3">The Lexicon, under Profile, keeps what you make: your own ideas, collections of notes, lenses that blend ideas, and the questions you are sitting with. Check-ins ask whether those questions are still open.</p>
+        </div>
+
+        <div class="spread">
+          <h3>Ideas and The Stem</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('idea-page')} alt="The page for the idea Attention, with its notes" /><span class="dot" aria-hidden="true" style="left:40%;top:56.5%">a</span></span><figcaption>An idea's page</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('stem')} alt="The Stem: notes that share ideas with one note" /><span class="dot" aria-hidden="true" style="left:47.5%;top:50.7%">b</span></span><figcaption>The Stem</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c4-01"><span class="dot inline" aria-hidden="true">a</span><span>On a note, each idea carries a dot: green for the built-in Canon, clay for your own.</span></li>
+            <li data-claim="c4-02"><span class="dot inline" aria-hidden="true">b</span><span>In The Stem, "related" means sharing an idea.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>The Lexicon</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('lexicon')} alt="The Lexicon's ideas" /><span class="dot" aria-hidden="true" style="left:45%;top:24%">c</span><span class="dot" aria-hidden="true" style="left:80%;top:80.9%">d</span></span><figcaption>The Lexicon</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('lens-in-search')} alt="The Commonplace narrowed to a lens chosen in Search" /><span class="dot" aria-hidden="true" style="left:55.5%;top:16.4%">e</span></span><figcaption>A lens, from Search</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c4-03"><span class="dot inline" aria-hidden="true">c</span><span>The Lexicon's Ideas lists only your own.</span></li>
+            <li data-claim="c4-05"><span class="dot inline" aria-hidden="true">d</span><span>Questions come from Marginborn's prompts and check-ins, not from the Lexicon's plus.</span></li>
+            <li data-claim="c4-04"><span class="dot inline" aria-hidden="true">e</span><span>To read a lens's or a collection's notes, choose it in Search.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>Questions and check-ins</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('question')} alt="A question's page with the notes attached to it" /></span><figcaption>A question</figcaption></figure>
+            <figure class="crop" style="--crop: 0.55"><span class="shot"><Image src={pic('checkin')} alt="A check-in asking whether questions are still open" /><span class="dot" aria-hidden="true" style="left:70.5%;top:25%">f</span></span><figcaption>A check-in</figcaption></figure>
+            <figure class="crop" style="--crop: 0.2"><span class="shot"><Image src={pic('tagging-card')} alt="The invitation to tag notes that have no ideas" /><span class="dot" aria-hidden="true" style="left:55%;top:30%">g</span></span><figcaption>Tag your library</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c4-06"><span class="dot inline" aria-hidden="true">f</span><span>Swiping away a check-in that Marginborn opened counts as done.</span></li>
+            <li data-claim="c4-07"><span class="dot inline" aria-hidden="true">f</span><span>Marginborn asks to send notifications when it first asks for your question. Reminders never contain the question.</span></li>
+            <li data-claim="c4-08"><span class="dot inline" aria-hidden="true">g</span><span>Once 25 notes have no ideas, Marginborn offers to tag them in batches.</span></li>
+          </ol>
+        </div>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+        <section class="chapter" id="finding">
+        <div class="chapter-head"><p class="eyebrow" data-nonclaim>Chapter 5</p><h2 class="ruled">Finding things</h2></div>
+        <div class="prose">
+          <p data-claim="c5-p1">Search looks through your notes, ideas, lenses and collections. Search by meaning, once it is turned on, also finds notes that say a thing in other words.</p>
+          <p data-claim="c5-p2">The Library holds the books and pages your notes come from, on three shelves: Reading, To read and Shelved.</p>
+        </div>
+
+        <div class="spread">
+          <h3>Search by word and by meaning</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('search-word')} alt="Searching by word as you type" /><span class="dot" aria-hidden="true" style="left:43%;top:10.5%">a</span></span><figcaption>By word</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('search-meaning')} alt="Results found by meaning, one marked Possible echo" /><span class="dot" aria-hidden="true" style="left:40%;top:31.8%">b</span></span><figcaption>By meaning</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c5-01"><span>With nothing typed, Search lists your lenses and collections.</span></li>
+            <li data-claim="c5-02"><span class="dot inline" aria-hidden="true">a</span><span>Typing searches by word. Search by meaning runs when you press Search on the keyboard.</span></li>
+            <li data-claim="c5-03"><span class="dot inline" aria-hidden="true">b</span><span>Search by meaning needs a download of about 179 MB and time to index. Both happen on the phone.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>The Library and duplicates</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('library')} alt="The Library's shelves" /><span class="dot" aria-hidden="true" style="left:49.5%;top:9.7%">c</span><span class="dot" aria-hidden="true" style="left:31%;top:32.2%">d</span></span><figcaption>The Library</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('duplicates')} alt="Possible duplicates to merge" /><span class="dot" aria-hidden="true" style="left:56%;top:46.7%">e</span></span><figcaption>Resolve Duplicates</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c5-04"><span class="dot inline" aria-hidden="true">c</span><span>The Library is not on the bar. Reach it from Home's Sources count, or Profile → Settings.</span></li>
+            <li data-claim="c5-06"><span class="dot inline" aria-hidden="true">c</span><span>The sort button names the current order and flips on a tap.</span></li>
+            <li data-claim="c5-05"><span class="dot inline" aria-hidden="true">d</span><span>Tapping a source opens Commonplace narrowed to it.</span></li>
+            <li data-claim="c5-07"><span class="dot inline" aria-hidden="true">d</span><span>Removing a source keeps its notes. Adding a title you already have makes no second copy.</span></li>
+            <li data-claim="c5-08"><span class="dot inline" aria-hidden="true">e</span><span>Duplicates are found for you but merged only by you, with 10 seconds to undo.</span></li>
+          </ol>
+        </div>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+        <section class="chapter" id="looking-after">
+        <div class="chapter-head"><p class="eyebrow" data-nonclaim>Chapter 6</p><h2 class="ruled">Looking after it</h2></div>
+        <div class="prose">
+          <p data-claim="c6-p1">Settings, under Profile, holds the appearance, check-ins, privacy switches, search by meaning, backup, importing from Readwise, linked devices and your account.</p>
+        </div>
+
+        <div class="spread">
+          <h3>Appearance and privacy</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('settings-top')} alt="Settings in Light" /><span class="dot" aria-hidden="true" style="left:60%;top:71.7%">a</span></span><figcaption>Light</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('settings-top-dark')} alt="Settings in Dark" /></span><figcaption>Dark</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c6-01"><span class="dot inline" aria-hidden="true">a</span><span>Screenshots of notes come out blank unless "Allow screenshots" is on.</span></li>
+          </ol>
+        </div>
+
+        <div class="spread">
+          <h3>Backup, Readwise and your account</h3>
+          <div class="phones">
+            <figure><span class="shot"><Image src={pic('settings-backup')} alt="Backup and Readwise in Settings" /><span class="dot" aria-hidden="true" style="left:45%;top:44.8%">b</span><span class="dot" aria-hidden="true" style="left:55.5%;top:71.1%">c</span></span><figcaption>Backup and Readwise</figcaption></figure>
+            <figure><span class="shot"><Image src={pic('settings-signout')} alt="Confirming sign out" /><span class="dot" aria-hidden="true" style="left:90%;top:53.5%">d</span></span><figcaption>Signing out</figcaption></figure>
+          </div>
+          <ol class="margins">
+            <li data-claim="c6-02"><span class="dot inline" aria-hidden="true">b</span><span>A backup export is readable text, not encrypted.</span></li>
+            <li data-claim="c6-03"><span class="dot inline" aria-hidden="true">b</span><span>Importing a backup merges. It cannot replace a library.</span></li>
+            <li data-claim="c6-04"><span class="dot inline" aria-hidden="true">c</span><span>Readwise highlights arrive without ideas. Your Readwise note on a highlight becomes a margin.</span></li>
+            <li data-claim="c6-05"><span class="dot inline" aria-hidden="true">d</span><span>Signing out removes Marginborn's data from the phone.</span></li>
+            <li data-claim="c6-06"><span>Deleting your account does not clear your other devices.</span></li>
+          </ol>
+        </div>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+        <section class="chapter" id="private">
+        <div class="chapter-head"><h2 class="ruled">What is private, plainly</h2></div>
+        <table class="privacy">
+          <tr data-claim="p-01"><th>Encrypted with your key before it is synced</th><td>Note text and question text</td></tr>
+          <tr data-claim="p-02"><th>Not encrypted with that key</th><td>The photos kept with your notes, ideas and their descriptions, collection and lens names, and source details such as titles, authors, page numbers and shared links</td></tr>
+          <tr data-claim="p-03"><th>Sent away to be read</th><td>A photo you capture or share, and a note's text when ideas are found for it (automatically after a photo or a share, or when you ask), go through Marginborn's server to Anthropic to be read, and their text to Microsoft Azure to be screened. They are not used for training or advertising</td></tr>
+          <tr data-claim="p-04"><th>Stays on the phone</th><td>The model and index for search by meaning</td></tr>
+        </table>
+        <p class="prose" data-claim="p-05">Feature-use counts stay off until you turn them on.</p>
+
+        <p class="guide-note" data-nonclaim>Pictures and details show Marginborn for iPhone, as of October 2026, over a sample library of books published before 1930.</p>
+        <p class="guide-back" data-nonclaim><a href="#chapters">Back to chapters</a></p>
+      </section>
+    </div>
     <Faq />
-    <ClosingCta />
+    <ClosingCta
+      line="Marginborn is in testing. Android testers can join now; on iPhone, leave your email and we'll write when it's ready."
+      cta={{ label: 'Test Marginborn', href: '/testwithus/', name: 'closing_testwithus' }}
+    />
   </main>
   <Footer />
 </BaseLayout>
-
-<style>
-  /* The intro inherits the section rhythm; just centre it and lift the top
-     gutter clear of the fixed nav. */
-  .hiw-howto-intro {
-    text-align: center;
-    padding-top: 64px;
-    padding-bottom: 24px;
-  }
-</style>

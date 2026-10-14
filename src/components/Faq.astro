@@ -7,26 +7,40 @@
  * Port source: surfc/src/components/LandingPage.jsx lines 358-386.
  */
 
-const FAQ_ITEMS = [
+// Every answer here is checked against the app's code and recorded, with its evidence, in the guide's
+// ledger (marginborn-guide/ledger/faq.md; the privacy answer follows claims.md p-01 to p-03). Change the
+// wording there first: the privacy answer is a GCE claim (GATING.md §5).
+type FaqItem = { q: string; a: string; link?: { href: string; label: string } }
+
+const FAQ_ITEMS: FaqItem[] = [
   {
     q: 'Who is Marginborn for?',
     a: 'Marginborn is for people who annotate books, build commonplace notebooks, or study recurring themes across disciplines.',
   },
   {
     q: 'How do I capture printed passages?',
-    a: 'Use the camera inside Marginborn to take a photo. The ingestion pipeline transcribes the marked text and preserves page context.',
+    a: "Photograph a page where you have marked a passage. Marginborn reads what you marked, picks up the book's "
+      + 'title, author and page if it can see them, and keeps the photo with the note. On a page with nothing marked '
+      + 'it finds no text, so you type the passage instead.',
   },
   {
     q: 'Can I capture handwritten notes?',
-    a: 'Yes. Photograph handwritten pages; Marginborn keeps the handwriting image and transcribes the text for search.',
+    a: "Yes. Photograph a handwritten page and Marginborn reads all of it. Notes you wrote in a book's margins can be "
+      + 'added to a note that has a photo, with Add the Margins.',
   },
   {
     q: 'Will my notes sync across devices?',
-    a: 'Notes live locally first and sync across your devices when online. Expect instant local saves and background conflict-aware sync.',
+    a: "Notes save on your phone first and sync across your devices when you're online. If the same note is changed "
+      + 'on two devices, the later change is kept.',
   },
   {
     q: 'Is my data private?',
-    a: 'Yes. Notes are encrypted at rest using AES-256-GCM and stay offline unless you choose to sync.',
+    a: 'Your note text and your questions are encrypted with your key before they are synced. The photos kept with '
+      + 'your notes, ideas, collection and lens names, and source details are not encrypted with that key. A photo '
+      + "you capture or share, and a note's text when ideas are found for it, go through Marginborn's server to "
+      + 'Anthropic to be read, and their text to Microsoft Azure to be screened. They are not used for training or '
+      + 'advertising.',
+    link: { href: '#private', label: 'What is private, plainly' },
   },
 ]
 ---
@@ -42,12 +56,17 @@ const FAQ_ITEMS = [
             <span>{item.q}</span>
             <span class="hiw-faq-chev" aria-hidden="true"></span>
           </summary>
-          <div class="hiw-faq-a">{item.a}</div>
+          <div class="hiw-faq-a">{item.a}{item.link && <> <a href={item.link.href}>{item.link.label}</a></>}</div>
         </details>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  /* A link inside an answer (the privacy answer points at the guide's privacy section). */
+  .hiw-faq-a a { color: var(--color-accent-dark); }
+</style>
 
 <script is:inline>
   // Single-open behaviour (was `faqOpen` index state in the React version).
