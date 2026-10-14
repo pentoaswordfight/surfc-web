@@ -105,8 +105,9 @@ We don't sell your data. We share it only with the service providers (sub-proces
 | PostHog | Product analytics (only with your consent) | EU |
 | Resend | Sending account and sign-in emails, and delivering our website and in-app forms to our inbox | US |
 | Google Workspace | Our email inbox: messages you send us and website form submissions | Europe |
-| Google Play | Giving Android testers access to test versions of the app (your email address) | Global |
 | Cloudflare | Content delivery, hosting, bot protection (Turnstile) | Global edge network |
+
+One exception to the list above: if you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. Google handles it under its own privacy policy, not under a contract with us.
 
 We may also disclose data if the law requires it (for example a valid court order), to protect people's safety, or as part of a business sale — in which case we'd tell you.
 
