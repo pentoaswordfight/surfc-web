@@ -40,6 +40,7 @@ We tell you this plainly because your notes can contain personal or sensitive th
 - **Your content:** the photos you capture, the text extracted from them, your notes, tags, and the idea index built from them. This is **end-to-end encrypted**; we store it but cannot read it.
 - **Payment data:** if you subscribe, your payment is handled by Stripe. Stripe processes your card details; we receive limited billing information (such as your billing country, card brand, and the last four digits) but never your full card number.
 - **Support and messages:** anything you send us by email or feedback.
+- **Tester sign-ups:** if you sign up to test the app, your email address, whether you use Android or iPhone, and — if you tell us — your device and what you write or produce.
 
 **Information we collect automatically**
 
@@ -71,6 +72,7 @@ Under the EU/UK GDPR and the Swiss Federal Act on Data Protection (FADP), we rel
 | Process payments and manage subscriptions | To bill you and meet tax/accounting duties | Contract; legal obligation |
 | Keep the Services secure, prevent abuse, fix errors | To protect you and us | Legitimate interests |
 | Respond to your messages and support requests | To help you | Contract; legitimate interests |
+| Run app testing: add you to the testing list, contact you about testing and follow-up research, and tell you when the iPhone app is ready if you asked | To recruit testers and learn from them | **Consent** (you can withdraw at any time) |
 | Analytics to understand and improve the Services | To make Marginborn better | **Consent** (you can decline; see "Cookies and analytics") |
 | Comply with the law | To meet legal obligations | Legal obligation |
 
@@ -101,14 +103,15 @@ We don't sell your data. We share it only with the service providers (sub-proces
 | Microsoft Azure AI Content Safety | Safety screening | EU (Germany West Central) |
 | Stripe | Payment processing | US |
 | PostHog | Product analytics (only with your consent) | EU |
-| Resend | Sending account and sign-in emails | US |
+| Resend | Sending account and sign-in emails, and delivering our website forms to our inbox | US |
+| Google Workspace | Our email inbox: messages you send us and website form submissions | Europe |
 | Cloudflare | Content delivery, hosting, bot protection (Turnstile) | Global edge network |
 
 We may also disclose data if the law requires it (for example a valid court order), to protect people's safety, or as part of a business sale — in which case we'd tell you.
 
 ## 7. Where your data is stored and sent
 
-Most of your data is stored and processed in the **EU** (Supabase, Azure, PostHog). Some processing happens in the **US** (Anthropic for AI, Stripe for payments, Resend for email) and on Cloudflare's global edge network.
+Most of your data is stored and processed in the **EU** (Supabase, Azure, PostHog), and our email inbox (Google Workspace) is stored in Europe. Some processing happens in the **US** (Anthropic for AI, Stripe for payments, Resend for email) and on Cloudflare's global edge network.
 
 When data goes outside the EU/EEA or Switzerland, we rely on appropriate safeguards — such as the EU Standard Contractual Clauses and their Swiss equivalent — to protect it. You can ask us for details.
 
@@ -117,6 +120,7 @@ When data goes outside the EU/EEA or Switzerland, we rely on appropriate safegua
 - **Your account and content:** for as long as your account is active. If you delete your account, we delete your content from our active systems within **30 days**. Encrypted copies may persist in routine backups for a short additional period before they're overwritten.
 - **Payment and tax records:** kept as long as the law requires (for example accounting rules).
 - **Logs and analytics:** kept for a limited period, then deleted or anonymised.
+- **Tester sign-ups (Android and iPhone):** deleted 6 months after closed testing of the app ends. You can ask us to delete yours sooner.
 
 ## 9. How we keep your data safe
 
