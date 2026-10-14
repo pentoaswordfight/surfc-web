@@ -31,8 +31,10 @@ export default defineConfig({
   // SUR-782: /policies/data-request/confirm/ is the one-time confirmation landing
   // for the data-request form — noindex, and out of the sitemap for the same
   // reason as /about/.
+  // SUR-1200: /testwithus/ is the closed-testing sign-up — a noindex campaign
+  // page that retires when closed testing ends.
   integrations: [
-    sitemap({ filter: (page) => !/\/(waitlist|pricing|about|data-request\/confirm)\/?$/.test(page) }),
+    sitemap({ filter: (page) => !/\/(waitlist|pricing|about|data-request\/confirm|testwithus)\/?$/.test(page) }),
     mdx(),
   ],
   // Astro 7 defaults the Markdown pipeline to the Sätteri (Rust) processor,
