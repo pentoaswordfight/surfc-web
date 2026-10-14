@@ -69,7 +69,7 @@ test.describe('How it works is the Marginborn guide', () => {
     const privacy = page.locator('#private')
     await expect(privacy).toContainText('Encrypted with your key before it is synced')
     await expect(privacy).toContainText('The photos kept with your notes')
-    await expect(privacy).toContainText('to Anthropic to be read and to Microsoft Azure to be screened')
+    await expect(privacy).toContainText('to Anthropic to be read, and their text to Microsoft Azure to be screened')
     await expect(privacy).toContainText('a sample library of books published before 1930')
   })
 
@@ -79,7 +79,7 @@ test.describe('How it works is the Marginborn guide', () => {
     await answer.locator('summary').click()
     await expect(answer).toContainText('before they are synced')
     await expect(answer).toContainText('The photos kept with your notes')
-    await expect(answer).toContainText('Microsoft Azure')
+    await expect(answer).toContainText('and their text to Microsoft Azure to be screened')
     await expect(answer).not.toContainText('stay offline')
     expect(await answer.innerText()).not.toMatch(BANNED)
     await expect(answer.locator('a[href="#private"]')).toHaveCount(1)
@@ -99,6 +99,10 @@ test.describe('How it works is the Marginborn guide', () => {
     await page.goto('/how-it-works/')
     const closing = page.locator('.hiw-closing-v2')
     await expect(closing).toContainText("you're not starting from a blank page")
+    // The tester page is Android's (SUR-1200); this guide shows the iPhone app, so the section says so.
+    await expect(closing).toContainText('Marginborn is in testing.')
+    await expect(closing).toContainText('on iPhone, leave your email')
+    await expect(closing).not.toContainText('free to use')
     const cta = closing.locator('a[data-cta="closing_testwithus"]')
     await expect(cta).toHaveText('Test Marginborn')
     await expect(cta).toHaveAttribute('href', '/testwithus/')
@@ -110,6 +114,7 @@ test.describe('How it works is the Marginborn guide', () => {
       const cta = page.locator('.hiw-closing-v2 a[data-cta="closing_signup"]')
       await expect(cta, path).toHaveText('Get Marginborn')
       await expect(cta, path).toHaveAttribute('href', /\/signin$/)
+      await expect(page.locator('.hiw-closing-v2'), path).toContainText('free to use')
     }
   })
 
@@ -174,10 +179,21 @@ test.describe('How it works is the Marginborn guide', () => {
     await page.goto('/how-it-works/')
     const widths = await page.locator('[data-guide] .phones figure').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().width))
     for (const width of widths) expect(width).toBeGreaterThanOrEqual(120)
+    // A screen that wraps onto its own row stays the size of the pair above it.
+    const spreads = await page.locator('[data-guide] .phones').evaluateAll((els) =>
+      els.map((el) => Array.from(el.querySelectorAll('figure')).map((f) => f.getBoundingClientRect().width)))
+    for (const sizes of spreads) expect(Math.max(...sizes)).toBeLessThanOrEqual(Math.min(...sizes) * 1.1)
   })
 
   test('every chapter ends with a way back to the chapter links', async ({ page }) => {
     await page.goto('/how-it-works/')
+    // Following one lands the chapter links below the fixed nav, not under it.
+    await page.locator('[data-guide] #getting-in a[href="#chapters"]').click()
+    await expect.poll(async () => {
+      const nav = await page.locator('[data-nav]').boundingBox()
+      const firstLink = await page.locator('[data-guide] #chapters a').first().boundingBox()
+      return nav && firstLink ? firstLink.y - (nav.y + nav.height) : -1
+    }).toBeGreaterThanOrEqual(0)
     await expect(page.locator('[data-guide] #chapters')).toHaveCount(1)
     for (const id of SECTIONS.slice(1)) {
       await expect(page.locator(`[data-guide] #${id} a[href="#chapters"]`), id).toHaveCount(1)

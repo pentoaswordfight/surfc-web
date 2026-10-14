@@ -38,7 +38,8 @@ const FAQ_ITEMS: FaqItem[] = [
     a: 'Your note text and your questions are encrypted with your key before they are synced. The photos kept with '
       + 'your notes, ideas, collection and lens names, and source details are not encrypted with that key. A photo '
       + "you capture or share, and a note's text when ideas are found for it, go through Marginborn's server to "
-      + 'Anthropic to be read and to Microsoft Azure to be screened, and are not used for training or advertising.',
+      + 'Anthropic to be read, and their text to Microsoft Azure to be screened. They are not used for training or '
+      + 'advertising.',
     link: { href: '#private', label: 'What is private, plainly' },
   },
 ]
@@ -61,6 +62,11 @@ const FAQ_ITEMS: FaqItem[] = [
     </div>
   </div>
 </section>
+
+<style>
+  /* A link inside an answer (the privacy answer points at the guide's privacy section). */
+  .hiw-faq-a a { color: var(--color-accent-dark); }
+</style>
 
 <script is:inline>
   // Single-open behaviour (was `faqOpen` index state in the React version).

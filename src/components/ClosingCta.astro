@@ -5,11 +5,16 @@ import { signupUrl } from '../lib/appUrl'
 import { TIER_NAMES } from '../lib/tiers'
 
 interface Props {
+  /** The line above the button, where a page needs its own (SUR-1204: How it works says Marginborn is in testing). */
+  line?: string
   /** The button, where a page needs its own (SUR-1204: How it works sends readers to the test sign-up, SUR-1200). */
   cta?: { label: string; href: string; name: string }
 }
 
-const { cta = { label: 'Get Marginborn', href: signupUrl(), name: 'closing_signup' } } = Astro.props
+const {
+  line = `Marginborn is free to use. ${TIER_NAMES.pro} is for heavier readers when you're ready.`,
+  cta = { label: 'Get Marginborn', href: signupUrl(), name: 'closing_signup' },
+} = Astro.props
 ---
 
 <section class="hiw-closing-v2">
@@ -20,7 +25,7 @@ const { cta = { label: 'Get Marginborn', href: signupUrl(), name: 'closing_signu
       So the next time you sit down to write, you're not starting from a blank page.
     </p>
     <p class="hiw-lede-small hiw-center">
-      Marginborn is free to use. {TIER_NAMES.pro} is for heavier readers when you're ready.
+      {line}
     </p>
     <div class="hiw-cta-row-v2 hiw-cta-center">
       <a href={cta.href} class="bf-cta" data-cta={cta.name}>

@@ -365,7 +365,7 @@ function pic(name: string): ImageMetadata {
         <table class="privacy">
           <tr data-claim="p-01"><th>Encrypted with your key before it is synced</th><td>Note text and question text</td></tr>
           <tr data-claim="p-02"><th>Not encrypted with that key</th><td>The photos kept with your notes, ideas and their descriptions, collection and lens names, and source details such as titles, authors, page numbers and shared links</td></tr>
-          <tr data-claim="p-03"><th>Sent away to be read</th><td>A photo you capture or share, and a note's text when ideas are found for it (automatically after a photo or a share, or when you ask), go through Marginborn's server to Anthropic to be read and to Microsoft Azure to be screened. They are not used for training or advertising</td></tr>
+          <tr data-claim="p-03"><th>Sent away to be read</th><td>A photo you capture or share, and a note's text when ideas are found for it (automatically after a photo or a share, or when you ask), go through Marginborn's server to Anthropic to be read, and their text to Microsoft Azure to be screened. They are not used for training or advertising</td></tr>
           <tr data-claim="p-04"><th>Stays on the phone</th><td>The model and index for search by meaning</td></tr>
         </table>
         <p class="prose" data-claim="p-05">Feature-use counts stay off until you turn them on.</p>
@@ -375,7 +375,10 @@ function pic(name: string): ImageMetadata {
       </section>
     </div>
     <Faq />
-    <ClosingCta cta={{ label: 'Test Marginborn', href: '/testwithus/', name: 'closing_testwithus' }} />
+    <ClosingCta
+      line="Marginborn is in testing. Android testers can join now; on iPhone, leave your email and we'll write when it's ready."
+      cta={{ label: 'Test Marginborn', href: '/testwithus/', name: 'closing_testwithus' }}
+    />
   </main>
   <Footer />
 </BaseLayout>
