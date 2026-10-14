@@ -1,9 +1,10 @@
 // SUR-370 / SUR-711 — Shared app-URL builder.
 //
-// The marketing site has multiple "Get braird" CTAs that point at
-// `app.braird.app`. They deep-link to `/signin` — the PWA's signed-out landing,
-// which is itself the signup route (passwordless OTP creates the account on
-// first request). SUR-711 dropped the old `?intent=signup` param: AuthScreen no
+// Since SUR-1216 only the legacy /waitlist/ CTA uses `signupUrl()`: the
+// front-door CTAs go to the closed-testing sign-up instead, and the founder
+// limits the web app's discoverability. It deep-links to `/signin` — the PWA's
+// signed-out landing, which is itself the signup route (passwordless OTP
+// creates the account on first request). SUR-711 dropped the old `?intent=signup` param: AuthScreen no
 // longer renders separate signup-framed UI, so the param had nothing to drive
 // and its only live effect was auto-opening the email sheet over the Terms /
 // Privacy consent notice.

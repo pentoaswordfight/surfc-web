@@ -1,20 +1,7 @@
 ---
 // Port source: surfc/src/components/LandingPage.jsx lines 389-406.
-
-import { signupUrl } from '../lib/appUrl'
-import { TIER_NAMES } from '../lib/tiers'
-
-interface Props {
-  /** The line above the button, where a page needs its own (SUR-1204: How it works says Marginborn is in testing). */
-  line?: string
-  /** The button, where a page needs its own (SUR-1204: How it works sends readers to the test sign-up, SUR-1200). */
-  cta?: { label: string; href: string; name: string }
-}
-
-const {
-  line = `Marginborn is free to use. ${TIER_NAMES.pro} is for heavier readers when you're ready.`,
-  cta = { label: 'Get Marginborn', href: signupUrl(), name: 'closing_signup' },
-} = Astro.props
+// SUR-1216 — every page that uses it closes on the closed-testing sign-up
+// (SUR-1200); the line is SUR-1204's, saying "beta" to match the button.
 ---
 
 <section class="hiw-closing-v2">
@@ -25,11 +12,11 @@ const {
       So the next time you sit down to write, you're not starting from a blank page.
     </p>
     <p class="hiw-lede-small hiw-center">
-      {line}
+      Marginborn is in beta. Android testers can join now; on iPhone, leave your email and we'll write when it's ready.
     </p>
     <div class="hiw-cta-row-v2 hiw-cta-center">
-      <a href={cta.href} class="bf-cta" data-cta={cta.name}>
-        {cta.label}
+      <a href="/testwithus/" class="bf-cta" data-cta="closing_testwithus">
+        Join the Beta
       </a>
     </div>
   </div>

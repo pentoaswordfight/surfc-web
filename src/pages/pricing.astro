@@ -7,8 +7,11 @@
  *   - PricingHero (hero band with headline + headline CTA)
  *   - PricingTiers (segmented monthly/annual control + Reader / Practitioner / Scholar)
  *   - PricingFaq (two questions: cancel, student discounts)
- *   - ClosingCta (reused unchanged)
  *   - Footer
+ *
+ * No ClosingCta since SUR-1216: it now invites readers to the beta, and this
+ * page's visitors are signed-in readers who want to pay — the app's upgrade
+ * buttons link here, and Stripe-cancel returns land here.
  *
  * The cold-visitor variant is shipped in the static HTML. The hydration
  * lives in `src/scripts/pricingCheckout.ts` (invoked below): it reads the
@@ -27,7 +30,6 @@ import Nav                  from '../components/Nav.astro'
 import PricingHero          from '../components/PricingHero.astro'
 import PricingTiers         from '../components/PricingTiers.astro'
 import PricingFaq           from '../components/PricingFaq.astro'
-import ClosingCta           from '../components/ClosingCta.astro'
 import Footer               from '../components/Footer.astro'
 import StripeCheckoutStates from '../components/StripeCheckoutStates.astro'
 import { TIER_NAMES }       from '../lib/tiers.ts'
@@ -51,7 +53,6 @@ import '../styles/pricing.css'
     <StripeCheckoutStates />
     <PricingTiers />
     <PricingFaq />
-    <ClosingCta />
   </main>
   <Footer />
 </BaseLayout>

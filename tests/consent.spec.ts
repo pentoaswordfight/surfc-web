@@ -126,7 +126,7 @@ test('the stored choice keeps CTAs clear on later visits', async ({ page }) => {
   await page.locator('#klaro .cookie-notice').getByRole('button', { name: 'Decline analytics' }).click()
   await page.goto('/')
   await expect(page.locator('#klaro .cookie-notice')).toBeHidden()
-  const cta = page.locator('[data-cta="hero_signup"]').first()
+  const cta = page.locator('[data-cta="hero_testwithus"]').first()
   await expect(cta).toBeVisible()
   await cta.click({ trial: true })
 })

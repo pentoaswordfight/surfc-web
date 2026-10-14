@@ -2,11 +2,11 @@
  * preserveUtm — rewrites cross-domain CTA hrefs on the marketing site to
  * carry the originating UTM / click-ID params across to `app.braird.app`.
  *
- * Why: marketing CTAs (Nav, Hero, ClosingCta, waitlist) are static
- * `<a href="https://app.braird.app/signin">` elements. By default they drop
+ * Why: the marketing CTAs that reach the app (pricing, waitlist) are static
+ * `<a href="https://app.braird.app/…">` elements. By default they drop
  * any UTM params the landing page received. Without this preservation, an
  * ad campaign tagged `?utm_source=twitter` loses attribution the moment a
- * visitor clicks any "Get braird" CTA — the resulting `auth_landing_viewed`
+ * visitor clicks one of those CTAs — the resulting `auth_landing_viewed`
  * event on app.braird.app would record `null` UTMs.
  *
  * Canonical UTM/click-ID keys are mirrored in `surfc/src/lib/utmParams.js`
