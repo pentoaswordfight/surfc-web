@@ -3,6 +3,13 @@
 
 import { signupUrl } from '../lib/appUrl'
 import { TIER_NAMES } from '../lib/tiers'
+
+interface Props {
+  /** The button, where a page needs its own (SUR-1204: How it works sends readers to the test sign-up, SUR-1200). */
+  cta?: { label: string; href: string; name: string }
+}
+
+const { cta = { label: 'Get Marginborn', href: signupUrl(), name: 'closing_signup' } } = Astro.props
 ---
 
 <section class="hiw-closing-v2">
@@ -16,8 +23,8 @@ import { TIER_NAMES } from '../lib/tiers'
       Marginborn is free to use. {TIER_NAMES.pro} is for heavier readers when you're ready.
     </p>
     <div class="hiw-cta-row-v2 hiw-cta-center">
-      <a href={signupUrl()} class="bf-cta" data-cta="closing_signup">
-        Get Marginborn
+      <a href={cta.href} class="bf-cta" data-cta={cta.name}>
+        {cta.label}
       </a>
     </div>
   </div>
