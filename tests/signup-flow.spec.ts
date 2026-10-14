@@ -3,7 +3,7 @@
  *
  * Scope (what this spec CAN cover from the marketing-side Playwright suite):
  *   - Marketing CTAs land on the right downstream surface on `app.braird.app`.
- *     The five CTAs catalogued as SIGNUP_CTAs in BaseLayout.astro all fire
+ *     The pricing CTAs catalogued as SIGNUP_CTAS in BaseLayout.astro all fire
  *     `marketing_signup_clicked` on click (smoke.spec.ts covers that
  *     event-level contract), but their **href destinations differ** by
  *     intent — pinning each destination here so a future href flip cannot
@@ -17,9 +17,7 @@
  * Cross-domain CTA destination matrix (this file pins each row):
  *   | CTA                          | Destination                              |
  *   |------------------------------|------------------------------------------|
- *   | nav_signup                   | /signin             (SUR-711)            |
- *   | hero_signup                  | /signin             (smoke.spec.ts)      |
- *   | pricing_start_free           | bare /              (smoke.spec.ts)      |
+ *   | pricing_start_free          | bare /              (smoke.spec.ts)      |
  *   | pricing_hero_start_free      | bare /                                   |
  *   | pricing_get_pro_annual       | /upgrade?…           (SUR-357 surface)   |
  *   | waitlist_legacy_signup       | /signin             (SUR-365 sunset)     |
@@ -33,34 +31,21 @@
  *     Playwright project provisions today. The shape of the cross-domain
  *     contract IS pinned here; the live contract is the manual smoke's job.
  *
- * Pairs with [smoke.spec.ts] which pins `hero_signup` href and asserts
- * `marketing_signup_clicked` fires on click for `hero_signup` +
- * `pricing_start_free`. This file pins the remaining CTAs by href format
- * and adds the UTM-preservation assertion.
+ * Pairs with [smoke.spec.ts] which asserts `marketing_signup_clicked` fires
+ * on click for `pricing_start_free`. This file pins the remaining CTAs by
+ * href format and adds the UTM-preservation assertion. SUR-1216 moved the
+ * front-door CTAs (nav, hero, close) off the app to /testwithus/, so they
+ * are no longer rows here.
  */
 
 import { expect, test } from './fixtures'
 
-// SUR-711 — "Get Marginborn" CTAs now deep-link to bare /signin (no intent param);
+// SUR-711 — signup CTAs deep-link to bare /signin (no intent param);
 // preserveUtm may append a UTM query, so allow an optional `?…` but never an
 // `intent=` param.
 const SIGNUP_HREF_RE = /^https:\/\/app\.braird\.app\/signin(?:\?(?!.*\bintent=)|$)/
 
 test.describe('SUR-368 — signup CTAs deep-link past the unauth redirect', () => {
-  test('home page: nav_signup resolves to /signin', async ({ page }) => {
-    // hero_signup is pinned by smoke.spec.ts. Only nav_signup is unique here.
-    // Some CTAs render multiple times across the page; pin every instance so
-    // a regression that only flips one copy can't slip past `.first()`.
-    await page.goto('/')
-    const anchors = page.locator('a[data-cta="nav_signup"]')
-    const count = await anchors.count()
-    expect(count, 'expected at least one nav_signup anchor').toBeGreaterThan(0)
-    for (let i = 0; i < count; i++) {
-      const href = await anchors.nth(i).getAttribute('href')
-      expect(href, `nav_signup #${i} href`).toMatch(SIGNUP_HREF_RE)
-    }
-  })
-
   test('legacy /waitlist/ page surfaces a direct-signup CTA (post-SUR-365 sunset)', async ({ page }) => {
     // The page has a 3-second meta-refresh to app.braird.app — block that hop
     // so the test can finish assertions on the page content.
@@ -104,23 +89,24 @@ test.describe('SUR-357 — pricing CTAs land on the right downstream surfaces', 
   })
 })
 
+// SUR-1216 left the front door with no app-origin CTA, so these run on the
+// pricing hero's "Start free" (bare app root).
 test.describe('SUR-368 — preserveUtm.ts round-trips campaign attribution', () => {
   test('UTM params from the landing URL are appended to signup CTA hrefs before click', async ({ page }) => {
-    await page.goto('/?utm_source=twitter&utm_campaign=launch&gclid=goog-xyz')
+    await page.goto('/pricing/?utm_source=twitter&utm_campaign=launch&gclid=goog-xyz')
 
     // preserveUtm.ts runs on DOMContentLoaded / astro:page-load. Wait for
     // the rewrite to settle before reading hrefs — without this, the test
     // races the inline script and sees the pre-rewrite href.
-    const hero = page.locator('a[data-cta="hero_signup"]').first()
-    await expect.poll(async () => hero.getAttribute('href'))
+    const cta = page.locator('a[data-cta="pricing_hero_start_free"]')
+    await expect.poll(async () => cta.getAttribute('href'))
       .toMatch(/utm_source=twitter/)
 
-    const href = await hero.getAttribute('href')!
-    expect(href).toMatch(/^https:\/\/app\.braird\.app\/signin\?/)
+    const href = await cta.getAttribute('href')!
+    expect(href).toMatch(/^https:\/\/app\.braird\.app\/\?/)
     expect(href).toMatch(/utm_source=twitter/)
     expect(href).toMatch(/utm_campaign=launch/)
     expect(href).toMatch(/gclid=goog-xyz/)
-    // SUR-711 — no intent param survives the rewrite onto the bare /signin href.
     expect(href).not.toMatch(/intent=/)
     // Origin-equality safeguard in preserveUtm.ts: keys we didn't pass in
     // must NOT appear (no accidental null-stamping).
@@ -128,22 +114,22 @@ test.describe('SUR-368 — preserveUtm.ts round-trips campaign attribution', () 
     expect(href).not.toMatch(/fbclid=/)
   })
 
-  test('UTM is appended cleanly to the bare /signin href (single, well-formed query)', async ({ page }) => {
-    // The build-time href now carries no query (SUR-711 dropped ?intent=signup),
-    // so preserveUtm must append the UTM as the FIRST param — exactly one `?`,
-    // no leftover intent, no malformed `/signin??`.
-    await page.goto('/?utm_source=twitter')
-    const hero = page.locator('a[data-cta="hero_signup"]').first()
-    await expect.poll(async () => hero.getAttribute('href'))
+  test('UTM is appended cleanly to a bare href (single, well-formed query)', async ({ page }) => {
+    // The build-time href carries no query, so preserveUtm must append the
+    // UTM as the FIRST param — exactly one `?`, nothing malformed.
+    await page.goto('/pricing/?utm_source=twitter')
+    const cta = page.locator('a[data-cta="pricing_hero_start_free"]')
+    await expect.poll(async () => cta.getAttribute('href'))
       .toMatch(/utm_source=twitter/)
-    const href = await hero.getAttribute('href')!
-    expect(href).toBe('https://app.braird.app/signin?utm_source=twitter')
+    const href = await cta.getAttribute('href')!
+    expect(href).toBe('https://app.braird.app/?utm_source=twitter')
+    // Same-origin CTAs keep their href: SUR-1216 accepts the UTM loss on /testwithus/.
+    await expect(page.locator('a[data-cta="nav_testwithus"]')).toHaveAttribute('href', '/testwithus/')
   })
 
   test('CTA without UTM in the URL is left untouched (no trailing "?")', async ({ page }) => {
-    await page.goto('/')
-    const hero = page.locator('a[data-cta="hero_signup"]').first()
-    const href = await hero.getAttribute('href')
-    expect(href).toBe('https://app.braird.app/signin')
+    await page.goto('/pricing/')
+    const href = await page.locator('a[data-cta="pricing_hero_start_free"]').getAttribute('href')
+    expect(href).toMatch(/^https:\/\/app\.braird\.app\/?$/)
   })
 })

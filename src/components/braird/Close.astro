@@ -4,7 +4,6 @@
  * the encryption/sync trust line (SUR-727, relocated from the retired
  * explainer), and the one CTA. Closing copy is the founder's line, not an OG card.
  */
-import { signupUrl } from '../../lib/appUrl'
 import MarginbornLockup from './MarginbornLockup.astro'
 ---
 
@@ -20,8 +19,8 @@ import MarginbornLockup from './MarginbornLockup.astro'
     </p>
     <p class="bf-close-trust">Your notes are encrypted, kept in your account, and synced across your devices.</p>
     <div class="bf-cta-row">
-      <a href={signupUrl()} class="bf-cta" data-cta="closing_signup">
-        Get Marginborn
+      <a href="/testwithus/" class="bf-cta" data-cta="closing_testwithus">
+        Join the Beta
       </a>
     </div>
   </div>

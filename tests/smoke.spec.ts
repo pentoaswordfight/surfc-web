@@ -9,10 +9,10 @@
  *     closes any previously-open sibling.
  *   - "Sign in" CTAs resolve to bare `app.braird.app` (default landing) — the
  *     APP origin is unchanged by SUR-1062; only the marketing origin moved.
- *   - The "Get Marginborn" CTA resolves to `app.braird.app/signin` (SUR-711:
- *     the signup-intent param was dropped; /signin is the signup route).
+ *   - The "Join the Beta" CTA resolves to `/testwithus/` and the front door
+ *     has no web-app link (SUR-1216).
  *
- * [SUR-218, SUR-365, SUR-370, SUR-711]
+ * [SUR-218, SUR-365, SUR-370, SUR-711, SUR-1216]
  */
 
 import { expect, test } from './fixtures'
@@ -136,7 +136,7 @@ test('FAQ enforces single-open behaviour', async ({ page }) => {
   await expect(first).not.toHaveAttribute('open', /.*/)
 })
 
-test('signup CTAs emit both app_cta_clicked and marketing_signup_clicked (SUR-367)', async ({ page }) => {
+test('the beta CTA emits app_cta_clicked but not marketing_signup_clicked (SUR-367, SUR-1216)', async ({ page }) => {
   await page.goto('/')
 
   // We swap in our recorder *after* the page has booted. (Since SUR-620 the
@@ -145,8 +145,8 @@ test('signup CTAs emit both app_cta_clicked and marketing_signup_clicked (SUR-36
   // independent of consent state.)
   // The BaseLayout click listener reads `window.posthog.capture` lazily at
   // click time, so this re-binding is honoured. We also short-circuit the
-  // anchor's default navigation; otherwise the page unloads to app.braird.app
-  // before we can read the recorded captures back.
+  // anchor's default navigation; otherwise the page unloads before we can
+  // read the recorded captures back.
   //
   // Lock the rebind with `Object.defineProperty(..., configurable:false)` so
   // that if PostHog ever loaded here, its async `array.js` couldn't reassign
@@ -174,18 +174,14 @@ test('signup CTAs emit both app_cta_clicked and marketing_signup_clicked (SUR-36
     )
   })
 
-  // hero_signup is rendered above the fold on every viewport — nav_signup is
+  // The hero CTA is rendered above the fold on every viewport — the nav one is
   // hidden behind the hamburger on mobile, so we'd need a menu-open dance.
-  const heroSignup = page.locator('[data-cta="hero_signup"]').first()
-  await heroSignup.click()
+  await page.locator('[data-cta="hero_testwithus"]').first().click()
 
+  // The closed-testing sign-up is not an app signup: counting it in the
+  // signup funnel would inflate step 1 with visitors who never reach the app.
   const captures = await page.evaluate(() => (window as any).__captures as Array<[string, Record<string, unknown>]>)
-  const names = captures.map(([n]) => n)
-  expect(names).toContain('app_cta_clicked')
-  expect(names).toContain('marketing_signup_clicked')
-
-  const signupEvent = captures.find(([n]) => n === 'marketing_signup_clicked')!
-  expect(signupEvent[1]).toEqual({ cta: 'hero_signup' })
+  expect(captures).toEqual([['app_cta_clicked', { cta: 'hero_testwithus' }]])
 })
 
 test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', async ({ page }) => {
@@ -229,21 +225,26 @@ test('pricing-page signup CTA also fires marketing_signup_clicked (SUR-367)', as
   expect(signupEvent[1]).toEqual({ cta: 'pricing_start_free' })
 })
 
-test('single "Get Marginborn" CTA deep-links to /signin (SUR-679, SUR-711)', async ({ page }) => {
+test('single "Join the Beta" CTA links to the closed-testing sign-up (SUR-679, SUR-1216)', async ({ page }) => {
   await page.goto('/')
 
-  // SUR-679 collapsed the old Sign in / Sign up pair into one CTA — "Open
-  // braird", reworded to "Get braird" in SUR-779 and to "Get Marginborn" in
-  // SUR-1062. It deep-links past the PWA's
-  // catch-all unauth redirect straight onto /signin — itself the signup route.
-  // SUR-711 dropped the old ?intent=signup param (AuthScreen no longer renders
-  // separate signup framing). The build-time href carries no UTMs on a plain
-  // `/` load; preserveUtm.ts appends them on a real ad landing. data-cta stays
-  // in the SIGNUP_CTAS allowlist so the funnel is unbroken.
-  const cta = page.locator('a', { hasText: /Get Marginborn/i }).first()
-  await expect(cta).toHaveAttribute('href', /https:\/\/app\.braird\.app\/signin$/)
-  await expect(cta).toHaveAttribute('data-cta', /signup$/)
+  // SUR-679 collapsed the old Sign in / Sign up pair into one CTA; SUR-1216
+  // pointed it at /testwithus/ (SUR-1200) instead of the web app.
+  const ctas = page.locator('a', { hasText: 'Join the Beta' })
+  await expect(ctas).toHaveCount(3) // nav, hero, close
+  for (const cta of await ctas.all()) {
+    await expect(cta).toHaveAttribute('href', '/testwithus/')
+    await expect(cta).toHaveAttribute('data-cta', /_testwithus$/)
+  }
 
-  // The standalone "Sign in" link is gone from the front door.
+  // The founder limits the web app's discoverability: the front door neither
+  // links to it nor offers a standalone "Sign in".
+  await expect(page.locator('a[href*="//app.braird.app"], a[href*="//app.marginborn.com"]')).toHaveCount(0)
   await expect(page.locator('a', { hasText: /^Sign in$/ })).toHaveCount(0)
+})
+
+test('the sign-up page\'s nav does not link to itself (SUR-1216)', async ({ page }) => {
+  await page.goto('/testwithus/')
+  await expect(page.locator('.hiw-nav-link').first()).toBeAttached()
+  await expect(page.locator('[data-nav] a[href="/testwithus/"]')).toHaveCount(0)
 })

@@ -8,12 +8,15 @@
  * scrolls past the 8px threshold — unchanged from the original port.
  *
  * Port source: surfc/src/components/LandingPage.jsx lines 137-150.
- * SUR-679 — Braird wordmark + forest chrome; single "Get Marginborn" CTA (copy
- * "Open braird" → "Get Marginborn" in SUR-779).
+ * SUR-679 — Braird wordmark + forest chrome; a single CTA. SUR-1216 made it
+ * "Join the Beta" → the closed-testing sign-up (SUR-1200), and dropped the web
+ * app link on purpose: the founder limits the web app's discoverability.
  */
 
-import { signupUrl } from '../lib/appUrl'
 import MarginbornLockup from './braird/MarginbornLockup.astro'
+
+// The sign-up page's own nav must not link to itself.
+const onTestPage = Astro.url.pathname === '/testwithus/'
 ---
 
 <nav class="hiw-nav" aria-label="Primary" data-nav>
@@ -50,9 +53,11 @@ import MarginbornLockup from './braird/MarginbornLockup.astro'
       <a href="/blog/" class="hiw-nav-link" data-cta="nav_blog">Blog</a>
       {/* Pricing temporarily hidden from nav (route kept live for the Stripe
           checkout cancel/failure flow). Re-add this link to restore. */}
-      <a href={signupUrl()} class="bf-cta" data-cta="nav_signup">
-        Get Marginborn
-      </a>
+      {!onTestPage && (
+        <a href="/testwithus/" class="bf-cta" data-cta="nav_testwithus">
+          Join the Beta
+        </a>
+      )}
     </div>
   </div>
 </nav>

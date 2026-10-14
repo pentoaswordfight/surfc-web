@@ -100,22 +100,25 @@ test.describe('How it works is the Marginborn guide', () => {
     const closing = page.locator('.hiw-closing-v2')
     await expect(closing).toContainText("you're not starting from a blank page")
     // The tester page is Android's (SUR-1200); this guide shows the iPhone app, so the section says so.
-    await expect(closing).toContainText('Marginborn is in testing.')
+    await expect(closing).toContainText('Marginborn is in beta.')
     await expect(closing).toContainText('on iPhone, leave your email')
     await expect(closing).not.toContainText('free to use')
     const cta = closing.locator('a[data-cta="closing_testwithus"]')
-    await expect(cta).toHaveText('Test Marginborn')
+    await expect(cta).toHaveText('Join the Beta')
     await expect(cta).toHaveAttribute('href', '/testwithus/')
   })
 
-  test('other pages keep their own closing button', async ({ page }) => {
-    for (const path of ['/about/', '/pricing/']) {
-      await page.goto(path)
-      const cta = page.locator('.hiw-closing-v2 a[data-cta="closing_signup"]')
-      await expect(cta, path).toHaveText('Get Marginborn')
-      await expect(cta, path).toHaveAttribute('href', /\/signin$/)
-      await expect(page.locator('.hiw-closing-v2'), path).toContainText('free to use')
-    }
+  test('About closes on the same beta button; Pricing has no closing section (SUR-1216)', async ({ page }) => {
+    await page.goto('/about/')
+    const cta = page.locator('.hiw-closing-v2 a[data-cta="closing_testwithus"]')
+    await expect(cta).toHaveText('Join the Beta')
+    await expect(cta).toHaveAttribute('href', '/testwithus/')
+    await expect(page.locator('.hiw-closing-v2')).toContainText('Marginborn is in beta.')
+
+    // Pricing's visitors are mostly Stripe-cancel returns who wanted to pay.
+    await page.goto('/pricing/')
+    await expect(page.locator('[data-cta="pricing_hero_start_free"]')).toBeAttached()
+    await expect(page.locator('.hiw-closing-v2')).toHaveCount(0)
   })
 
   test('dot letters are hidden from screen readers', async ({ page }) => {
