@@ -10,7 +10,8 @@
  *   - Footer
  *
  * No ClosingCta since SUR-1216: it now invites readers to the beta, and this
- * page's visitors are mostly Stripe-cancel returns who already wanted to pay.
+ * page's visitors are signed-in readers who want to pay — the app's upgrade
+ * buttons link here, and Stripe-cancel returns land here.
  *
  * The cold-visitor variant is shipped in the static HTML. The hydration
  * lives in `src/scripts/pricingCheckout.ts` (invoked below): it reads the

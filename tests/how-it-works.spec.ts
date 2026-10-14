@@ -115,7 +115,7 @@ test.describe('How it works is the Marginborn guide', () => {
     await expect(cta).toHaveAttribute('href', '/testwithus/')
     await expect(page.locator('.hiw-closing-v2')).toContainText('Marginborn is in beta.')
 
-    // Pricing's visitors are mostly Stripe-cancel returns who wanted to pay.
+    // Pricing's visitors want to pay (the app's upgrade buttons, Stripe-cancel returns).
     await page.goto('/pricing/')
     await expect(page.locator('[data-cta="pricing_hero_start_free"]')).toBeAttached()
     await expect(page.locator('.hiw-closing-v2')).toHaveCount(0)

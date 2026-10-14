@@ -29,9 +29,12 @@ but §5 items 1 and 8 made it GCE: it removes the signup deep-link and changes `
   link to the beta form would have counted every beta click as an app sign-up in `marketing_signup_clicked`.
   An href test cannot see that. The pin is the smoke test that the beta click fires `app_cta_clicked` and
   nothing else (an exact capture list).
-- **`/pricing/` speaks to paying visitors.** It is out of the nav; its visitors are mostly Stripe-cancel
-  returns (`checkout.ts` `cancelUrl`), signed in and wanting to pay. A shared component rendered there
+- **`/pricing/` speaks to paying visitors.** It is out of the nav; its visitors come from the app's upgrade
+  buttons (surfc `ProfileScreen`, `YourPlanSection`, `UpgradeRoute`) and from Stripe-cancel returns
+  (`checkout.ts` `cancelUrl`) — signed in and wanting to pay. A shared component rendered there
   (`ClosingCta`) is read by that audience, not by cold readers — the beta line contradicted the page.
+  The reviewers first said "mostly Stripe-cancel returns"; the intranet `architecture-decision-reviewer`
+  found the app's links.
 - **The front door no longer reaches the app, so `preserveUtm` lost its test anchor on `/`.** The tests now
   run on `/pricing/`. The UTM lockstep with surfc now protects almost no live traffic.
 
