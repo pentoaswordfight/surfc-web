@@ -12,7 +12,7 @@ const SIGNUP = '**/functions/v1/tester-signup'
 // The consent label is a cross-repo contract: surfc's tester-signup function
 // quotes it verbatim (CONSENT_STATEMENT) into every sign-up mail.
 const CONSENT_STATEMENT =
-  'I agree that Marginborn may use these details to contact me about testing the app, including follow-up research. I can withdraw at any time.'
+  'I agree that Marginborn may use these details to contact me about testing the app, including follow-up research, and, if I chose iPhone, to tell me when the iPhone app is ready. I can withdraw at any time.'
 
 async function fillValidForm(page: import('@playwright/test').Page, phone: 'android' | 'ios' = 'android') {
   await page.fill('#tw-email', '  ada@example.com ')
@@ -32,8 +32,13 @@ test.describe('/testwithus/ — the page', () => {
     await expect(page.getByRole('radiogroup', { name: 'Your phone' })).toBeVisible()
     await expect(page.locator('#tw-device')).toHaveAttribute('maxlength', '120')
     await expect(page.locator('#tw-produce')).toHaveAttribute('maxlength', '200')
+    await expect(page.getByRole('radiogroup', { name: 'Your phone' })).toHaveAttribute('aria-required', 'true')
+    // Phone comes first: it decides what the email field asks for.
+    await expect(page.locator('#tw-form input:not([type="hidden"])').first()).toHaveAttribute('name', 'phone')
     await expect(page.locator('label:has(#tw-consent) span')).toHaveText(CONSENT_STATEMENT)
-    await expect(page.locator('#tw-consent-hint a')).toHaveAttribute('href', '/policies/privacy/')
+    await expect(page.locator('#tw-consent-hint a[href="/policies/privacy/"]')).toHaveCount(1)
+    // Withdrawing is as visible as agreeing.
+    await expect(page.locator('#tw-consent-hint a[href="mailto:hello@marginborn.com"]')).toHaveCount(1)
     await expect(page.locator('.tw-steps li')).toHaveCount(4)
   })
 
@@ -154,14 +159,44 @@ test.describe('/testwithus/ — submitting', () => {
     await expect(page.locator('#tw-alert')).toContainText('Too many sign-ups')
   })
 
-  test('a server 500 shows the generic error with the mailto fallback', async ({ page }) => {
-    await page.route(SIGNUP, (route) => route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":"send_failed","message":"internal detail"}' }))
+  test('a gateway 401 (no function error code) shows the generic error, not the gateway text', async ({ page }) => {
+    await page.route(SIGNUP, (route) => route.fulfill({
+      status: 401, contentType: 'application/json', body: JSON.stringify({ message: 'No API key found in request' }),
+    }))
     await page.goto('/testwithus/')
     await fillValidForm(page)
     await page.click('button[type="submit"]')
     await expect(page.locator('#tw-alert')).toContainText('hello@marginborn.com')
+    await expect(page.locator('#tw-alert')).not.toContainText('API key')
+  })
+
+  test('a server 500 shows the generic error with a mailto link', async ({ page }) => {
+    await page.route(SIGNUP, (route) => route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":"send_failed","message":"internal detail"}' }))
+    await page.goto('/testwithus/')
+    await fillValidForm(page)
+    await page.click('button[type="submit"]')
+    await expect(page.locator('#tw-alert a[href="mailto:hello@marginborn.com"]')).toHaveText('hello@marginborn.com')
     await expect(page.locator('#tw-alert')).not.toContainText('internal detail')
     await expect(page.locator('#tw-form')).toBeVisible()
+  })
+
+  test('while the request runs the button says so, then gets its label back', async ({ page }) => {
+    let release: () => void = () => {}
+    const held = new Promise<void>((resolve) => { release = resolve })
+    await page.route(SIGNUP, async (route) => {
+      await held
+      return route.fulfill({ status: 429, contentType: 'application/json', body: JSON.stringify({ error: 'rate_limit', message: 'Too many sign-ups from here recently. Please try again later.' }) })
+    })
+    await page.goto('/testwithus/')
+    await fillValidForm(page)
+    await page.click('button[type="submit"]')
+    const button = page.locator('button[type="submit"]')
+    await expect(button).toHaveText('Signing up…')
+    await expect(button).toBeDisabled()
+    release()
+    await expect(page.locator('#tw-alert')).toBeVisible()
+    await expect(button).toHaveText('Sign up to test')
+    await expect(button).toBeEnabled()
   })
 })
 

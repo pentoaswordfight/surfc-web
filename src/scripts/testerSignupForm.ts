@@ -20,11 +20,28 @@ const SUCCESS: Record<Phone, string> = {
   android: 'You’re signed up. We add new testers in batches and will email you the link to join.',
   ios: 'You’re on the list. We’ll email you when the iPhone app is ready.',
 }
-const FAILURE = 'We couldn’t send your sign-up just now. Please try again in a moment. If this keeps happening, email hello@marginborn.com instead.'
+const TIMEOUT_MS = 15_000
 
+/** The generic failure, with the inbox as a real mailto link. */
+function failure(): Node[] {
+  const link = document.createElement('a')
+  link.href = 'mailto:hello@marginborn.com'
+  link.textContent = 'hello@marginborn.com'
+  return [
+    document.createTextNode('We couldn’t send your sign-up just now. Please try again in a moment. If this keeps happening, email '),
+    link,
+    document.createTextNode(' instead.'),
+  ]
+}
+
+/**
+ * `functionMessage` is set only when the reply came from the function itself
+ * (it always sends an `error` code). A gateway reply, e.g. a 401 for a missing
+ * apikey, never reaches the visitor.
+ */
 class SignupError extends Error {
-  constructor(public readonly status: number, message: string) {
-    super(message)
+  constructor(public readonly status: number, public readonly functionMessage: string | null) {
+    super(`tester-signup failed: ${status}`)
     this.name = 'SignupError'
   }
 }
@@ -43,10 +60,13 @@ async function postSignup(body: unknown): Promise<void> {
     method: 'POST',
     headers,
     body: JSON.stringify(body),
+    // A hung request must end in the failure message, not a dead button.
+    signal: AbortSignal.timeout(TIMEOUT_MS),
   })
   if (!res.ok) {
-    const data = (await res.json().catch(() => null)) as { message?: string } | null
-    throw new SignupError(res.status, data?.message ?? `tester-signup failed: ${res.status}`)
+    const data = (await res.json().catch(() => null)) as { error?: unknown; message?: unknown } | null
+    const fromFunction = typeof data?.error === 'string' && typeof data.message === 'string'
+    throw new SignupError(res.status, fromFunction ? (data.message as string) : null)
   }
 }
 
@@ -73,7 +93,11 @@ export function initTesterSignupForm(): void {
       hp_trap: String(data.get('hp_trap') ?? ''),
     }
 
-    if (submit) submit.disabled = true
+    const label = submit?.textContent ?? ''
+    if (submit) {
+      submit.disabled = true
+      submit.textContent = 'Signing up…'
+    }
     form.setAttribute('aria-busy', 'true')
     try {
       await postSignup(payload)
@@ -85,14 +109,19 @@ export function initTesterSignupForm(): void {
       }
       posthog()?.capture('tester_signup_submitted', { phone })
     } catch (err) {
-      // 4xx carries the function's own wording (a field error or the rate limit).
+      // A function 4xx carries its own wording (a field error or the rate limit).
       if (alert) {
-        alert.textContent = err instanceof SignupError && err.status < 500 ? err.message : FAILURE
+        const own = err instanceof SignupError && err.status < 500 ? err.functionMessage : null
+        if (own) alert.textContent = own
+        else alert.replaceChildren(...failure())
         alert.hidden = false
         alert.focus()
       }
     } finally {
-      if (submit) submit.disabled = false
+      if (submit) {
+        submit.disabled = false
+        submit.textContent = label
+      }
       form.removeAttribute('aria-busy')
     }
   })

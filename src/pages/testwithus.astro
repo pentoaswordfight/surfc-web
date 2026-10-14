@@ -23,7 +23,7 @@ import '../styles/policy.css'
 ---
 
 <BaseLayout
-  title="Test Marginborn on Android — Marginborn"
+  title="Test the Android app — Marginborn"
   description="Help test the Marginborn Android app before it opens on Google Play. Sign up with your Google account and use the app for 14 days."
   path="/testwithus/"
   noindex
@@ -54,17 +54,10 @@ import '../styles/policy.css'
 
         <!-- method="post": if the script has not loaded yet, a submit must never put the email in a URL. -->
         <form id="tw-form" class="policy-form tw-form" method="post" novalidate aria-label="Sign up to test Marginborn">
-          <div class="policy-field tw-row">
-            <label for="tw-email" class="tw-label">Google account email</label>
-            <div class="tw-field">
-              <input id="tw-email" name="email" type="email" class="inp" required maxlength="254" autocomplete="email" aria-describedby="tw-email-hint" />
-              <p id="tw-email-hint" class="policy-hint">The one you use on Google Play — we can only invite that account. On iPhone, any email works.</p>
-            </div>
-          </div>
-
-          <div class="policy-field tw-row">
+          <!-- Phone first: it decides what the email field asks for. -->
+          <div class="tw-row">
             <span id="tw-phone-label" class="tw-label">Your phone</span>
-            <div class="tw-field" role="radiogroup" aria-labelledby="tw-phone-label" aria-describedby="tw-phone-hint">
+            <div class="tw-field" role="radiogroup" aria-labelledby="tw-phone-label" aria-describedby="tw-phone-hint" aria-required="true">
               <div class="policy-choices tw-phones">
                 <label><input type="radio" name="phone" value="android" required /> <span>Android</span></label>
                 <label><input type="radio" name="phone" value="ios" /> <span>iPhone</span></label>
@@ -73,14 +66,22 @@ import '../styles/policy.css'
             </div>
           </div>
 
-          <div class="policy-field tw-row">
+          <div class="tw-row">
+            <label for="tw-email" class="tw-label">Google account email</label>
+            <div class="tw-field">
+              <input id="tw-email" name="email" type="email" class="inp" required maxlength="254" autocomplete="email" aria-describedby="tw-email-hint" />
+              <p id="tw-email-hint" class="policy-hint">The one you use on Google Play — we can only invite that account. On iPhone, any email works.</p>
+            </div>
+          </div>
+
+          <div class="tw-row">
             <label for="tw-device" class="tw-label">Phone model <span class="policy-optional">(optional)</span></label>
             <div class="tw-field">
               <input id="tw-device" name="device" type="text" class="inp" maxlength="120" autocomplete="off" placeholder="Pixel 8, Galaxy S24" />
             </div>
           </div>
 
-          <div class="policy-field tw-row">
+          <div class="tw-row">
             <label for="tw-produce" class="tw-label">What do you write or produce? <span class="policy-optional">(optional)</span></label>
             <div class="tw-field">
               <input id="tw-produce" name="produce" type="text" class="inp" maxlength="200" autocomplete="off" aria-describedby="tw-produce-hint" />
@@ -91,9 +92,9 @@ import '../styles/policy.css'
           <div class="tw-row">
             <div class="tw-field">
               <div class="policy-choices">
-                <label><input id="tw-consent" type="checkbox" name="consent" required aria-describedby="tw-consent-hint" /> <span>I agree that Marginborn may use these details to contact me about testing the app, including follow-up research. I can withdraw at any time.</span></label>
+                <label><input id="tw-consent" type="checkbox" name="consent" required aria-describedby="tw-consent-hint" /> <span>I agree that Marginborn may use these details to contact me about testing the app, including follow-up research, and, if I chose iPhone, to tell me when the iPhone app is ready. I can withdraw at any time.</span></label>
               </div>
-              <p id="tw-consent-hint" class="policy-hint">How we handle your data: <a href="/policies/privacy/">Privacy Policy</a>.</p>
+              <p id="tw-consent-hint" class="policy-hint">To withdraw, email <a href="mailto:hello@marginborn.com">hello@marginborn.com</a>. How we handle your data: <a href="/policies/privacy/">Privacy Policy</a>.</p>
             </div>
           </div>
 
@@ -116,8 +117,8 @@ import '../styles/policy.css'
         <ol class="tw-steps">
           <li>We add your Google account to the test and email you a link.</li>
           <li>You open the link on your phone and install Marginborn from Google Play.</li>
-          <li>You use the app for 14 days and stay in the test until the end.</li>
-          <li>You tell us what works and what doesn’t, with Send feedback in the app.</li>
+          <li>You use the app for the full 14 days without leaving the test.</li>
+          <li>You tell us what works and what doesn’t, with “Send feedback” in the app.</li>
         </ol>
       </section>
     </div>
@@ -230,7 +231,7 @@ import '../styles/policy.css'
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-  /* `.tw-form` is a grid and `.bf-cta` is inline-flex; both outrank the UA [hidden] rule. */
+  /* `.tw-sheet` is flex, `.tw-row` is grid and `.bf-cta` is inline-flex; all outrank the UA [hidden] rule. */
   .tw-sheet [hidden] { display: none !important; }
 
   .tw-form {
@@ -247,7 +248,6 @@ import '../styles/policy.css'
   }
   /* Rows without a margin note (consent, button) start in the text column. */
   .tw-row > .tw-field:only-child { grid-column: 2; }
-  .tw-row > * + * { margin-top: 0; }
   .tw-field > * + * { margin-top: 6px; }
 
   .tw-label {
@@ -258,25 +258,43 @@ import '../styles/policy.css'
     line-height: 1.35;
     color: var(--color-text-secondary);
     text-align: right;
-    padding-top: 8px;
+    padding-top: 11px; /* centres the first line on a 44px control */
   }
   .tw-label .policy-optional {
     display: block;
     font-size: 13.5px;
   }
+  /* The shared muted grey is 3.3:1 on paper; these hints carry instructions. */
+  .tw-sheet .policy-hint,
+  .tw-sheet .policy-optional { color: var(--color-text-secondary); }
+
+  /* 44px touch targets. */
+  .tw-sheet .inp { min-height: 44px; }
   .tw-phones {
     grid-template-columns: repeat(2, max-content);
     column-gap: 28px;
-    padding-top: 8px;
   }
+  .tw-phones label { min-height: 44px; align-items: center; }
+  .tw-phones input { margin-top: 0; }
 
-  .tw-sheet .inp { background: var(--color-bg-input); }
   .tw-sheet .inp:focus-visible,
   .tw-sheet .tw-submit:focus-visible {
     outline: 2px solid var(--color-accent-text);
     outline-offset: 2px;
   }
   .tw-submit { margin-top: 4px; }
+  .tw-submit:disabled {
+    cursor: progress;
+    opacity: 0.75;
+    transform: none;
+    box-shadow: none;
+    background: var(--bf-shoot);
+  }
+
+  /* Two columns but a narrow sheet: give the text column more of it. */
+  @media (min-width: 960px) and (max-width: 1099.98px) {
+    .tw-sheet { --tw-margin: 8.5rem; }
+  }
 
   @media (max-width: 959.98px) {
     .tw-grid {

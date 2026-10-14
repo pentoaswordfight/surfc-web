@@ -13,7 +13,7 @@ We are the data controller for the personal data described here. If you disagree
 - **Your notes are end-to-end encrypted.** We hold the encrypted data; the keys stay with you. We cannot read your note text.
 - To turn your photos into searchable text and ideas, the **content is sent to AI providers** (Anthropic and Microsoft Azure) in readable form. They process it to give you the feature. They do **not** use it to train their models. This is not a zero-retention arrangement — see "AI processing".
 - We collect the **account, payment, and usage data** needed to run the Services. We don't sell your data, and we don't run ads.
-- Most of your data is stored in the **EU**. Some processing happens in the **US** (Anthropic, Stripe).
+- Most of your data is stored in the **EU**. Some processing happens in the **US** (Anthropic, Stripe, Resend).
 - You have rights over your data — access, correction, deletion, and more. See "Your rights".
 
 This summary is a guide, not the full picture. The sections below govern.
@@ -103,8 +103,9 @@ We don't sell your data. We share it only with the service providers (sub-proces
 | Microsoft Azure AI Content Safety | Safety screening | EU (Germany West Central) |
 | Stripe | Payment processing | US |
 | PostHog | Product analytics (only with your consent) | EU |
-| Resend | Sending account and sign-in emails, and delivering our website forms to our inbox | US |
+| Resend | Sending account and sign-in emails, and delivering our website and in-app forms to our inbox | US |
 | Google Workspace | Our email inbox: messages you send us and website form submissions | Europe |
+| Google Play | Giving Android testers access to test versions of the app (your email address) | Global |
 | Cloudflare | Content delivery, hosting, bot protection (Turnstile) | Global edge network |
 
 We may also disclose data if the law requires it (for example a valid court order), to protect people's safety, or as part of a business sale — in which case we'd tell you.
@@ -120,7 +121,7 @@ When data goes outside the EU/EEA or Switzerland, we rely on appropriate safegua
 - **Your account and content:** for as long as your account is active. If you delete your account, we delete your content from our active systems within **30 days**. Encrypted copies may persist in routine backups for a short additional period before they're overwritten.
 - **Payment and tax records:** kept as long as the law requires (for example accounting rules).
 - **Logs and analytics:** kept for a limited period, then deleted or anonymised.
-- **Tester sign-ups (Android and iPhone):** deleted 6 months after closed testing of the app ends. You can ask us to delete yours sooner.
+- **Tester sign-ups (Android and iPhone):** deleted 6 months after Android closed testing ends. You can ask us to delete yours sooner.
 
 ## 9. How we keep your data safe
 
