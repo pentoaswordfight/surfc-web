@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Marginborn walkthrough</title>
+<!-- Render-only page, never deployed: README.md says how to make the films from it. -->
+<style>
+  /* The site's own self-hosted fonts, from the repo's node_modules (npm ci first). */
+  @font-face { font-family: Lora; font-weight: 500; font-display: block; src: url(../node_modules/@fontsource/lora/files/lora-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: Lora; font-weight: 600; font-display: block; src: url(../node_modules/@fontsource/lora/files/lora-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: "Hanken Grotesk"; font-weight: 400; font-display: block; src: url(../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: "Hanken Grotesk"; font-weight: 500; font-display: block; src: url(../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: "Hanken Grotesk"; font-weight: 600; font-display: block; src: url(../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: "Hanken Grotesk"; font-weight: 700; font-display: block; src: url(../node_modules/@fontsource/hanken-grotesk/files/hanken-grotesk-latin-700-normal.woff2) format('woff2'); }
+  :root {
+    --paper: rgb(239, 238, 231);
+    --screen: rgb(240, 239, 233);
+    --ink: rgb(27, 36, 31);
+    --ink-2: rgba(27, 36, 31, .74);
+    --green: rgb(30, 107, 64);
+    --bright: rgb(47, 158, 99);
+    --leaf: rgb(111, 192, 137);
+    --forest: rgb(21, 40, 28);
+    --on-forest: rgb(236, 239, 231);
+    --sans: "Hanken Grotesk", system-ui, sans-serif;
+    --serif: Lora, Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden; position: relative;
+    background: var(--forest); color: var(--ink); font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .scene { position: absolute; inset: 0; background: var(--paper); opacity: 0; }
+  .scene.dark { background: var(--forest); color: var(--on-forest); }
+
+  /* lockup */
+  .lockup { display: flex; align-items: center; gap: .28em; font: 600 1em/1 var(--serif); letter-spacing: -.015em; }
+  .lockup svg { width: 1.15em; height: 1.15em; color: var(--bright); }
+  .lockup .r { color: var(--bright); }
+  .dark .lockup svg, .dark .lockup .r { color: var(--leaf); }
+
+  .eyebrow { font: 700 19px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--green); }
+  .dark .eyebrow { color: var(--leaf); }
+
+  /* intro, chapter cards and outro */
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .hero { font: 600 116px/1.05 var(--serif); letter-spacing: -.02em; margin: 30px 0 34px; }
+  .lede { font: 400 35px/1.45 var(--sans); max-width: 1180px; opacity: .82; margin: 0; text-wrap: balance; }
+  .card-ch { position: absolute; left: 180px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; width: 1200px; }
+  .card-ch .hero { font-size: 132px; margin: 26px 0 30px; }
+  .card-ch .lede { max-width: 1000px; }
+  .numeral { position: absolute; right: 90px; bottom: -120px; font: 600 760px/1 var(--serif); color: var(--leaf); opacity: .09; letter-spacing: -.04em; }
+
+  /* chapter beats */
+  .left { position: absolute; left: 150px; top: 110px; bottom: 120px; width: 610px; display: flex; flex-direction: column; justify-content: center; }
+  .left h2 { font: 600 66px/1.08 var(--serif); letter-spacing: -.015em; margin: 22px 0 40px; }
+  .points { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; }
+  .points li { position: relative; padding-left: 34px; font: 500 29px/1.4 var(--sans); color: var(--ink-2); text-wrap: pretty; }
+  .points li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 12px; height: 12px; border-radius: 50%; background: var(--bright); }
+  .right { position: absolute; left: 800px; right: 90px; top: 96px; bottom: 112px; display: flex; align-items: center; justify-content: center; gap: 38px; }
+  .right[data-n="1"] { --w: 360px; }
+  .right[data-n="2"] { --w: 340px; gap: 54px; }
+  .right[data-n="3"] { --w: 288px; gap: 34px; }
+  .right[data-n="5"] { --w: 250px; gap: 46px; }
+
+  .shot { display: flex; flex-direction: column; align-items: center; }
+  .phone { padding: calc(var(--w) * .036); background: #121a16; border-radius: calc(var(--w) * .165); box-shadow: 0 30px 60px -20px rgba(21, 40, 28, .45), 0 8px 18px rgba(21, 40, 28, .14); }
+  .phone .screen { width: var(--w); aspect-ratio: 414 / 900; border-radius: calc(var(--w) * .13); overflow: hidden; background: var(--screen); }
+  .screen img { display: block; width: 100%; }
+  .slip .screen { width: var(--w); border-radius: 22px; overflow: hidden; background: var(--screen); box-shadow: 0 26px 50px -18px rgba(21, 40, 28, .4), 0 6px 14px rgba(21, 40, 28, .12); }
+  .slip .screen img { height: 100%; object-fit: cover; }
+  .label { margin-top: 18px; font: 600 21px/1 var(--sans); color: var(--ink-2); }
+  .label b { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: 9px; border-radius: 50%; background: var(--forest); color: var(--on-forest); font: 700 15px/1 var(--sans); vertical-align: 1px; }
+
+  /* overview */
+  .ov-head { position: absolute; top: 120px; left: 0; right: 0; text-align: center; }
+  .ov-head h2 { font: 600 72px/1.05 var(--serif); letter-spacing: -.015em; margin: 22px 0 18px; }
+  .ov-head p { font: 400 30px/1.4 var(--sans); color: var(--ink-2); margin: 0; }
+  .ov .right { left: 0; right: 0; top: 330px; bottom: 130px; }
+  .tab { margin-top: 20px; padding: 10px 22px; border-radius: 999px; background: rgba(27, 36, 31, .07); font: 700 21px/1 var(--sans); color: var(--ink); }
+  .tab.raised { background: var(--bright); color: #fff; }
+  .foot { position: absolute; left: 0; right: 0; bottom: 92px; text-align: center; font: 400 17px/1 var(--sans); color: rgba(27, 36, 31, .55); }
+
+  /* privacy */
+  .pv-head { position: absolute; top: 120px; left: 150px; }
+  .pv-head h2 { font: 600 72px/1.05 var(--serif); letter-spacing: -.015em; margin: 22px 0 0; }
+  .grid { position: absolute; left: 150px; right: 150px; top: 330px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .pv { background: rgba(255, 255, 255, .62); border: 1.5px solid rgba(27, 36, 31, .1); border-radius: 22px; padding: 34px 38px; }
+  .pv h3 { display: flex; align-items: center; gap: 14px; font: 700 27px/1.2 var(--sans); color: var(--green); margin: 0 0 14px; }
+  .pv h3 i { width: 14px; height: 14px; border-radius: 50%; background: var(--bright); }
+  .pv p { font: 400 26px/1.45 var(--sans); color: var(--ink-2); margin: 0; text-wrap: pretty; }
+  .pv-foot { position: absolute; left: 150px; bottom: 116px; font: 500 22px/1 var(--sans); color: var(--ink-2); }
+
+  /* outro */
+  .url { margin-top: 46px; padding: 22px 46px; border-radius: 999px; background: var(--bright); color: var(--forest); font: 700 34px/1 var(--sans); }
+  .testing { margin-top: 26px; font: 600 28px/1.4 var(--sans); color: var(--leaf); }
+
+  /* persistent chrome over paper scenes */
+  #chrome { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  #chrome .lockup { position: absolute; left: 150px; top: 50px; font-size: 32px; color: var(--ink); }
+  .rail { position: absolute; left: 0; right: 0; bottom: 38px; display: flex; justify-content: center; gap: 12px; }
+  .chip { padding: 9px 18px; border-radius: 999px; border: 1.5px solid rgba(27, 36, 31, .16); font: 600 17px/1 var(--sans); color: var(--ink-2); background: rgba(239, 238, 231, 0); }
+  .progress { position: absolute; left: 0; bottom: 0; height: 5px; width: 100%; background: var(--bright); transform-origin: 0 50%; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="chrome">
+  <div class="lockup" data-lockup></div>
+  <div class="rail"></div>
+  <div class="progress"></div>
+</div>
+<script src="timing.js"></script>
+<script>
+// Every scene is laid out up front and driven by Web Animations on one
+// shared timeline, so a renderer can seek to any frame: window.seek(ms).
+const MARK = `<svg viewBox="0 0 100 100" aria-hidden="true"><g stroke="currentColor" stroke-width="5.4" stroke-linecap="round" fill="none"><path d="M50 89.6 V66.7"/><path d="M50 70.8 C45.8 56.3 37.5 47.9 29.2 39.6"/><path d="M50 68.8 C54.2 50 62.5 35.4 68.8 25"/></g><path fill="currentColor" d="M29.2 39.6 C16.7 39.6 10.4 29.2 12.5 18.8 C25 20.8 31.3 29.2 29.2 39.6 Z"/><path fill="currentColor" d="M68.8 25 C81.3 25 87.5 14.6 85.4 4.2 C72.9 6.3 66.7 14.6 68.8 25 Z"/></svg>`;
+const LOCKUP = `${MARK}<span>ma<span class="r">r</span>ginbo<span class="r">r</span>n</span>`;
+
+// One timeline for both apps. ?platform=ios swaps in the iPhone app's wording; without it the words follow
+// the Android app. The pictures are the iPhone screens in both (src/assets/how-it-works, as on the page).
+const q = new URLSearchParams(location.search);
+const IOS = q.get('platform') === 'ios';
+const say = (android, ios) => (IOS ? ios : android);
+const pic = file => `../src/assets/how-it-works/${file}.jpg`;
+
+// [file, label, clip] — clip = [top, height, source height] of the image, for crops shown as a slip, not a phone.
+const CHAPTERS = [
+  { name: 'Getting in', lede: 'Sign in, set up encryption, and link a second device.', beats: [
+    { title: 'Signing in and setting up', shots: [['sign-in', 'Sign-in'], ['set-up-encryption', 'Set up encryption']], points: [
+      say('Sign in with an email code, or continue with Google.', 'Continue with Apple or Google, or use an email code.'),
+      'A new account sets up encryption next. It cannot be skipped.',
+      'Notes are encrypted before they leave the phone. A passkey keeps the key.'] },
+    { title: 'Coming back, and a second device', shots: [['lock', 'Locked'], ['passkey-unlock', 'Unlocking'], ['settings-devices', 'Linked devices', [0, 560, 594]]], points: [
+      say('It locks when Android closes the app, and when you sign out.', 'It locks every time you leave it, and unlocking starts by itself.'),
+      say('After the first passkey unlock, your fingerprint or screen lock can unlock it too.', 'You are back where you were, unfinished note included.'),
+      'Link a second device early. Its code lasts 60 seconds and works once.'] },
+  ] },
+  { name: 'Capturing', lede: say('The green button', 'The raised button') + ' in the middle of the bottom bar opens Capture.', beats: [
+    { title: 'From a photo to a note', shots: [['capture-form-source', 'Source spotted'], ['capture-form-transcription', 'The text arrives']], points: [
+      say('Tap Capture to photograph a passage. Hold it to write a note or import a photo.', 'Photograph a passage, choose a photo, or write a note.'),
+      'Marginborn reads the passages you marked, or your handwriting.',
+      say('The text appears word by word, with its source and suggested ideas.', 'The text arrives word by word, with its source, a page and ideas.')] },
+    { title: 'Ideas, and a check before saving', shots: [['add-idea', 'Add idea'], ['privacy-review', 'Review before saving']], points: [
+      'Ideas are suggested after a photo, and on request after a written note.',
+      say('Marginborn checks a photo’s text and shared text', 'Before text is sent for ideas, Marginborn checks it') + ' for card numbers, phone numbers, email addresses and more.'] },
+    { title: 'Sharing in from another app', shots: [['share-form', 'A shared passage']], points: [
+      'Send a passage, a link or a picture with another app’s share button.',
+      say('Marginborn opens with the share, ready to review.', 'The share waits for you, for up to 7 days.'),
+      say('Text, links and pictures open as a form. Marginborn reads a picture first.', 'Text and links open as a form. A picture is saved straight away.')] },
+  ] },
+  { name: 'Your Commonplace', lede: 'Everything you keep lands in the Commonplace.', beats: [
+    { title: 'The cloud and the list', shots: [['commonplace-cloud', 'The cloud'], ['commonplace-list', 'The list']], points: [
+      'Two views of the same notes: a cloud of ideas, and a list of notes.',
+      'Tap an idea in the cloud for the list narrowed to it.',
+      'Notes show an age, never a date.'] },
+    { title: 'A note’s page', shots: [['note-page', 'A note’s page'], ['note-menu', 'Hold a card'], ['margins-review', 'Add the Margins']], points: [
+      'Tap a note for its source, its ideas and its margins.',
+      'Hold a card to edit, file, share or delete it.',
+      'Add the Margins reads the handwriting on a note’s photo.'] },
+  ] },
+  { name: 'Following a thought', lede: 'Notes are filed under ideas. Follow one to the notes that share it.', beats: [
+    { title: 'Ideas and The Stem', shots: [['idea-page', 'An idea’s page'], ['stem', 'The Stem']], points: [
+      'The Canon is Marginborn’s built-in set of ideas. You can add your own.',
+      'On a note, green marks a Canon idea and clay marks your own.',
+      'See Related Notes opens The Stem: notes that share its ideas, grouped by idea.'] },
+    { title: 'The Lexicon', shots: [['lexicon', 'The Lexicon'], ['lens-in-search', 'A lens, from Search']], points: [
+      'The Lexicon, under Profile, keeps what you make.',
+      'Your own ideas, collections, lenses that blend ideas, and the questions you are sitting with.',
+      say('Open a lens or a collection from Search or the Lexicon to read its notes.', 'Choose a lens or a collection in Search to read its notes.')] },
+    { title: 'Questions and check-ins', shots: [['question', 'A question'], ['checkin', 'A check-in'], ['tagging-card', 'Tag your library', [70, 104, 900]]], points: [
+      'Check-ins ask whether your questions are still open.',
+      'Reminders never contain the question.',
+      'Once 25 notes have no ideas, Marginborn offers to tag them in batches.'] },
+  ] },
+  { name: 'Finding things', lede: 'Search by word or by meaning, and keep your sources in the Library.', beats: [
+    { title: 'By word and by meaning', shots: [['search-word', 'By word'], ['search-meaning', 'By meaning']], points: [
+      'Search looks through your notes, ideas, lenses and collections.',
+      'Typing searches by word. Press Search on the keyboard to search by meaning.',
+      'Search by meaning finds notes that say a thing in other words. It runs on the phone.'] },
+    { title: 'The Library and duplicates', shots: [['library', 'The Library'], ['duplicates', 'Resolve Duplicates']], points: [
+      say('The Library keeps books on three shelves: Reading, To read and Shelved. Other media has its own view.', 'The Library holds your sources on three shelves: Reading, To read and Shelved.'),
+      'Tap a source to open its notes.',
+      'Duplicates are found for you, but merged only by you.'] },
+  ] },
+  { name: 'Looking after it', lede: 'Settings, under Profile, holds the rest.', beats: [
+    { title: 'Appearance and privacy', shots: [['settings-top', 'Light'], ['settings-top-dark', 'Dark']], points: [
+      'Choose Light, Dark, or the system’s setting.',
+      'Screenshots of notes come out blank unless Allow screenshots is on.'] },
+    { title: 'Backup, Readwise and your account', shots: [['settings-backup', 'Backup and Readwise'], ['settings-signout', 'Signing out', [0, 560, 594]]], points: [
+      'A backup export is readable text. Importing a backup merges.',
+      'Readwise highlights arrive without ideas. Your Readwise notes become margins.',
+      'Signing out removes Marginborn’s data from the phone.'] },
+  ] },
+];
+const PRIVATE = [
+  ['Encrypted with your key before it is synced', 'Note text and question text.'],
+  ['Not encrypted with that key', 'The photos kept with your notes, ideas and their descriptions, collection and lens names, and ' + say('source titles and authors.', 'source details.')],
+  ['Sent away to be read', 'Photos you capture or share, and a note’s text when ideas are found, go through Marginborn’s server to Anthropic to be read, and their text to Microsoft Azure to be screened. Not used for training or advertising.'],
+  ['Stays on the phone', 'The model and index for search by meaning.'],
+];
+
+const FADE = 500, WPS = 4.2, EASE = 'cubic-bezier(.2, .7, .2, 1)';
+const ANIMS = [];
+const anim = (el, keyframes, delay, duration, fill = 'both', easing = EASE) =>
+  ANIMS.push(el.animate(keyframes, { delay, duration, fill, easing }));
+const rise = (el, at, dy = 34, dur = 800) =>
+  anim(el, [{ opacity: 0, transform: `translateY(${dy}px)` }, { opacity: 1, transform: 'none' }], at, dur);
+const words = s => s.split(/\s+/).length;
+const h = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
+const stage = document.getElementById('stage');
+let T = 0;
+const STARTS = [];
+
+// A scene fades in over the one below it; the old one drops out once covered.
+// A voiceover can ask for more time: timing.js sets window.MIN_DUR, one entry per scene for each app.
+function scene(html, dur, dark = false) {
+  dur = Math.max(dur, MIN_DUR[IOS ? 'ios' : 'android'][STARTS.length] || 0);
+  const el = h(`<section class="scene${dark ? ' dark' : ''}">${html}</section>`);
+  stage.append(el);
+  const s = T;
+  STARTS.push(s);
+  if (s === 0) el.style.opacity = 1;
+  else anim(el, [{ opacity: 0 }, { opacity: 1 }], s, FADE, 'both', 'ease-in-out');
+  anim(el, [{ opacity: 1 }, { opacity: 0 }], s + dur + FADE, 1, 'forwards', 'linear');
+  T += dur;
+  return [el, s, dur];
+}
+
+function shotHtml([file, label, clip], i) {
+  const img = `<img src="${pic(file)}" alt="">`;
+  const tag = `<div class="label"><b>${'abc'[i]}</b>${label}</div>`;
+  if (!clip) return `<div class="shot"><div class="phone"><div class="screen">${img}</div></div>${tag}</div>`;
+  const [top, height, srcH] = clip;
+  const style = `aspect-ratio:414/${height};`;
+  const pos = `object-position:0 ${srcH > height ? top / (srcH - height) * 100 : 0}%`;
+  return `<div class="shot slip"><div class="screen" style="${style}"><img src="${pic(file)}" alt="" style="${pos}"></div>${tag}</div>`;
+}
+
+// --- intro
+{
+  const [el, s] = scene(`<div class="center">
+      <div class="lockup" style="font-size:64px">${LOCKUP}</div>
+      <div class="eyebrow" style="margin-top:70px">A guide for new readers</div>
+      <div class="hero">How Marginborn works</div>
+      <p class="lede">Marginborn keeps the passages you read and the thoughts they start, files them under ideas, and brings them back on Home.</p>
+    </div>`, 6500, true);
+  [...el.querySelector('.center').children].forEach((c, i) => rise(c, s + 300 + i * 450));
+}
+
+// --- the app in one picture
+const chromeFrom = T;
+{
+  const tabs = [['home', 'Home'], ['commonplace-cloud', 'Commonplace'], ['capture-form-transcription', 'Capture'], ['search-word', 'Search'], ['profile', 'Profile']];
+  const [el, s] = scene(`<div class="ov">
+      <div class="ov-head"><div class="eyebrow">The app in one picture</div><h2>Five places on the bottom bar</h2><p>Everything else opens from one of them.</p></div>
+      <div class="right" data-n="5">${tabs.map(([f, l]) => `<div class="shot"><div class="phone"><div class="screen"><img src="${pic(f)}" alt=""></div></div><div class="tab${l === 'Capture' ? ' raised' : ''}">${l}</div></div>`).join('')}</div>
+      <div class="foot">Pictures show Marginborn for iPhone, as of October 2026, over a sample library of books published before 1930.${say(' Some screens look different on Android.', '')}</div>
+    </div>`, 9000);
+  [...el.querySelector('.ov-head').children].forEach((c, i) => rise(c, s + 300 + i * 250));
+  el.querySelectorAll('.shot').forEach((c, i) => rise(c, s + 1100 + i * 260, 70, 1000));
+  rise(el.querySelector('.foot'), s + 3000, 10);
+}
+
+// --- chapters
+const chapterSpans = [];
+const chromeGaps = [];
+CHAPTERS.forEach((ch, ci) => {
+  const n = ci + 1, start = T;
+  {
+    const [el, s, d] = scene(`<div class="numeral">${String(n).padStart(2, '0')}</div><div class="card-ch">
+        <div class="eyebrow">Chapter ${n}</div><div class="hero">${ch.name}</div><p class="lede">${ch.lede}</p></div>`, 3200, true);
+    [...el.querySelector('.card-ch').children].forEach((c, i) => rise(c, s + 250 + i * 300, 40, 900));
+    anim(el.querySelector('.numeral'), [{ opacity: 0, transform: 'translateY(60px) scale(.96)' }, { opacity: .09, transform: 'none' }], s, d + FADE, 'both', 'cubic-bezier(.1,.6,.3,1)');
+    chromeGaps.push([s, s + d]);
+  }
+  ch.beats.forEach(b => {
+    const total = b.points.reduce((a, p) => a + words(p), 0);
+    const dur = Math.max(7500, 1300 + (total / WPS) * 1000 + 2300);
+    const [el, s, d] = scene(`<div class="left"><div class="eyebrow">Chapter ${n} · ${ch.name}</div><h2>${b.title}</h2>
+        <ul class="points">${b.points.map(p => `<li>${p}</li>`).join('')}</ul></div>
+        <div class="right" data-n="${b.shots.length}">${b.shots.map(shotHtml).join('')}</div>`, dur);
+    const left = el.querySelector('.left');
+    rise(left.querySelector('.eyebrow'), s + 250, 20);
+    rise(left.querySelector('h2'), s + 400, 28);
+    let seen = 0;
+    left.querySelectorAll('li').forEach((li, i) => {
+      anim(li, [{ opacity: 0, transform: 'translateX(-18px)' }, { opacity: 1, transform: 'none' }], s + 1300 + (seen / WPS) * 1000, 700);
+      seen += words(b.points[i]);
+    });
+    el.querySelectorAll('.shot').forEach((c, i) => rise(c, s + 500 + i * 220, 80, 1100));
+    anim(el.querySelector('.right'), [{ transform: 'translateY(10px)' }, { transform: 'translateY(-12px)' }], s, d + FADE, 'both', 'linear');
+  });
+  chapterSpans.push([start, T]);
+});
+
+// --- what is private
+{
+  const start = T;
+  const [el, s] = scene(`<div class="pv-head"><div class="eyebrow">What is private</div><h2>What is private, plainly</h2></div>
+      <div class="grid">${PRIVATE.map(([t, p]) => `<div class="pv"><h3><i></i>${t}</h3><p>${p}</p></div>`).join('')}</div>
+      <div class="pv-foot">Feature-use counts stay off until you turn them on.</div>`, 18000);
+  rise(el.querySelector('.pv-head .eyebrow'), s + 250, 20);
+  rise(el.querySelector('.pv-head h2'), s + 400, 28);
+  // All four cards are up within ~6s; the hold gives time to read them.
+  el.querySelectorAll('.pv').forEach((c, i) => rise(c, s + 1300 + i * 1500, 40, 900));
+  rise(el.querySelector('.pv-foot'), s + 7000, 14);
+  chapterSpans.push([start, T]);
+}
+const chromeTo = T;
+
+// --- outro
+{
+  const [el, s] = scene(`<div class="center">
+      <div class="lockup" style="font-size:52px">${LOCKUP}</div>
+      <div class="hero" style="margin-top:64px">Build your Commonplace</div>
+      <p class="lede">So the next time you sit down to write, you’re not starting from a blank page.</p>
+      <div class="testing">Marginborn is in testing. Android testers can join now.</div>
+      <div class="url">marginborn.com</div>
+    </div>`, 8000, true);
+  [...el.querySelector('.center').children].forEach((c, i) => rise(c, s + 300 + i * 380));
+}
+const TOTAL = T + FADE;
+
+// --- chrome: lockup, chapter rail and progress bar over the paper scenes
+{
+  const chrome = document.getElementById('chrome');
+  chrome.querySelector('[data-lockup]').innerHTML = LOCKUP;
+  const rail = chrome.querySelector('.rail');
+  [...CHAPTERS.map(c => c.name), 'What is private'].forEach((name, i) => {
+    const chip = h(`<div class="chip">${name}</div>`);
+    rail.append(chip);
+    const [a, b] = chapterSpans[i];
+    const on = { background: 'rgb(30, 107, 64)', color: '#fff', borderColor: 'rgb(30, 107, 64)' };
+    const off = { background: 'rgba(239, 238, 231, 0)', color: 'rgba(27, 36, 31, .74)', borderColor: 'rgba(27, 36, 31, .16)' };
+    anim(chip, [off, on], a + FADE, 400);
+    anim(chip, [on, off], b, 400, 'forwards');
+  });
+  // Created in time order so the latest one in effect wins.
+  anim(chrome, [{ opacity: 0 }, { opacity: 1 }], chromeFrom + 200, FADE);
+  chromeGaps.forEach(([a, b]) => {
+    anim(chrome, [{ opacity: 1 }, { opacity: 0 }], a, 250, 'forwards');
+    anim(chrome, [{ opacity: 0 }, { opacity: 1 }], b + 100, FADE, 'forwards');
+  });
+  anim(chrome, [{ opacity: 1 }, { opacity: 0 }], chromeTo, 300, 'forwards');
+  anim(chrome.querySelector('.progress'), [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], 0, TOTAL, 'both', 'linear');
+}
+
+window.TOTAL = TOTAL;
+window.STARTS = STARTS;
+window.seek = ms => ANIMS.forEach(a => { a.currentTime = ms; });
+window.ready = (async () => {
+  await Promise.all(['500 30px Lora', '600 30px Lora', '400 30px "Hanken Grotesk"', '500 30px "Hanken Grotesk"', '600 30px "Hanken Grotesk"', '700 30px "Hanken Grotesk"'].map(f => document.fonts.load(f)));
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(i => i.decode()));
+})();
+
+ANIMS.forEach(a => a.pause());
+if (q.has('t')) window.ready.then(() => seek(+q.get('t') * 1000));
+else if (!q.has('render')) window.ready.then(() => { seek(0); ANIMS.forEach(a => a.play()); });
+</script>
+</body>
+</html>
