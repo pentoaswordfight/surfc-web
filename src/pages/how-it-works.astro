@@ -5,9 +5,19 @@
  * guide's ledger (marginborn-guide/ledger/claims.md), where each one is checked against the iOS
  * app's code: change the wording there first. The pictures show the iPhone app over a
  * public-domain sample library; marginborn-guide/sample-library/README.md says how to retake them.
+ *
+ * Under the title, the walkthrough film (SUR-1221): one per app, the reader's own first. The iPhone
+ * film's words follow this guide; the Android film's follow the Android app. Both show the iPhone
+ * screens. video/README.md says how to make them; the build hashes the files into /_astro/.
  */
 import type { ImageMetadata } from 'astro'
-import { Image }  from 'astro:assets'
+import { Image, getImage } from 'astro:assets'
+import poster          from '../assets/walkthrough/poster.png'
+import iosFilm         from '../assets/walkthrough/marginborn-walkthrough-ios.mp4?url'
+import androidFilm     from '../assets/walkthrough/marginborn-walkthrough-android.mp4?url'
+// no-inline: a captions file under Vite's 4 KB limit would otherwise become a data: URL.
+import iosCaptions     from '../assets/walkthrough/marginborn-walkthrough-ios.vtt?url&no-inline'
+import androidCaptions from '../assets/walkthrough/marginborn-walkthrough-android.vtt?url&no-inline'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav        from '../components/Nav.astro'
 import Faq        from '../components/Faq.astro'
@@ -22,6 +32,12 @@ function pic(name: string): ImageMetadata {
   if (!picture) throw new Error(`how-it-works: no picture named ${name}`)
   return picture.default
 }
+
+const films = [
+  { app: 'ios', name: 'iPhone', src: iosFilm, captions: iosCaptions },
+  { app: 'android', name: 'Android', src: androidFilm, captions: androidCaptions },
+]
+const filmPoster = await getImage({ src: poster, format: 'webp' })
 ---
 <BaseLayout
   title="How Marginborn works — a guide for new readers"
@@ -35,6 +51,38 @@ function pic(name: string): ImageMetadata {
           <p class="eyebrow" data-nonclaim>A guide for new readers</p>
           <h1 class="ruled">How Marginborn works</h1>
           <p class="prose" data-claim="i-p1">Marginborn keeps the passages you read and the thoughts they start, files them under ideas, and brings them back on Home. This guide walks through how it works, and the things it does that you might not guess.</p>
+          <div class="film" data-film>
+            {films.map(({ app, name, src, captions }) => (
+              <video data-app={app} src={src} poster={filmPoster.src} width="1920" height="1080" controls preload="none" playsinline aria-label={`How Marginborn works, the video for ${name}`}>
+                <track kind="captions" src={captions} srclang="en" label="English" />
+              </video>
+            ))}
+            <div class="film-foot">
+              <fieldset class="film-switch">
+                <legend data-nonclaim>Video for</legend>
+                {films.map(({ app, name }, i) => (
+                  <label><input type="radio" name="film-app" value={app} checked={i === 0} autocomplete="off" />{name}</label>
+                ))}
+              </fieldset>
+              <p class="film-note" data-app="android" data-nonclaim>The pictures show the iPhone app. Some screens look different on Android.</p>
+            </div>
+            <script is:inline>
+              // Runs as the page is read, before it is drawn, so nothing moves when an Android phone gets
+              // the Android film. The switch itself is CSS (:has). Only the film on show fetches its
+              // metadata (about 320 KiB on a phone); switching pauses the film put away. The radios are
+              // autocomplete="off": a choice the browser restored after this ran would skip all of this.
+              {
+                const film = document.currentScript.parentElement
+                const show = () => film.querySelectorAll('video').forEach((video) => {
+                  if (video.dataset.app === film.querySelector('input:checked').value) video.preload = 'metadata'
+                  else video.pause()
+                })
+                if (/Android/i.test(navigator.userAgent)) film.querySelector('input[value="android"]').checked = true
+                show()
+                film.addEventListener('change', show)
+              }
+            </script>
+          </div>
           <nav aria-label="Chapters" id="chapters">
             <ol class="toc">
               <li><a href="#map">The app in one picture</a></li>

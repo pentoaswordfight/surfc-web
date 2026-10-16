@@ -48,8 +48,32 @@
 
 .guide .intro { display: flex; flex-direction: column; gap: 18px; }
 .guide .toc { display: flex; flex-wrap: wrap; gap: 8px; }
-.guide .toc a { display: inline-block; font-size: 14px; padding: 6px 13px; border-radius: 999px; border: 1px solid var(--line-strong); text-decoration: none; color: var(--ink-2); }
-.guide .toc a:hover { background: var(--accent-wash); color: var(--accent-ink); border-color: transparent; }
+.guide .toc a, .guide .film-switch label { display: inline-block; font-size: 14px; padding: 6px 13px; border-radius: 999px; border: 1px solid var(--line-strong); text-decoration: none; color: var(--ink-2); }
+.guide .toc a:hover, .guide .film-switch label:hover { background: var(--accent-wash); color: var(--accent-ink); border-color: transparent; }
+
+/* The walkthrough films (SUR-1221), one per app. The switch under them shows one at a time without script,
+   in the chapter links' pill. The forest ground is the films' own, so nothing flashes white before the poster. */
+/* More room below than inside: the switch and its note belong to the film, not to the chapter links under it. */
+.guide .film { display: flex; flex-direction: column; gap: 12px; margin-block: 6px 18px; }
+.guide .film video { width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--bf-forest); border-radius: 14px; }
+/* The iPhone film holds the slot until the Android radio is checked, so a paint mid-parse (before the radios
+   exist) never shows both films, and an Android phone's film takes the same box: nothing moves. */
+.guide .film:not(:has([value="android"]:checked)) [data-app="android"],
+.guide .film:has([value="android"]:checked) [data-app="ios"] { display: none; }
+.guide .film-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.guide .film-switch { display: flex; align-items: center; gap: 8px; min-width: 0; margin: 0; padding: 0; border: 0; }
+/* Floated, the legend joins the row instead of sitting on the fieldset's border. */
+.guide .film-switch legend { float: left; padding: 0; font-size: 14px; color: var(--ink-2); }
+.guide .film-switch label { position: relative; cursor: pointer; }
+.guide .film-switch label:has(:checked) { background: var(--accent-ink); color: var(--on-accent); border-color: var(--accent-ink); }
+.guide .film-switch label:has(:focus-visible) { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+/* Forced colours drop the fill, which alone marks the chosen pill: mark it in the system's own colours. */
+@media (forced-colors: active) {
+  .guide .film-switch label:has(:checked) { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; outline-color: CanvasText; }
+}
+/* The radio covers its pill, unseen: the whole pill takes the click, and the keyboard and screen readers get a real radio. */
+.guide .film-switch input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.guide .film-note { font-size: 13px; color: var(--ink-2); }
 
 /* Chapter links, and the links back to them, land below the fixed nav. */
 .guide #chapters { scroll-margin-top: 88px; }
