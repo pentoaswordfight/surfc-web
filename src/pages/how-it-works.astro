@@ -32,9 +32,10 @@ function pic(name: string): ImageMetadata {
   return picture.default
 }
 
-// The poster paints the page's largest element: at 60 the watercolour looks as it does at the default
-// 80, at a third less weight.
-const filmPoster = await getImage({ src: poster, format: 'webp', quality: 60 })
+// The poster paints the page's largest element, so it is light (44 KiB, not 90): at quality 60 the
+// watercolour looks as it does at the default 80, and 960 wide is near the box it fills, 1020 px on a
+// desktop and about 1050 device pixels on a phone.
+const filmPoster = await getImage({ src: poster, format: 'webp', quality: 60, width: 960 })
 ---
 <BaseLayout
   title="How Marginborn works — a guide for new readers"
@@ -52,7 +53,7 @@ const filmPoster = await getImage({ src: poster, format: 'webp', quality: 60 })
             <video src={film} poster={filmPoster.src} width="1280" height="720" controls preload="metadata" playsinline aria-label="A film about the ideas behind Marginborn">
               <track kind="captions" src={captions} srclang="en" label="English" />
             </video>
-            <p class="film-note" data-nonclaim>The film shows the ideas behind Marginborn. The guide below shows the app, and <a href="#private">What is private, plainly</a> says exactly what is encrypted and what is sent away.</p>
+            <p class="film-note" data-nonclaim>The film shows the ideas behind Marginborn in broad strokes; where it and the guide differ, the guide is right. The guide below shows the iPhone app, and <a href="#private">What is private, plainly</a> says what is encrypted and what is sent away.</p>
           </div>
           <nav aria-label="Chapters" id="chapters">
             <ol class="toc">

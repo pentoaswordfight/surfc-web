@@ -1,8 +1,9 @@
 # The website film
 
 The film under the title of `/how-it-works/` (SUR-1228) comes finished from outside the repo: a
-NotebookLM video overview, "Marginborn: The Architecture of Connected Thought", attached to SUR-1228.
-This folder makes it ready for the page. The NotebookLM watermark and end card come off, the
+NotebookLM video overview, "Marginborn: The Architecture of Connected Thought", attached to SUR-1228
+as `Marginborn___The_Architecture_of_Connected_Thought (1).mp4` (SHA-256
+`58afa29d09f801c4266aaa202e038dc79c30b081744bef2d7fbf95187c38ef10`). This folder makes it ready for the page. The NotebookLM watermark and end card come off, the
 Marginborn lockup closes the film, and the captions come from the film's own words. Nothing here is
 deployed: the page plays the files in `src/assets/walkthrough/`, which the build hashes into `/_astro/`.
 
@@ -23,6 +24,8 @@ From this folder, with `FF` set to the ffmpeg binary (`python -c "import imageio
 and `SRC` to the film from NotebookLM:
 
 ```sh
+mkdir -p out
+
 # 1. The watermark's own pixels, bottom right.
 python -I watermark-mask.py "$SRC" out/watermark-mask.png
 
@@ -35,11 +38,11 @@ node end-card.cjs out/blank-page.png out/end-card.png
 #    fade into the lockup, H.264 720p and AAC, small enough for the page.
 "$FF" -y -t 267.4 -i "$SRC" -loop 1 -framerate 30 -t 3.8 -i out/end-card.png -filter_complex \
   "[0:v]$CLEAN,settb=AVTB,format=yuv420p[film];[1:v]settb=AVTB,format=yuv420p[card];[film][card]xfade=transition=fade:duration=0.8:offset=266.6[v];[0:a]afade=t=out:st=267:d=0.4,apad=whole_dur=270.4,loudnorm=I=-16:TP=-1.5:LRA=11[a]" \
-  -map "[v]" -map "[a]" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p \
-  -ar 48000 -c:a aac -b:a 96k -movflags +faststart ../src/assets/walkthrough/marginborn-film.mp4
+  -map "[v]" -map "[a]" -c:v libx264 -preset slow -crf 26 -bf 0 -pix_fmt yuv420p \
+  -ar 24000 -c:a aac -b:a 64k -movflags +faststart ../src/assets/walkthrough/marginborn-film.mp4
 
-# 4. The poster: the reader in the armchair, the film's last scene.
-"$FF" -y -ss 262 -i ../src/assets/walkthrough/marginborn-film.mp4 -frames:v 1 -update 1 ../src/assets/walkthrough/poster.png
+# 4. The poster: the reader in the armchair, the film's last scene, from the source (one lossy step fewer).
+"$FF" -y -ss 262 -i "$SRC" -vf "$CLEAN" -frames:v 1 -update 1 ../src/assets/walkthrough/poster.png
 
 # 5. The captions, from the film's own words.
 python -I transcribe.py ../src/assets/walkthrough/marginborn-film.mp4 out/transcript.json
@@ -53,6 +56,8 @@ python -I captions.py out/transcript.json ../src/assets/walkthrough/marginborn-f
 - **The captions:** step 5 prints the words the model was least sure of. Listen to those, and add what it
   misheard to `FIXES` in `captions.py`.
 - **The size:** keep the film under Cloudflare Pages' 25 MiB limit for one file. At CRF 26 it is about
-  17 MB.
+  16.6 MB. Every page view fetches the film's index (`preload="metadata"`), so step 3 keeps it small:
+  no B-frames (no table of frame reorders) and 24 kHz sound (half the sound frames) take it from about
+  297 KB to 153 KB. Without B-frames the film itself is about 0.5 MB larger than with them.
 - **The words** are the film's own, not the guide's. Check what a new film says against the page before
   it goes up; the note under the film points readers to the exact privacy section.

@@ -48,6 +48,9 @@ test.describe('How it works is the Marginborn guide', () => {
     await expect(video).toHaveAttribute('preload', 'metadata')
     await expect(video).not.toHaveAttribute('autoplay')
     await expect(video).toHaveAttribute('aria-label', /\S/)
+    // The box is reserved before the poster arrives, so nothing under it moves.
+    await expect(video).toHaveAttribute('width', '1280')
+    await expect(video).toHaveAttribute('height', '720')
     const src = (await video.getAttribute('src'))!
     expect(src, 'hashed into /_astro/, so the immutable cache rule is safe').toMatch(/^\/_astro\/.+\.mp4$/)
     const seek = await page.request.get(src, { headers: { Range: 'bytes=0-1' } })
@@ -55,7 +58,9 @@ test.describe('How it works is the Marginborn guide', () => {
     expect(seek.headers()['content-type']).toBe('video/mp4')
     const bytes = Number(seek.headers()['content-range']?.split('/')[1])
     expect(bytes, "under Cloudflare Pages' 25 MiB limit for one file").toBeLessThan(25 * 1024 * 1024)
-    expect((await page.request.get((await video.getAttribute('poster'))!)).status()).toBe(200)
+    const poster = (await video.getAttribute('poster'))!
+    expect(poster, 'the light WebP, not the PNG it is made from').toMatch(/^\/_astro\/.+\.webp$/)
+    expect((await page.request.get(poster)).status()).toBe(200)
 
     const track = video.locator('track[kind="captions"]')
     await expect(track).toHaveAttribute('srclang', 'en')
@@ -64,10 +69,16 @@ test.describe('How it works is the Marginborn guide', () => {
     expect(vtt.match(/-->/g)?.length ?? 0).toBeGreaterThan(30)
     expect(vtt, 'none of the wording the guide bans').not.toMatch(BANNED)
     // The captions come from a transcript; the app's name is spelt as the app spells it.
-    for (const name of vtt.match(/margin\W?born\w*/gi) ?? []) expect(name).toBe('Marginborn')
+    const names = vtt.match(/margin\W?born\w*/gi) ?? []
+    expect(names.length).toBeGreaterThan(0)
+    for (const name of names) expect(name).toBe('Marginborn')
 
-    // The film's words are its own, not the guide's: the note under it points to the exact privacy section.
-    await expect(film.locator('.film-note a[href="#private"]')).toHaveCount(1)
+    // The film's words are its own, not the guide's: the note under it says which one is right, and
+    // points to the privacy section.
+    const note = film.locator('.film-note')
+    await expect(note).toContainText('where it and the guide differ, the guide is right')
+    await expect(note.locator('a[href="#private"]')).toHaveCount(1)
+    await expect(page.locator('[data-guide] #private')).toHaveCount(1)
   })
 
   test('every picture has words and loads', async ({ page }) => {

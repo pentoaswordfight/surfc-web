@@ -2,28 +2,28 @@ WEBVTT
 
 NOTE Made by video/captions.py from the film's own words (video/transcribe.py).
 
-00:00:00.000 --> 00:00:03.640
+00:00:00.000 --> 00:00:03.660
 Every day, you capture a massive trail of information.
 
 00:00:03.840 --> 00:00:07.740
 Book highlights, margin scribbles, voice memos, and saved articles.
 
-00:00:07.880 --> 00:00:10.660
+00:00:07.900 --> 00:00:10.720
 You save all this material because you intend to use it.
 
-00:00:10.660 --> 00:00:14.360
+00:00:10.720 --> 00:00:14.360
 But months later, when it is actually time to create,
 
-00:00:14.480 --> 00:00:17.220
+00:00:14.480 --> 00:00:17.240
 those brilliant fragments are completely hidden,
 
-00:00:17.220 --> 00:00:19.260
+00:00:17.240 --> 00:00:19.260
 leaving you staring at a blank page.
 
-00:00:19.440 --> 00:00:22.080
+00:00:19.460 --> 00:00:22.060
 Our default organization creates friction.
 
-00:00:22.080 --> 00:00:24.680
+00:00:22.100 --> 00:00:24.680
 We instinctively file notes away by their source,
 
 00:00:24.680 --> 00:00:27.540
@@ -41,13 +41,13 @@ To make these scattered thoughts useful, the organization method has to invert.
 00:00:38.340 --> 00:00:40.580
 Instead of grouping notes by where they came from,
 
-00:00:40.580 --> 00:00:43.560
+00:00:40.580 --> 00:00:43.540
 they must be grouped by the actual ideas they represent.
 
 00:00:43.720 --> 00:00:47.180
 This concept-first architecture is the foundation of Marginborn.
 
-00:00:47.540 --> 00:00:51.280
+00:00:47.520 --> 00:00:51.280
 Gathering your notes by idea rather than by book is the exact mechanism
 
 00:00:51.280 --> 00:00:55.340
@@ -59,31 +59,31 @@ Getting physical media into this environment is nearly frictionless.
 00:00:59.280 --> 00:01:03.160
 You simply photograph a marked passage directly from the page of a physical book.
 
-00:01:03.460 --> 00:01:07.740
+00:01:03.440 --> 00:01:07.740
 The moment that image is captured, the system runs an automated security sweep,
 
-00:01:07.740 --> 00:01:10.540
+00:01:07.740 --> 00:01:10.440
 instantly checking the text to scrub out sensitive details,
 
-00:01:10.540 --> 00:01:12.800
+00:01:10.440 --> 00:01:12.800
 like credit card numbers or email addresses.
 
-00:01:13.080 --> 00:01:15.780
+00:01:13.060 --> 00:01:15.780
 Once the text is secure, extraction begins.
 
 00:01:15.900 --> 00:01:19.400
 The text is detached from the book, and you tag it with a central concept.
 
-00:01:19.400 --> 00:01:22.620
+00:01:19.400 --> 00:01:22.600
 By tagging, you sever it from its original medium.
 
-00:01:22.720 --> 00:01:24.280
+00:01:22.700 --> 00:01:24.260
 The central node then pulses,
 
-00:01:24.320 --> 00:01:27.620
+00:01:24.380 --> 00:01:27.620
 actively searching for other notes that share that exact concept.
 
-00:01:27.820 --> 00:01:31.340
+00:01:27.840 --> 00:01:31.340
 This identical extraction pipeline works for your digital life as well.
 
 00:01:31.400 --> 00:01:34.100
@@ -95,25 +95,25 @@ routing them straight into the system.
 00:01:36.040 --> 00:01:39.020
 Capturing raw text accomplishes very little on its own.
 
-00:01:39.020 --> 00:01:43.140
+00:01:39.020 --> 00:01:43.160
 Assigning an immediate conceptual anchor is what makes the information usable later.
 
-00:01:43.140 --> 00:01:49.060
+00:01:43.160 --> 00:01:49.220
 All of these conceptual nodes gather in a central hub called the Commonplace view,
 
-00:01:49.060 --> 00:01:52.040
+00:01:49.220 --> 00:01:52.040
 forming an interconnected cloud of ideas.
 
-00:01:52.240 --> 00:01:54.940
+00:01:52.300 --> 00:01:54.940
 This structure collapses time completely.
 
-00:01:55.320 --> 00:01:58.380
+00:01:55.380 --> 00:01:58.380
 A note from an old podcast and a highlight from a book read
 
 00:01:58.380 --> 00:02:02.420
 yesterday snap together perfectly when they share an idea tag.
 
-00:02:02.580 --> 00:02:07.820
+00:02:02.620 --> 00:02:07.820
 Click to see related notes, and the structure expands downward, revealing the stems,
 
 00:02:07.820 --> 00:02:10.900
@@ -128,10 +128,10 @@ This is your personalized storage area for the unique lenses you apply to your w
 00:02:19.560 --> 00:02:23.060
 your active collections, and the specific questions you are trying to answer.
 
-00:02:23.360 --> 00:02:26.900
+00:02:23.360 --> 00:02:26.920
 To keep the network healthy, the system performs active maintenance.
 
-00:02:27.140 --> 00:02:30.760
+00:02:27.160 --> 00:02:30.760
 Marginborn automatically offers to tag orphaned notes for you and
 
 00:02:30.760 --> 00:02:33.860
@@ -152,19 +152,19 @@ discoveries to bridge directly into your present thoughts.
 00:02:50.340 --> 00:02:53.780
 Months after you save a note, you sit down to start a new project.
 
-00:02:53.820 --> 00:02:55.440
+00:02:53.800 --> 00:02:55.480
 You vaguely remember a perfect quote,
 
-00:02:55.440 --> 00:02:58.200
+00:02:55.480 --> 00:02:58.220
 but you can't recall the author or the exact phrasing.
 
-00:02:58.200 --> 00:03:00.980
+00:02:58.220 --> 00:03:00.980
 A rigid keyword search fails here.
 
-00:03:00.980 --> 00:03:05.020
+00:03:01.000 --> 00:03:05.000
 Instead, Marginborn uses search by meaning, allowing you to find notes
 
-00:03:05.020 --> 00:03:09.280
+00:03:05.000 --> 00:03:09.280
 based on the intent of the idea, even if you type completely different words.
 
 00:03:09.540 --> 00:03:12.860
@@ -173,7 +173,7 @@ When that forgotten quote surfaces exactly when you need it,
 00:03:12.860 --> 00:03:16.980
 you experience what Marginborn calls a braird, as seen here.
 
-00:03:17.040 --> 00:03:19.360
+00:03:17.020 --> 00:03:19.360
 It's named for the Scottish term for the first green
 
 00:03:19.360 --> 00:03:21.960
@@ -182,10 +182,10 @@ shoots that pushed through the soil after sowing.
 00:03:22.240 --> 00:03:25.200
 The more notes you feed into this idea-centric structure,
 
-00:03:25.200 --> 00:03:27.460
+00:03:25.200 --> 00:03:27.440
 the stronger this return on investment becomes.
 
-00:03:27.460 --> 00:03:29.660
+00:03:27.440 --> 00:03:29.660
 Patterns, recurring questions,
 
 00:03:29.660 --> 00:03:32.960
@@ -209,7 +209,7 @@ and intellectual connections requires absolute security.
 00:03:49.780 --> 00:03:54.480
 This is why Marginborn employs a strict cryptographic architecture.
 
-00:03:54.880 --> 00:03:59.360
+00:03:54.900 --> 00:03:59.360
 As this diagram illustrates, your personal notes and questions are locked with
 
 00:03:59.360 --> 00:04:01.760
@@ -224,10 +224,10 @@ The boundaries around your data are absolute,
 00:04:07.120 --> 00:04:09.980
 meaning search runs entirely on your local device,
 
-00:04:09.980 --> 00:04:12.580
+00:04:09.980 --> 00:04:12.600
 and your personal thoughts are never routed into
 
-00:04:12.580 --> 00:04:16.220
+00:04:12.600 --> 00:04:16.220
 external AI training models or advertising algorithms.
 
 00:04:16.690 --> 00:04:18.840

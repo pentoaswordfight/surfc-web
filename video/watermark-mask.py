@@ -27,9 +27,8 @@ median = np.median(np.frombuffer(raw, np.uint8).reshape(-1, H, W).astype(np.floa
 
 
 def spread(a, r):
-    """The mean (or, for a bool array, any) of each pixel's square of radius r."""
-    p = np.pad(a.astype(np.float32), r, mode="edge")
-    return sum(p[dy:dy + a.shape[0], dx:dx + a.shape[1]] for dy in range(2 * r + 1) for dx in range(2 * r + 1)) / (2 * r + 1) ** 2
+    """The mean of each pixel's square of radius r (for a bool array, above 0 where any is set)."""
+    return np.lib.stride_tricks.sliding_window_view(np.pad(a.astype(np.float32), r, mode="edge"), (2 * r + 1,) * 2).mean(axis=(-2, -1))
 
 
 glyphs = np.abs(median - spread(median, 4)) > STANDS_OUT

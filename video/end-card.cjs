@@ -13,13 +13,17 @@ const ground = 'data:image/png;base64,' + fs.readFileSync(blankPage).toString('b
   const browser = await chromium.launch({ channel: 'msedge' });
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   await page.goto('http://localhost:4321/', { waitUntil: 'networkidle' });
-  await page.evaluate((ground) => {
+  await page.evaluate(async (ground) => {
+    const blank = new Image();
+    blank.src = ground;
+    blank.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
+    await blank.decode(); // drawn before the screenshot, not after it
     const lockup = document.querySelector('.bf-close-lockup');
     lockup.classList.remove('bf-close-lockup'); // the home page's spacing, not the lockup's own
-    lockup.style.fontSize = '60px';
+    lockup.style.cssText = 'position:relative;font-size:60px';
     const card = document.createElement('div');
-    card.style.cssText = `position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:url(${ground}) center/cover`;
-    card.append(lockup);
+    card.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center';
+    card.append(blank, lockup);
     document.body.append(card);
   }, ground);
   await page.evaluate(() => document.fonts.ready);
