@@ -1,74 +1,84 @@
-"""Write one film's WebVTT captions into src/assets/walkthrough/. Each voice line sits where mix.py puts it
-(its scene start plus its lead-in); inside a line, each sentence starts after the pause that ends the one
-before, found in the clip itself. Run after vo.py and the render: venv python -I captions.py android|ios"""
-import json, re, sys
-from pathlib import Path
+"""The film's captions, from the timed words transcribe.py wrote.
 
-import numpy as np
-import soundfile as sf
+    python -I captions.py out/transcript.json ../src/assets/walkthrough/marginborn-film.vtt
 
-sys.path.insert(0, str(Path(__file__).parent))  # python -I leaves the script's folder off the path
-from vo import lines
+Each sentence starts a cue. A sentence too long for one cue is halved where the halves come out
+most even, a break after a comma counting as COMMA characters more even, and each half again until
+every cue fits. FIXES spells the app's own names the way the app does; read the captions through
+after a new film, and add to FIXES what the model misheard.
+"""
+import json
+import re
+import sys
 
-MAX_CUE = 90  # characters: short neighbouring sentences share a cue, so a chapter card is one cue
-
-
-def pauses(x, sr, n):
-    """The n longest quiet stretches inside a clip, as (start, end) seconds, in time order."""
-    hop = int(.01 * sr)
-    env = np.sqrt(np.convolve(x ** 2, np.ones(hop) / hop, "same"))[::hop]
-    quiet = env < env.max() * .02  # about 34 dB under the line's peak
-    runs, start = [], None
-    for i, q in enumerate(quiet):
-        if q and start is None:
-            start = i
-        elif not q and start is not None:
-            if start > 0:  # not the lead-in silence; the tail never closes, so it is never counted
-                runs.append((i - start, start * hop / sr, i * hop / sr))
-            start = None
-    assert len(runs) >= n, f"{len(runs)} pauses for {n} sentence breaks"
-    return sorted((a, b) for _, a, b in sorted(runs, reverse=True)[:n])
+MAX_CUE = 84  # two lines of 42 characters
+COMMA = 20  # how much evener a break after a comma reads
+LINGER = 0.4  # seconds a cue stays after its last word, unless the next one starts first
+FIXES = [
+    (r"\bMarginborne\b|\bmargin-born\b", "Marginborn"),
+    (r"\bbraired\b", "braird"),
+    (r"\bcommonplace view\b", "Commonplace view"),
+    (r"\bthe lexicon\b", "the Lexicon"),
+]
 
 
-def stamp(t):
-    ms = round(t * 1000)
-    return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d}.{ms % 1000:03d}"
+def text(words):
+    # The model hears "end-to-end" as "end", "-to", "-end".
+    return re.sub(r" (?=-\w)", "", " ".join(w["word"] for w in words))
 
 
-def main(platform):
-    here = Path(__file__).parent
-    starts = json.loads((here / "out" / platform / "picture.json").read_text())["starts"]
-    clips_json = here / "vo" / platform / "clips.json"
-    clips = json.loads(clips_json.read_text())
-    texts = [text for _, text in lines(platform)]
-    assert len(starts) == len(clips) == len(texts), (len(starts), len(clips), len(texts))
+def halves(words):
+    if len(words) == 1 or len(text(words)) <= MAX_CUE:
+        return [words]
 
-    cues = []
-    for s, c, text in zip(starts, clips, texts):
-        x, sr = sf.read(clips_json.parent / c["file"], dtype="float64")
-        sentences = re.split(r"(?<=[.?!])\s+", text)
-        gaps = pauses(x, sr, len(sentences) - 1)
-        # A break found far from where the words put it means a comma pause won: stop rather than mistime.
-        for k, (a, b) in enumerate(gaps):
-            share = sum(map(len, sentences[:k + 1])) / len(text)
-            assert abs((a + b) / 2 / c["length"] - share) < .2, (text, k, a, b, share)
-        bounds = [0.0] + [b for _, b in gaps] + [c["length"]]
-        t0 = s / 1000 + c["lead"]
-        line = [[t0 + bounds[k], t0 + bounds[k + 1], sent] for k, sent in enumerate(sentences)]
-        merged = [line[0]]
-        for cue in line[1:]:
-            if len(merged[-1][2]) + 1 + len(cue[2]) <= MAX_CUE:
-                merged[-1][1:] = [cue[1], merged[-1][2] + " " + cue[2]]
-            else:
-                merged.append(cue)
-        cues += merged
+    def unevenness(i):
+        comma = COMMA if words[i - 1]["word"].endswith(",") else 0
+        return max(len(text(words[:i])), len(text(words[i:]))) - comma
 
-    body = "\n\n".join(f"{stamp(a)} --> {stamp(b)}\n{t}" for a, b, t in cues)
-    out = here.parent / "src" / "assets" / "walkthrough" / f"marginborn-walkthrough-{platform}.vtt"
-    out.write_text(f"WEBVTT\n\nNOTE Made by video/captions.py from the voice lines in video/vo.py.\n\n{body}\n",
-                   encoding="utf-8", newline="\n")
-    print(f"{out.name}: {len(cues)} cues, last ends {stamp(cues[-1][1])}")
+    breaks = [i for i in range(1, len(words)) if not words[i]["word"].startswith("-")]  # never inside a word
+    i = min(breaks, key=unevenness)
+    return halves(words[:i]) + halves(words[i:])
+
+
+def cues(words):
+    sentences, sentence = [], []
+    for word in words:
+        sentence.append(word)
+        if word["word"].endswith((".", "?", "!")):
+            sentences.append(sentence)
+            sentence = []
+    if sentence:
+        sentences.append(sentence)
+    return [cue for s in sentences for cue in halves(s)]
+
+
+def stamp(seconds):
+    h, rest = divmod(round(seconds * 1000), 3_600_000)
+    m, rest = divmod(rest, 60_000)
+    return f"{h:02}:{m:02}:{rest // 1000:02}.{rest % 1000:03}"
+
+
+def main(transcript, vtt):
+    with open(transcript, encoding="utf-8") as f:
+        words = json.load(f)
+    groups = cues(words)
+    lines = ["WEBVTT", "", "NOTE Made by video/captions.py from the film's own words (video/transcribe.py).", ""]
+    for i, group in enumerate(groups):
+        start, end = group[0]["start"], group[-1]["end"]
+        following = groups[i + 1][0]["start"] if i + 1 < len(groups) else end + LINGER
+        caption = text(group)
+        for wrong, right in FIXES:
+            caption = re.sub(wrong, right, caption)
+        lines += [f"{stamp(start)} --> {stamp(max(end, min(end + LINGER, following)))}", caption, ""]
+
+    # Nothing the narrator said is lost, no cue is too long, and the cues run in order.
+    assert sum(groups, []) == words
+    assert all(len(text(g)) <= MAX_CUE or len(g) == 1 for g in groups)
+    assert all(a[0]["start"] <= b[0]["start"] for a, b in zip(groups, groups[1:]))
+    with open(vtt, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(lines))
+    print(f"{len(groups)} cues")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(*sys.argv[1:3])

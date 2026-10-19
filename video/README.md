@@ -1,68 +1,63 @@
-# The walkthrough films
+# The website film
 
-The two films under the title of `/how-it-works/` (SUR-1221) are made from this folder. Nothing here is
-deployed: the page plays the finished files in `src/assets/walkthrough/`, which the build hashes into
-`/_astro/`.
+The film under the title of `/how-it-works/` (SUR-1228) comes finished from outside the repo: a
+NotebookLM video overview, "Marginborn: The Architecture of Connected Thought", attached to SUR-1228
+as `Marginborn___The_Architecture_of_Connected_Thought (1).mp4` (SHA-256
+`58afa29d09f801c4266aaa202e038dc79c30b081744bef2d7fbf95187c38ef10`). This folder makes it ready for the page. The NotebookLM watermark and end card come off, the
+Marginborn lockup closes the film, and the captions come from the film's own words. Nothing here is
+deployed: the page plays the files in `src/assets/walkthrough/`, which the build hashes into `/_astro/`.
 
-- **One timeline, two apps.** `walkthrough.html` lays out every scene and drives them on one timeline.
-  `?platform=ios` swaps in the iPhone app's wording; without it the words follow the Android app. Both
-  films show the iPhone screens from `src/assets/how-it-works/`, the same pictures as the page.
-- **Words.** The iPhone film's words come from the claims on `/how-it-works/` (the guide's ledger). The
-  Android film's words were checked against braird-android main at 864ecf1. `vo.py` holds the voice
-  lines (one per scene, as the captions show them); `walkthrough.html` holds the on-screen text. A line
-  that changes in one usually changes in the other.
-- **Voice.** Kokoro, voice `af_heart` (Apache-2.0), US English.
-- **Music.** `mix.py` generates the ambient music itself, with a fixed seed, so it is the same on every
-  run and needs no licence. The finished sound is normalised to −16 LUFS.
+SUR-1221's two app films, and the files that made them (scenes, voices, music), are in git at `d90bfe4`.
 
 ## What you need
 
-- `npm ci` in the repo root: the timeline uses the site's own fonts from `node_modules/@fontsource`, and
-  `render.cjs` uses the repo's own Playwright.
-- Microsoft Edge: it draws the frames.
-- A Python venv with `kokoro-onnx==0.4.7 soundfile scipy numpy imageio-ffmpeg`. imageio-ffmpeg brings an
-  ffmpeg with libx264.
-- The Kokoro model, not committed (about 350 MB). Into a folder outside the repo:
+- A Python venv with `imageio-ffmpeg numpy faster-whisper`. imageio-ffmpeg brings an ffmpeg with
+  libx264; faster-whisper downloads its model (about 1.5 GB) on the first run.
+- For the end card: `npm ci` in the repo root, Microsoft Edge, and the built site on port 4321
+  (`npm run build && npm run preview`).
 
-  ```sh
-  for f in kokoro-v1.0.onnx voices-v1.0.bin; do
-    curl -fL -o "$f" "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/$f"
-  done
-  ```
+`out/` is a working folder, not committed.
 
-`vo/` and `out/` are working folders, not committed.
+## Making the film ready
 
-## Making a film
-
-From this folder, for `P=android` or `P=ios`, with `FF` set to the ffmpeg binary (`python -c "import imageio_ffmpeg as f; print(f.get_ffmpeg_exe())"`):
+From this folder, with `FF` set to the ffmpeg binary (`python -c "import imageio_ffmpeg as f; print(f.get_ffmpeg_exe())"`)
+and `SRC` to the film from NotebookLM:
 
 ```sh
-# 1. The voice lines, and the scene lengths they need (timing.js, one entry per app).
-python -I vo.py <model dir> $P
+mkdir -p out
 
-# 2. The picture, frame by frame (about 9 minutes). Also writes out/$P/picture.json: the scene starts.
-PLATFORM=$P FFMPEG=$FF node render.cjs walkthrough.html video out/$P/picture.mp4
+# 1. The watermark's own pixels, bottom right.
+python -I watermark-mask.py "$SRC" out/watermark-mask.png
 
-# 3. The sound: each line at its scene start, over the music.
-python -I mix.py out/$P/picture.json vo/$P/clips.json out/$P/soundtrack.wav
+# 2. The end card: the lockup on a blank page of the film (19.37 s is the first frame of one).
+CLEAN="removelogo=f=out/watermark-mask.png,crop=1270:714:5:2,scale=1280:720,setsar=1"
+"$FF" -y -ss 19.37 -i "$SRC" -vf "$CLEAN" -frames:v 1 -update 1 out/blank-page.png
+node end-card.cjs out/blank-page.png out/end-card.png
 
-# 4. The film the page plays: H.264 1080p and AAC, small enough for the page.
-"$FF" -y -i out/$P/picture.mp4 -i out/$P/soundtrack.wav -map 0:v -map 1:a \
-  -c:v libx264 -preset slow -tune stillimage -crf 26 -pix_fmt yuv420p \
-  -af loudnorm=I=-16:TP=-1.5:LRA=11 -ar 48000 -c:a aac -b:a 96k -shortest -movflags +faststart \
-  ../src/assets/walkthrough/marginborn-walkthrough-$P.mp4
+# 3. The film: cut before NotebookLM's end card (it starts at 267.47 s; the voice ends at 266.9 s),
+#    fade into the lockup, H.264 720p and AAC, small enough for the page.
+"$FF" -y -t 267.4 -i "$SRC" -loop 1 -framerate 30 -t 3.8 -i out/end-card.png -filter_complex \
+  "[0:v]$CLEAN,settb=AVTB,format=yuv420p[film];[1:v]settb=AVTB,format=yuv420p[card];[film][card]xfade=transition=fade:duration=0.8:offset=266.6[v];[0:a]afade=t=out:st=267:d=0.4,apad=whole_dur=270.4,loudnorm=I=-16:TP=-1.5:LRA=11[a]" \
+  -map "[v]" -map "[a]" -c:v libx264 -preset slow -crf 26 -bf 0 -pix_fmt yuv420p \
+  -ar 24000 -c:a aac -b:a 64k -movflags +faststart ../src/assets/walkthrough/marginborn-film.mp4
 
-# 5. The captions, timed from the same scene starts and from the pauses inside each line.
-python -I captions.py $P
+# 4. The poster: the reader in the armchair, the film's last scene, from the source (one lossy step fewer).
+"$FF" -y -ss 262 -i "$SRC" -vf "$CLEAN" -frames:v 1 -update 1 ../src/assets/walkthrough/poster.png
+
+# 5. The captions, from the film's own words.
+python -I transcribe.py ../src/assets/walkthrough/marginborn-film.mp4 out/transcript.json
+python -I captions.py out/transcript.json ../src/assets/walkthrough/marginborn-film.vtt
 ```
 
-Steps 2 to 5 belong together: a changed line changes the scene lengths, so the picture, the sound and
-the captions all have to be made again. The poster is the opening card, the same in both films:
-
-```sh
-node render.cjs walkthrough.html stills 4 out/poster   # then out/poster/t00004.png → ../src/assets/walkthrough/poster.png
-```
-
-To look at one moment without rendering, open `walkthrough.html?platform=ios&t=52` in a browser.
-
-Keep each film under Cloudflare Pages' 25 MiB limit for one file; at CRF 26 they are about 17 MB.
+- **The crop** in `CLEAN` takes off the two black rows at the top and the four at the bottom of
+  NotebookLM's frame, and 5 px at each side to keep 16:9.
+- **The times** in steps 2 to 4 belong to this film. A new film needs its own: a blank page, the start
+  of its end card, a poster frame.
+- **The captions:** step 5 prints the words the model was least sure of. Listen to those, and add what it
+  misheard to `FIXES` in `captions.py`.
+- **The size:** keep the film under Cloudflare Pages' 25 MiB limit for one file. At CRF 26 it is about
+  16.6 MB. Every page view fetches the film's index (`preload="metadata"`), so step 3 keeps it small:
+  no B-frames (no table of frame reorders) and 24 kHz sound (half the sound frames) take it from about
+  297 KB to 153 KB. Without B-frames the film itself is about 0.5 MB larger than with them.
+- **The words** are the film's own, not the guide's. Check what a new film says against the page before
+  it goes up; the note under the film points readers to the exact privacy section.
