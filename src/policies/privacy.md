@@ -72,7 +72,7 @@ Under the EU/UK GDPR and the Swiss Federal Act on Data Protection (FADP), we rel
 | Process payments and manage subscriptions | To bill you and meet tax/accounting duties | Contract; legal obligation |
 | Keep the Services secure, prevent abuse, fix errors | To protect you and us | Legitimate interests |
 | Respond to your messages and support requests | To help you | Contract; legitimate interests |
-| Run app testing: add you to the testing list, contact you about testing and follow-up research, and tell you when the iPhone app is ready if you asked | To recruit testers and learn from them | **Consent** (you can withdraw at any time) |
+| Run app testing: invite you to the test on Google Play or TestFlight, and contact you about testing and follow-up research | To recruit testers and learn from them | **Consent** (you can withdraw at any time) |
 | Analytics to understand and improve the Services | To make Marginborn better | **Consent** (you can decline; see "Cookies and analytics") |
 | Comply with the law | To meet legal obligations | Legal obligation |
 
@@ -107,7 +107,7 @@ We don't sell your data. We share it only with the service providers (sub-proces
 | Google Workspace | Our email inbox: messages you send us and website form submissions | Europe |
 | Cloudflare | Content delivery, hosting, bot protection (Turnstile) | Global edge network |
 
-One exception to the list above: if you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. Google handles it under its own privacy policy, not under a contract with us.
+Two exceptions to the list above. If you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. If you sign up to test the iPhone app, we add your email address to our test in TestFlight, Apple's testing service, so that Apple can send you the invitation. Google and Apple each handle it under their own privacy policy, not under a contract with us.
 
 We may also disclose data if the law requires it (for example a valid court order), to protect people's safety, or as part of a business sale — in which case we'd tell you.
 
@@ -122,7 +122,7 @@ When data goes outside the EU/EEA or Switzerland, we rely on appropriate safegua
 - **Your account and content:** for as long as your account is active. If you delete your account, we delete your content from our active systems within **30 days**. Encrypted copies may persist in routine backups for a short additional period before they're overwritten.
 - **Payment and tax records:** kept as long as the law requires (for example accounting rules).
 - **Logs and analytics:** kept for a limited period, then deleted or anonymised.
-- **Tester sign-ups (Android and iPhone):** deleted 6 months after Android closed testing ends. You can ask us to delete yours sooner.
+- **Tester sign-ups (Android and iPhone):** deleted 6 months after testing ends on that platform: Android closed testing on Google Play, or iPhone testing in TestFlight. You can ask us to delete yours sooner.
 
 ## 9. How we keep your data safe
 

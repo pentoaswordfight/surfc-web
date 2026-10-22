@@ -1,20 +1,25 @@
 ---
 /**
- * /testwithus/ — Android closed-testing sign-up (SUR-1200). Play needs at
- * least 12 testers opted in for 14 days (SUR-702); this page recruits them and
- * is linked from the SUR-1065 announcement and social posts.
+ * /testwithus/ — tester sign-up for both apps: Android closed testing on Google
+ * Play (SUR-1200; Play needs at least 12 testers opted in for 14 days,
+ * SUR-702) and iPhone testing in TestFlight (SUR-1267). Linked from every
+ * front-door CTA, the SUR-1065 announcement and social posts.
  *
  * The form POSTs to the `tester-signup` Edge Function in surfc/ via
  * `src/scripts/testerSignupForm.ts`. Field names, the honeypot and the consent
  * statement are a cross-repo contract with that function: the consent label
  * below is quoted verbatim into every sign-up mail as the consent record, so
  * change it there too (`CONSENT_STATEMENT`). Nothing is mailed to the visitor;
- * the founder replies with the Play opt-in link once their Google account is
- * on the tester list.
+ * the founder adds the address to the Play email list or the TestFlight group
+ * and replies with the next steps.
+ *
+ * The phone choice decides the email label, its hint and which steps show
+ * (`.tw-for-*` / `.tw-path-*`, CSS `:has()` only). Before a choice, both paths
+ * show with neutral copy.
  *
  * Design: the forest front-door ground, with the form as a paper page whose
  * labels sit in its margin — the one bold element. `noindex` and out of the
- * sitemap: a campaign page that retires when closed testing ends.
+ * sitemap: a campaign page that retires when testing ends.
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav from '../components/Nav.astro'
@@ -23,8 +28,8 @@ import '../styles/policy.css'
 ---
 
 <BaseLayout
-  title="Test the Android app — Marginborn"
-  description="Help test the Marginborn Android app before it opens on Google Play. Sign up with your Google account and use the app for 14 days."
+  title="Test the app — Marginborn"
+  description="Help test the Marginborn app on Android or iPhone. Sign up with your Google account or Apple Account and use the app for 14 days."
   path="/testwithus/"
   noindex
   bodyClass="braird-front-door"
@@ -33,10 +38,10 @@ import '../styles/policy.css'
   <main class="tw bf-dots">
     <div class="bf-wrap tw-grid">
       <div class="tw-copy">
-        <h1 class="tw-title">Help us test Marginborn on Android.</h1>
+        <h1 class="tw-title">Help us test Marginborn.</h1>
         <p class="tw-lede">
-          Before a new app can go on Google Play, Google asks for at least 12 people to test it
-          for 14 days. Sign up here and we’ll send you the link to join.
+          Marginborn is in testing on Android and iPhone. Sign up with the phone you use, and
+          we’ll invite you to the test.
         </p>
       </div>
 
@@ -44,8 +49,9 @@ import '../styles/policy.css'
         <noscript>
           <p class="policy-note">
             This form needs JavaScript. You can email
-            <a href="mailto:hello@marginborn.com">hello@marginborn.com</a> instead — tell us the
-            Google account you use on Google Play, and we’ll add you.
+            <a href="mailto:hello@marginborn.com">hello@marginborn.com</a> instead. Tell us your
+            phone and the email of your Google account (Android) or Apple Account (iPhone), and
+            we’ll add you.
           </p>
         </noscript>
 
@@ -57,27 +63,32 @@ import '../styles/policy.css'
           <!-- Phone first: it decides what the email field asks for. -->
           <div class="tw-row">
             <span id="tw-phone-label" class="tw-label">Your phone</span>
-            <div class="tw-field" role="radiogroup" aria-labelledby="tw-phone-label" aria-describedby="tw-phone-hint" aria-required="true">
+            <div class="tw-field" role="radiogroup" aria-labelledby="tw-phone-label" aria-required="true">
               <div class="policy-choices tw-phones">
                 <label><input type="radio" name="phone" value="android" required /> <span>Android</span></label>
                 <label><input type="radio" name="phone" value="ios" /> <span>iPhone</span></label>
               </div>
-              <p id="tw-phone-hint" class="policy-hint">The app is Android-only for now. Choose iPhone and we’ll email you when it’s ready.</p>
             </div>
           </div>
 
+          <!-- One label and one hint, each holding all three wordings: aria-describedby
+               would read a hidden element it names by id, but not a hidden child. -->
           <div class="tw-row">
-            <label for="tw-email" class="tw-label">Google account email</label>
+            <label for="tw-email" class="tw-label"><span class="tw-for-none">Email</span><span class="tw-for-android">Google account email</span><span class="tw-for-ios">Apple Account email</span></label>
             <div class="tw-field">
               <input id="tw-email" name="email" type="email" class="inp" required maxlength="254" autocomplete="email" aria-describedby="tw-email-hint" />
-              <p id="tw-email-hint" class="policy-hint">The one you use on Google Play — we can only invite that account. On iPhone, any email works.</p>
+              <p id="tw-email-hint" class="policy-hint">
+                <span class="tw-for-none">On Android, the Google account you use on Google Play. On iPhone, the email of your Apple Account.</span>
+                <span class="tw-for-android">The one you use on Google Play. We can only invite that account.</span>
+                <span class="tw-for-ios">The one you use for the App Store. Apple sends the TestFlight invitation there.</span>
+              </p>
             </div>
           </div>
 
           <div class="tw-row">
             <label for="tw-device" class="tw-label">Phone model <span class="policy-optional">(optional)</span></label>
             <div class="tw-field">
-              <input id="tw-device" name="device" type="text" class="inp" maxlength="120" autocomplete="off" placeholder="Pixel 8, Galaxy S24" />
+              <input id="tw-device" name="device" type="text" class="inp" maxlength="120" autocomplete="off" placeholder="Pixel 8, iPhone 15" />
             </div>
           </div>
 
@@ -92,7 +103,7 @@ import '../styles/policy.css'
           <div class="tw-row">
             <div class="tw-field">
               <div class="policy-choices">
-                <label><input id="tw-consent" type="checkbox" name="consent" required aria-describedby="tw-consent-hint" /> <span>I agree that Marginborn may use these details to contact me about testing the app, including follow-up research, and, if I chose iPhone, to tell me when the iPhone app is ready. I can withdraw at any time.</span></label>
+                <label><input id="tw-consent" type="checkbox" name="consent" required aria-describedby="tw-consent-hint" /> <span>I agree that Marginborn may use these details to invite me to test the app on Google Play or TestFlight, and to contact me about testing, including follow-up research. I can withdraw at any time.</span></label>
               </div>
               <p id="tw-consent-hint" class="policy-hint">To withdraw, email <a href="mailto:hello@marginborn.com">hello@marginborn.com</a>. How we handle your data: <a href="/policies/privacy/">Privacy Policy</a>.</p>
             </div>
@@ -114,12 +125,24 @@ import '../styles/policy.css'
 
       <section class="tw-next" aria-labelledby="tw-next-title">
         <h2 id="tw-next-title" class="tw-next-title">What happens next</h2>
-        <ol class="tw-steps">
-          <li>We add your Google account to the test and email you a link.</li>
-          <li>You open the link on your phone and install Marginborn from Google Play.</li>
-          <li>You use the app for the full 14 days without leaving the test.</li>
-          <li>You tell us what works and what doesn’t, with “Send feedback” in the app.</li>
-        </ol>
+        <div class="tw-path tw-path-android">
+          <h3 class="tw-path-title">On Android</h3>
+          <ol class="tw-steps">
+            <li>We add your Google account to the test and email you a link.</li>
+            <li>You open the link on your phone and install Marginborn from Google Play.</li>
+            <li>You use the app for the full 14 days without leaving the test. Google asks for this before a new app can go on Google Play.</li>
+            <li>You tell us what works and what doesn’t, with “Send feedback” in the app.</li>
+          </ol>
+        </div>
+        <div class="tw-path tw-path-ios">
+          <h3 class="tw-path-title">On iPhone</h3>
+          <ol class="tw-steps">
+            <li>We add your email to the test. Apple emails you an invitation from TestFlight.</li>
+            <li>You install TestFlight from the App Store, then open the invitation on your iPhone to install Marginborn.</li>
+            <li>You use the app for at least 14 days.</li>
+            <li>You tell us what works and what doesn’t, with “Send feedback” in the app.</li>
+          </ol>
+        </div>
       </section>
     </div>
   </main>
@@ -172,14 +195,33 @@ import '../styles/policy.css'
     max-width: 44ch;
   }
 
+  /* ── The phone choice decides what shows. No choice: neutral copy and both paths. ── */
+  .tw:has([name="phone"]:checked) .tw-for-none,
+  .tw:not(:has([name="phone"][value="android"]:checked)) .tw-for-android,
+  .tw:not(:has([name="phone"][value="ios"]:checked)) .tw-for-ios,
+  .tw:has([name="phone"][value="ios"]:checked) .tw-path-android,
+  .tw:has([name="phone"][value="android"]:checked) .tw-path-ios { display: none; }
+
   /* ── What happens next: a real sequence, so it is numbered ── */
+  /* A gap, not sibling margins: a hidden path takes no space. */
+  .tw-next { display: grid; row-gap: 22px; }
   .tw-next-title {
     font-family: var(--font-display);
     font-weight: 500;
     font-size: 21px;
     line-height: 1.3;
     color: var(--bf-head);
-    margin: 0 0 16px;
+    margin: 0;
+  }
+  /* Written in the same hand as the sheet's margin notes. */
+  .tw-path-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.35;
+    color: var(--bf-muted);
+    margin: 0 0 12px;
   }
   .tw-steps {
     list-style: none;

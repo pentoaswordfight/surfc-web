@@ -1,5 +1,6 @@
 /**
- * testerSignupForm — progressive enhancement for /testwithus/ (SUR-1200).
+ * testerSignupForm — progressive enhancement for /testwithus/ (SUR-1200,
+ * iPhone via TestFlight since SUR-1267).
  *
  * Native validation first (`reportValidity`), then one POST to the
  * `tester-signup` Edge Function in surfc/ (`verify_jwt = false`; see
@@ -18,7 +19,7 @@ type Phone = 'android' | 'ios'
 
 const SUCCESS: Record<Phone, string> = {
   android: 'You’re signed up. We add new testers in batches and will email you the link to join.',
-  ios: 'You’re on the list. We’ll email you when the iPhone app is ready.',
+  ios: 'You’re signed up. We add new testers in batches, and Apple will email you the TestFlight invitation.',
 }
 const TIMEOUT_MS = 15_000
 
