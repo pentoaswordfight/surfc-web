@@ -40,7 +40,7 @@ We tell you this plainly because your notes can contain personal or sensitive th
 - **Your content:** the photos you capture, the text extracted from them, your notes, tags, and the idea index built from them. This is **end-to-end encrypted**; we store it but cannot read it.
 - **Payment data:** if you subscribe, your payment is handled by Stripe. Stripe processes your card details; we receive limited billing information (such as your billing country, card brand, and the last four digits) but never your full card number.
 - **Support and messages:** anything you send us by email or feedback.
-- **Tester sign-ups:** if you sign up to test the app, your email address, whether you use Android or iPhone, and — if you tell us — your device and what you write or produce.
+- **Tester sign-ups:** if you sign up to test the app, your email address, whether you use Android or iPhone, and — if you tell us — your device and what you write or produce. If you test the iPhone app in TestFlight, Apple also gives us the email address on your invitation, whether you installed the app, how often you used it, crash reports with your device model, and any feedback you send through TestFlight.
 
 **Information we collect automatically**
 
@@ -107,13 +107,13 @@ We don't sell your data. We share it only with the service providers (sub-proces
 | Google Workspace | Our email inbox: messages you send us and website form submissions | Europe |
 | Cloudflare | Content delivery, hosting, bot protection (Turnstile) | Global edge network |
 
-Two exceptions to the list above. If you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. If you sign up to test the iPhone app, we add your email address to our test in TestFlight, Apple's testing service, so that Apple can send you the invitation. Google and Apple each handle it under their own privacy policy, not under a contract with us.
+Two exceptions to the list above. If you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. If you sign up to test the iPhone app, we add your email address to our test in TestFlight, Apple's testing service, so that Apple can send you the invitation. Google and Apple each handle it under their own privacy policy, as independent controllers, not as our service providers.
 
 We may also disclose data if the law requires it (for example a valid court order), to protect people's safety, or as part of a business sale — in which case we'd tell you.
 
 ## 7. Where your data is stored and sent
 
-Most of your data is stored and processed in the **EU** (Supabase, Azure, PostHog), and our email inbox (Google Workspace) is stored in Europe. Some processing happens in the **US** (Anthropic for AI, Stripe for payments, Resend for email) and on Cloudflare's global edge network.
+Most of your data is stored and processed in the **EU** (Supabase, Azure, PostHog), and our email inbox (Google Workspace) is stored in Europe. Some processing happens in the **US** (Anthropic for AI, Stripe for payments, Resend for email) and on Cloudflare's global edge network. If you sign up to test the app, Google or Apple receives your email address and may process it in the US.
 
 When data goes outside the EU/EEA or Switzerland, we rely on appropriate safeguards — such as the EU Standard Contractual Clauses and their Swiss equivalent — to protect it. You can ask us for details.
 

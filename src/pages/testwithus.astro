@@ -29,7 +29,7 @@ import '../styles/policy.css'
 
 <BaseLayout
   title="Test the app — Marginborn"
-  description="Help test the Marginborn app on Android or iPhone. Sign up with your Google account or Apple Account and use the app for 14 days."
+  description="Help test the Marginborn app on Android or iPhone. Sign up with the email of your Google Account or Apple Account, then use the app for 14 days."
   path="/testwithus/"
   noindex
   bodyClass="braird-front-door"
@@ -40,7 +40,7 @@ import '../styles/policy.css'
       <div class="tw-copy">
         <h1 class="tw-title">Help us test Marginborn.</h1>
         <p class="tw-lede">
-          Marginborn is in testing on Android and iPhone. Sign up with the phone you use, and
+          Marginborn is in testing on Android and iPhone. Tell us which phone you use, and
           we’ll invite you to the test.
         </p>
       </div>
@@ -50,7 +50,7 @@ import '../styles/policy.css'
           <p class="policy-note">
             This form needs JavaScript. You can email
             <a href="mailto:hello@marginborn.com">hello@marginborn.com</a> instead. Tell us your
-            phone and the email of your Google account (Android) or Apple Account (iPhone), and
+            phone and the email of your Google Account (Android) or Apple Account (iPhone), and
             we’ll add you.
           </p>
         </noscript>
@@ -74,11 +74,11 @@ import '../styles/policy.css'
           <!-- One label and one hint, each holding all three wordings: aria-describedby
                would read a hidden element it names by id, but not a hidden child. -->
           <div class="tw-row">
-            <label for="tw-email" class="tw-label"><span class="tw-for-none">Email</span><span class="tw-for-android">Google account email</span><span class="tw-for-ios">Apple Account email</span></label>
+            <label for="tw-email" class="tw-label"><span class="tw-for-none">Email</span><span class="tw-for-android">Google Account email</span><span class="tw-for-ios">Apple Account email</span></label>
             <div class="tw-field">
               <input id="tw-email" name="email" type="email" class="inp" required maxlength="254" autocomplete="email" aria-describedby="tw-email-hint" />
               <p id="tw-email-hint" class="policy-hint">
-                <span class="tw-for-none">On Android, the Google account you use on Google Play. On iPhone, the email of your Apple Account.</span>
+                <span class="tw-for-none">On Android, the Google Account you use on Google Play. On iPhone, your Apple Account email.</span>
                 <span class="tw-for-android">The one you use on Google Play. We can only invite that account.</span>
                 <span class="tw-for-ios">The one you use for the App Store. Apple sends the TestFlight invitation there.</span>
               </p>
@@ -103,7 +103,7 @@ import '../styles/policy.css'
           <div class="tw-row">
             <div class="tw-field">
               <div class="policy-choices">
-                <label><input id="tw-consent" type="checkbox" name="consent" required aria-describedby="tw-consent-hint" /> <span>I agree that Marginborn may use these details to invite me to test the app on Google Play or TestFlight, and to contact me about testing, including follow-up research. I can withdraw at any time.</span></label>
+                <label><input id="tw-consent" type="checkbox" name="consent" required aria-describedby="tw-consent-hint" /> <span>I agree that Marginborn may give my email address to Google Play or Apple TestFlight to invite me to test the app, and may contact me about testing, including follow-up research. I can withdraw at any time.</span></label>
               </div>
               <p id="tw-consent-hint" class="policy-hint">To withdraw, email <a href="mailto:hello@marginborn.com">hello@marginborn.com</a>. How we handle your data: <a href="/policies/privacy/">Privacy Policy</a>.</p>
             </div>
@@ -125,16 +125,16 @@ import '../styles/policy.css'
 
       <section class="tw-next" aria-labelledby="tw-next-title">
         <h2 id="tw-next-title" class="tw-next-title">What happens next</h2>
-        <div class="tw-path tw-path-android">
+        <div class="tw-path-android">
           <h3 class="tw-path-title">On Android</h3>
           <ol class="tw-steps">
-            <li>We add your Google account to the test and email you a link.</li>
+            <li>We add your Google Account to the test and email you a link.</li>
             <li>You open the link on your phone and install Marginborn from Google Play.</li>
-            <li>You use the app for the full 14 days without leaving the test. Google asks for this before a new app can go on Google Play.</li>
+            <li>You use the app for at least 14 days without leaving the test. Google asks for this before a new app can go on Google Play.</li>
             <li>You tell us what works and what doesn’t, with “Send feedback” in the app.</li>
           </ol>
         </div>
-        <div class="tw-path tw-path-ios">
+        <div class="tw-path-ios">
           <h3 class="tw-path-title">On iPhone</h3>
           <ol class="tw-steps">
             <li>We add your email to the test. Apple emails you an invitation from TestFlight.</li>
@@ -195,10 +195,13 @@ import '../styles/policy.css'
     max-width: 44ch;
   }
 
-  /* ── The phone choice decides what shows. No choice: neutral copy and both paths. ── */
+  /* ── The phone choice decides what shows. No choice: neutral copy and both paths.
+     Platform wordings are hidden by default and only revealed by :has(), so a
+     browser without :has() keeps the neutral state, not three labels at once. ── */
+  .tw-for-android, .tw-for-ios { display: none; }
+  .tw:has([name="phone"][value="android"]:checked) .tw-for-android,
+  .tw:has([name="phone"][value="ios"]:checked) .tw-for-ios { display: inline; }
   .tw:has([name="phone"]:checked) .tw-for-none,
-  .tw:not(:has([name="phone"][value="android"]:checked)) .tw-for-android,
-  .tw:not(:has([name="phone"][value="ios"]:checked)) .tw-for-ios,
   .tw:has([name="phone"][value="ios"]:checked) .tw-path-android,
   .tw:has([name="phone"][value="android"]:checked) .tw-path-ios { display: none; }
 

@@ -145,9 +145,9 @@ test.describe('How it works is the Marginborn guide', () => {
     await page.goto('/how-it-works/')
     const closing = page.locator('.hiw-closing-v2')
     await expect(closing).toContainText("you're not starting from a blank page")
-    // The tester page is Android's (SUR-1200); this guide shows the iPhone app, so the section says so.
-    await expect(closing).toContainText('Marginborn is in beta.')
-    await expect(closing).toContainText('on iPhone, leave your email')
+    // Both apps take testers since SUR-1267; no "when it's ready" for iPhone any more.
+    await expect(closing).toContainText('Marginborn is in beta, on Android and iPhone.')
+    await expect(closing).not.toContainText('ready')
     await expect(closing).not.toContainText('free to use')
     const cta = closing.locator('a[data-cta="closing_testwithus"]')
     await expect(cta).toHaveText('Join the Beta')
@@ -159,7 +159,7 @@ test.describe('How it works is the Marginborn guide', () => {
     const cta = page.locator('.hiw-closing-v2 a[data-cta="closing_testwithus"]')
     await expect(cta).toHaveText('Join the Beta')
     await expect(cta).toHaveAttribute('href', '/testwithus/')
-    await expect(page.locator('.hiw-closing-v2')).toContainText('Marginborn is in beta.')
+    await expect(page.locator('.hiw-closing-v2')).toContainText('Marginborn is in beta, on Android and iPhone.')
 
     // Pricing's visitors want to pay (the app's upgrade buttons, Stripe-cancel returns).
     await page.goto('/pricing/')
