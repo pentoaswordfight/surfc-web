@@ -1,5 +1,6 @@
 /**
- * SUR-1200 — /testwithus/, the Android closed-testing sign-up.
+ * SUR-1200 — /testwithus/, the tester sign-up: Android closed testing on Google
+ * Play, and iPhone testing in TestFlight since SUR-1267.
  *
  * The form POSTs to the `tester-signup` Edge Function via
  * src/scripts/testerSignupForm.ts. Every network call is intercepted with
@@ -12,7 +13,7 @@ const SIGNUP = '**/functions/v1/tester-signup'
 // The consent label is a cross-repo contract: surfc's tester-signup function
 // quotes it verbatim (CONSENT_STATEMENT) into every sign-up mail.
 const CONSENT_STATEMENT =
-  'I agree that Marginborn may use these details to contact me about testing the app, including follow-up research, and, if I chose iPhone, to tell me when the iPhone app is ready. I can withdraw at any time.'
+  'I agree that Marginborn may give my email address to Google Play or Apple TestFlight to invite me to test the app, and may contact me about testing, including follow-up research. I can withdraw at any time.'
 
 async function fillValidForm(page: import('@playwright/test').Page, phone: 'android' | 'ios' = 'android') {
   await page.fill('#tw-email', '  ada@example.com ')
@@ -21,12 +22,14 @@ async function fillValidForm(page: import('@playwright/test').Page, phone: 'andr
 }
 
 test.describe('/testwithus/ — the page', () => {
-  test('renders every field, the Google-account hint, the consent label and the privacy link', async ({ page }) => {
+  test('renders every field, the email hint, the consent label and the privacy link', async ({ page }) => {
     const response = await page.goto('/testwithus/')
     expect(response?.status()).toBe(200)
 
-    await expect(page.locator('h1')).toHaveText('Help us test Marginborn on Android.')
-    await expect(page.getByLabel('Google account email')).toHaveAttribute('type', 'email')
+    await expect(page.locator('h1')).toHaveText('Help us test Marginborn.')
+    // By id: getByLabel matches the label's raw text, hidden wordings included.
+    // The accessible name is pinned in the phone-choice test below.
+    await expect(page.locator('#tw-email')).toHaveAttribute('type', 'email')
     await expect(page.locator('#tw-email-hint')).toContainText('Google Play')
     await expect(page.locator('input[name="phone"]')).toHaveCount(2)
     await expect(page.getByRole('radiogroup', { name: 'Your phone' })).toBeVisible()
@@ -39,7 +42,40 @@ test.describe('/testwithus/ — the page', () => {
     await expect(page.locator('#tw-consent-hint a[href="/policies/privacy/"]')).toHaveCount(1)
     // Withdrawing is as visible as agreeing.
     await expect(page.locator('#tw-consent-hint a[href="mailto:hello@marginborn.com"]')).toHaveCount(1)
-    await expect(page.locator('.tw-steps li')).toHaveCount(4)
+    await expect(page.locator('.tw-path-android .tw-steps li')).toHaveCount(4)
+    await expect(page.locator('.tw-path-ios .tw-steps li')).toHaveCount(4)
+  })
+
+  test('the phone choice switches the email label, its hint and the steps', async ({ page }) => {
+    await page.goto('/testwithus/')
+    const email = page.locator('#tw-email')
+    const android = page.locator('.tw-path-android')
+    const ios = page.locator('.tw-path-ios')
+
+    // No choice yet: neutral copy, both paths. The description proves the
+    // hidden wordings stay out of what a screen reader announces.
+    await expect(email).toHaveAccessibleName('Email')
+    await expect(email).toHaveAccessibleDescription('On Android, the Google Account you use on Google Play. On iPhone, your Apple Account email.')
+    await expect(android).toBeVisible()
+    await expect(ios).toBeVisible()
+
+    await page.check('input[name="phone"][value="ios"]')
+    await expect(email).toHaveAccessibleName('Apple Account email')
+    await expect(email).toHaveAccessibleDescription('The one you use for the App Store. Apple sends the TestFlight invitation there.')
+    await expect(ios).toBeVisible()
+    await expect(android).toBeHidden()
+
+    await page.check('input[name="phone"][value="android"]')
+    await expect(email).toHaveAccessibleName('Google Account email')
+    await expect(email).toHaveAccessibleDescription('The one you use on Google Play. We can only invite that account.')
+    await expect(android).toBeVisible()
+    await expect(ios).toBeHidden()
+  })
+
+  test('carries no Android-only, "when it’s ready" or em-dash copy (SUR-1267)', async ({ page }) => {
+    await page.goto('/testwithus/')
+    // textContent, so the wordings hidden by the phone choice are checked too.
+    expect(await page.locator('main').textContent()).not.toMatch(/Android-only|when it[’']s ready|—/)
   })
 
   test('is noindex and stays out of the sitemap', async ({ page, request }) => {
@@ -121,7 +157,7 @@ test.describe('/testwithus/ — submitting', () => {
     expect(headers.authorization).toBeUndefined()
   })
 
-  test('an iPhone sign-up gets the iPhone next step', async ({ page }) => {
+  test('an iPhone sign-up gets the TestFlight next step', async ({ page }) => {
     let phone: unknown
     await page.route(SIGNUP, (route) => {
       phone = route.request().postDataJSON().phone
@@ -130,7 +166,7 @@ test.describe('/testwithus/ — submitting', () => {
     await page.goto('/testwithus/')
     await fillValidForm(page, 'ios')
     await page.click('button[type="submit"]')
-    await expect(page.locator('#tw-status')).toContainText('when the iPhone app is ready')
+    await expect(page.locator('#tw-status')).toContainText('the TestFlight invitation')
     expect(phone).toBe('ios')
   })
 
@@ -201,7 +237,7 @@ test.describe('/testwithus/ — submitting', () => {
 })
 
 test.describe('/testwithus/ — analytics', () => {
-  test('with analytics allowed, a sign-up fires tester_signup_submitted with the phone only', async ({ page }) => {
+  for (const phone of ['android', 'ios'] as const) test(`with analytics allowed, a ${phone} sign-up fires tester_signup_submitted with the phone only`, async ({ page }) => {
     await page.route(SIGNUP, (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }))
     await page.goto('/testwithus/')
     // Stand in for a consented PostHog (see smoke.spec.ts for why the rebind is locked).
@@ -214,13 +250,13 @@ test.describe('/testwithus/ — analytics', () => {
         value: { capture: (name: string, props: Record<string, unknown>) => { captures.push([name, props]) } },
       })
     })
-    await fillValidForm(page)
+    await fillValidForm(page, phone)
     await page.click('button[type="submit"]')
     await expect(page.locator('#tw-status')).toBeVisible()
 
     const captures = await page.evaluate(() => (window as any).__captures as Array<[string, Record<string, unknown>]>)
     const signup = captures.filter(([n]) => n === 'tester_signup_submitted')
-    expect(signup).toEqual([['tester_signup_submitted', { phone: 'android' }]])
+    expect(signup).toEqual([['tester_signup_submitted', { phone }]])
     expect(JSON.stringify(captures)).not.toContain('ada@example.com')
   })
 

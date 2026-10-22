@@ -40,11 +40,11 @@ We tell you this plainly because your notes can contain personal or sensitive th
 - **Your content:** the photos you capture, the text extracted from them, your notes, tags, and the idea index built from them. This is **end-to-end encrypted**; we store it but cannot read it.
 - **Payment data:** if you subscribe, your payment is handled by Stripe. Stripe processes your card details; we receive limited billing information (such as your billing country, card brand, and the last four digits) but never your full card number.
 - **Support and messages:** anything you send us by email or feedback.
-- **Tester sign-ups:** if you sign up to test the app, your email address, whether you use Android or iPhone, and — if you tell us — your device and what you write or produce.
+- **Tester sign-ups:** if you sign up to test the app, your email address, whether you use Android or iPhone, and — if you tell us — your device and what you write or produce. If you test the iPhone app in TestFlight, Apple also gives us the email address on your invitation, whether you installed the app, how often you used it, crash reports with your device model, and any feedback you send through TestFlight.
 
 **Information we collect automatically**
 
-- **Usage and device data:** basic technical information such as IP address, browser and device type, operating system, and how you use the Services (pages, features, timestamps, error reports). We use this to keep the Services secure and working, and — only with your consent — for analytics. **In our Android and iOS apps, analytics are narrower than this**: each one is a bare count of feature use or its outcome, with no device identifier and no advertising identifier. The count is sent over your signed-in connection so we know it came from a real account, but that identity is checked and then discarded — never recorded, never passed on.
+- **Usage and device data:** basic technical information such as IP address, browser and device type, operating system, and how you use the Services (pages, features, timestamps, error reports). We use this to keep the Services secure and working, and — only with your consent — for analytics. **In our Android and iOS apps, analytics are narrower than this**: each one is a bare count of feature use or its outcome, with no device identifier and no advertising identifier. The count is sent over your signed-in connection so we know it came from a real account, but that identity is checked and then discarded — never recorded, never passed on. TestFlight testers: see "Tester sign-ups" above.
 
 **What we do not collect**
 
@@ -72,7 +72,8 @@ Under the EU/UK GDPR and the Swiss Federal Act on Data Protection (FADP), we rel
 | Process payments and manage subscriptions | To bill you and meet tax/accounting duties | Contract; legal obligation |
 | Keep the Services secure, prevent abuse, fix errors | To protect you and us | Legitimate interests |
 | Respond to your messages and support requests | To help you | Contract; legitimate interests |
-| Run app testing: add you to the testing list, contact you about testing and follow-up research, and tell you when the iPhone app is ready if you asked | To recruit testers and learn from them | **Consent** (you can withdraw at any time) |
+| Run app testing: invite you to the test on Google Play or TestFlight, and contact you about testing and follow-up research | To recruit testers and learn from them | **Consent** (you can withdraw at any time) |
+| Use the install, usage, crash and feedback data Apple gives us for TestFlight testers | To fix errors and learn from testers | Legitimate interests |
 | Analytics to understand and improve the Services | To make Marginborn better | **Consent** (you can decline; see "Cookies and analytics") |
 | Comply with the law | To meet legal obligations | Legal obligation |
 
@@ -107,13 +108,13 @@ We don't sell your data. We share it only with the service providers (sub-proces
 | Google Workspace | Our email inbox: messages you send us and website form submissions | Europe |
 | Cloudflare | Content delivery, hosting, bot protection (Turnstile) | Global edge network |
 
-One exception to the list above: if you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. Google handles it under its own privacy policy, not under a contract with us.
+Two exceptions to the list above. If you sign up to test the Android app, we add your email address to our testing list on Google Play so that Google can give you access to the test version. If you sign up to test the iPhone app, we add your email address to our test in TestFlight, Apple's testing service, so that Apple can send you the invitation. Google and Apple each handle it under their own privacy policy, as independent controllers, not as our service providers.
 
 We may also disclose data if the law requires it (for example a valid court order), to protect people's safety, or as part of a business sale — in which case we'd tell you.
 
 ## 7. Where your data is stored and sent
 
-Most of your data is stored and processed in the **EU** (Supabase, Azure, PostHog), and our email inbox (Google Workspace) is stored in Europe. Some processing happens in the **US** (Anthropic for AI, Stripe for payments, Resend for email) and on Cloudflare's global edge network.
+Most of your data is stored and processed in the **EU** (Supabase, Azure, PostHog), and our email inbox (Google Workspace) is stored in Europe. Some processing happens in the **US** (Anthropic for AI, Stripe for payments, Resend for email) and on Cloudflare's global edge network. If you sign up to test the app, Google or Apple receives your email address and may process it in the US under their own transfer safeguards.
 
 When data goes outside the EU/EEA or Switzerland, we rely on appropriate safeguards — such as the EU Standard Contractual Clauses and their Swiss equivalent — to protect it. You can ask us for details.
 
@@ -122,7 +123,7 @@ When data goes outside the EU/EEA or Switzerland, we rely on appropriate safegua
 - **Your account and content:** for as long as your account is active. If you delete your account, we delete your content from our active systems within **30 days**. Encrypted copies may persist in routine backups for a short additional period before they're overwritten.
 - **Payment and tax records:** kept as long as the law requires (for example accounting rules).
 - **Logs and analytics:** kept for a limited period, then deleted or anonymised.
-- **Tester sign-ups (Android and iPhone):** deleted 6 months after Android closed testing ends. You can ask us to delete yours sooner.
+- **Tester sign-ups (Android and iPhone):** deleted 6 months after testing ends on that platform: Android closed testing on Google Play, or iPhone testing in TestFlight. You can ask us to delete yours sooner.
 
 ## 9. How we keep your data safe
 
@@ -159,7 +160,7 @@ We use a small number of cookies and similar technologies:
 
 You choose through our consent banner, and you can change your choice any time from the "Consent preferences" link in the footer of our website, or from Settings → Privacy in the web app. One choice covers both. We default to off for anything non-essential.
 
-**In our Android and iOS apps** there are no cookies and no consent banner. Analytics there are off until you switch them on: we ask once, and you can change your answer any time in Settings → Privacy. What those apps send is deliberately thin — counts of feature use and outcomes, for example whether a search found anything — never your note content, never what you searched for, and no device or advertising identifier. They carry no third-party analytics software: each count goes to our own servers, which check that it came from a signed-in account, discard that identity without recording it, and pass on only the count to PostHog in the EU.
+**In our Android and iOS apps** there are no cookies and no consent banner. Analytics there are off until you switch them on: we ask once, and you can change your answer any time in Settings → Privacy. What those apps send is deliberately thin — counts of feature use and outcomes, for example whether a search found anything — never your note content, never what you searched for, and no device or advertising identifier. They carry no third-party analytics software: each count goes to our own servers, which check that it came from a signed-in account, discard that identity without recording it, and pass on only the count to PostHog in the EU. TestFlight is the exception: if you test the iPhone app in TestFlight, Apple gives us the data listed under "Tester sign-ups" in "What we collect", and the in-app switch does not control it.
 
 ## 12. Children
 
