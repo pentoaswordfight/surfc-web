@@ -32,4 +32,20 @@ test.describe('SUR-530 — pricing tier display names', () => {
     // hardcoded copy (hero/FAQ) that bypasses the SSoT.
     await expect(page.getByText('Annotator', { exact: false })).toHaveCount(0)
   })
+
+  // SUR-1272 — the same guard for the retired product name. The page source,
+  // not getByText, so the <head> and every attribute count too; case-sensitive,
+  // because the lowercase `surfc-card` class and app URL are not copy.
+  test('the retired "Surfc" name is gone from /pricing', async ({ page }) => {
+    await page.goto('/pricing/')
+
+    await expect(page).toHaveTitle('Plans & Pricing — Marginborn')
+    expect(await page.content()).not.toContain('Surfc')
+    // The overlay's and the failure banner's "Get help" links (hidden until checkout stalls or fails).
+    const help = page.locator('.stripe-overlay-help, .checkout-failure-help')
+    await expect(help).toHaveCount(2)
+    for (const link of await help.all()) {
+      await expect(link).toHaveAttribute('href', 'mailto:hello@marginborn.com')
+    }
+  })
 })
