@@ -66,7 +66,7 @@ export const PRICING_CHECKOUT_FAILURE_RETRY = 'pricing_checkout_failure_retry'
 
 // "Get help" target — surfc-web has no /help route (SUR-496 decision: mailto
 // for now). Mirrors the in-app StripeTransition's helpHref affordance.
-export const SUPPORT_MAILTO = 'mailto:hello@surfc.app'
+export const SUPPORT_MAILTO = 'mailto:hello@marginborn.com'
 
 export const CHECKOUT_FAILURE_HEADLINE = "Couldn't open secure billing."
 
